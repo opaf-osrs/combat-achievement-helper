@@ -146,22 +146,22 @@
    "attemptsPerKill": 3.0
   },
   "Dagannoth Prime": {
-   "ttkSeconds": 30,
-   "respawnSeconds": 10,
-   "killsPerHour": 90,
-   "note": "DKS rotation; mage protection + ranged kill. Shared cave so near-continuous, slight respawn/aggro juggling."
+   "ttkSeconds": 60,
+   "respawnSeconds": 90,
+   "killsPerHour": 24,
+   "note": "Wiki respawn is 150 ticks = 90s. The slowest kill of the three: Prime is tankiest against its own weakness, with a ranged defence roll of 19,536 - 1.9x Supreme's - so a ~90 Ranged account barely out-rolls it. Pray Magic, kill with ranged."
   },
   "Dagannoth Rex": {
-   "ttkSeconds": 30,
-   "respawnSeconds": 10,
-   "killsPerHour": 90,
-   "note": "Melee with Salve/crush; tanky but fast with good gear. Continuous in DKS cave, minor respawn downtime."
+   "ttkSeconds": 40,
+   "respawnSeconds": 90,
+   "killsPerHour": 27,
+   "note": "Wiki respawn is 150 ticks = 90s. Rex has Magic level 0 so magic hits ~99%, but a trident is low damage: ~6 DPS against 255 HP is ~40s. The easiest of the three - pray Melee, one style."
   },
   "Dagannoth Supreme": {
-   "ttkSeconds": 18,
-   "respawnSeconds": 7,
-   "killsPerHour": 144,
-   "note": "Ranged (chins/bp) on DKS island; ~18s kill, short re-aggro/repositioning. Often killed alongside Prime/Rex so KC stacks fast; standalone Supreme rate shown."
+   "ttkSeconds": 50,
+   "respawnSeconds": 90,
+   "killsPerHour": 25,
+   "note": "Wiki respawn is 150 ticks = 90s. Lowest defence level (128) and only +10 melee defence, so melee is right, but 255 HP at realistic accuracy is ~50s, not the 18s previously recorded - that figure needed 14.2 DPS, beyond even a maxed Scythe setup."
   },
   "Demonic Gorilla": {
    "ttkSeconds": 70,
@@ -384,9 +384,9 @@
   },
   "Skotizo": {
    "ttkSeconds": 150,
-   "respawnSeconds": 60,
-   "killsPerHour": 17,
-   "note": "Requires a Dark totem per kill; melee/ranged. Multi-altar mechanic (destroy 4 altars + boss). Downtime gated by totem supply and re-entry."
+   "respawnSeconds": 12420,
+   "killsPerHour": 0,
+   "note": "Every kill consumes a Dark totem, which is three pieces at 1/(500-HP) from Catacombs of Kourend monsters - about 1,395 hill giant kills, or ~3.5 hours, per totem. The pieces are UNTRADEABLE, so no amount of gold shortcuts it. The respawn carries that farm; killsPerHour is 0 because the true rate is ~0.29/hr and the field is an integer."
   },
   "Tempoross": {
    "ttkSeconds": 360,

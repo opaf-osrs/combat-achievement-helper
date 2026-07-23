@@ -112,12 +112,19 @@ public class BossReadinessTest
 	}
 
 	@Test
-	public void anEstablishedAccountStillGetsTheEfficientBosses()
+	public void anEstablishedAccountGetsADifferentListFromABeginner()
 	{
-		// The other direction: readiness must not flatten the list for someone who is ready for everything.
+		// The other direction: readiness must not flatten the list for someone ready for everything. Asserted
+		// on the SHAPE rather than by naming bosses — this test used to require a Dagannoth in the top six,
+		// which stopped being true the moment their kill times were corrected (they had been recorded at a
+		// 7-second respawn against the wiki's 90, making them look like the fastest points in the game).
 		List<String> top = topMonsters(bossesFor(account(90)), 6);
-		assertTrue("a combat-114 account still leads with the efficient bosses (" + top + ")",
-			top.stream().anyMatch(m -> m.startsWith("Dagannoth")));
+		List<String> beginner = topMonsters(bossesFor(account(1)), 6);
+
+		assertEquals("a maxed account still gets a full shortlist", 6, top.size());
+		assertNotEquals("and it is not the beginner's list", beginner, top);
+		assertTrue("no boss it is unready for leads the list",
+			bossesFor(account(90)).get(0).readinessSink < 2.0);
 	}
 
 	@Test

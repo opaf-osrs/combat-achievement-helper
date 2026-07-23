@@ -147,8 +147,16 @@ public class DataIntegrityTest
 		for (CombatAchievement task : CombatAchievementLibrary.loadBundled().all())
 		{
 			BossTiming t = timings.timingFor(task.monster());
-			if (!t.isKnown() || t.killsPerHour() <= 0 || t.secondsPerKill() <= 0)
+			if (!t.isKnown() || t.secondsPerKill() <= 0)
 			{
+				continue;
+			}
+			if (t.killsPerHour() <= 0)
+			{
+				// 0 means "under one an hour" — the integer field cannot say 0.29. Honest only if the
+				// timing really is that slow; a lazily-zeroed entry would hide a disagreement here.
+				assertTrue(task.monster() + " has killsPerHour 0 but is quicker than one an hour",
+					t.secondsPerKill() >= 3600);
 				continue;
 			}
 			double derived = 3600.0 / t.secondsPerKill();
