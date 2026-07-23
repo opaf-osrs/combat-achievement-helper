@@ -39,15 +39,19 @@ public final class DebugSimulation
 	/** Hitpoints starts at 10 in OSRS, so a "level 1 in everything" account is still 10 HP (combat 3). */
 	public static final int MIN_HITPOINTS = 10;
 
-	private static final DebugSimulation NONE = new DebugSimulation(Collections.emptyMap(), false);
+	private static final DebugSimulation NONE =
+		new DebugSimulation(Collections.emptyMap(), false, false);
 
 	private final Map<String, Integer> levelOverrides;
 	private final boolean zeroCompletion;
+	private final boolean zeroQuests;
 
-	private DebugSimulation(Map<String, Integer> levelOverrides, boolean zeroCompletion)
+	private DebugSimulation(Map<String, Integer> levelOverrides, boolean zeroCompletion,
+		boolean zeroQuests)
 	{
 		this.levelOverrides = Collections.unmodifiableMap(new LinkedHashMap<>(levelOverrides));
 		this.zeroCompletion = zeroCompletion;
+		this.zeroQuests = zeroQuests;
 	}
 
 	/** No simulation: every {@code apply} is the identity. */
@@ -56,11 +60,20 @@ public final class DebugSimulation
 		return NONE;
 	}
 
+	public static DebugSimulation of(Map<String, Integer> levelOverrides, boolean zeroCompletion)
+	{
+		return of(levelOverrides, zeroCompletion, false);
+	}
+
 	/**
 	 * @param levelOverrides skill name → level to pretend; empty leaves the real levels alone
 	 * @param zeroCompletion pretend no Combat Achievement has been completed
+	 * @param zeroQuests     pretend no quest has been done — without this a simulated beginner keeps the
+	 *                       real account's quest log, so quest-gated content stays unlocked and nothing
+	 *                       shows under "Unlock next" (a quest already done is not an unlock)
 	 */
-	public static DebugSimulation of(Map<String, Integer> levelOverrides, boolean zeroCompletion)
+	public static DebugSimulation of(Map<String, Integer> levelOverrides, boolean zeroCompletion,
+		boolean zeroQuests)
 	{
 		Map<String, Integer> clean = new LinkedHashMap<>();
 		if (levelOverrides != null)
@@ -73,11 +86,11 @@ public final class DebugSimulation
 				}
 			}
 		}
-		if (clean.isEmpty() && !zeroCompletion)
+		if (clean.isEmpty() && !zeroCompletion && !zeroQuests)
 		{
 			return NONE;
 		}
-		return new DebugSimulation(clean, zeroCompletion);
+		return new DebugSimulation(clean, zeroCompletion, zeroQuests);
 	}
 
 	/** Every skill set to {@code level} — the preset behind the "3 / 40 / 60 / 80 / 99" buttons. */
@@ -100,12 +113,17 @@ public final class DebugSimulation
 	/** True when this changes anything; a false value means the panel should show the real account. */
 	public boolean isActive()
 	{
-		return zeroCompletion || !levelOverrides.isEmpty();
+		return zeroCompletion || zeroQuests || !levelOverrides.isEmpty();
 	}
 
 	public boolean zeroCompletion()
 	{
 		return zeroCompletion;
+	}
+
+	public boolean zeroQuests()
+	{
+		return zeroQuests;
 	}
 
 	/** Skill name → simulated level; empty when levels are not being overridden. */
@@ -131,10 +149,14 @@ public final class DebugSimulation
 		return fallback;
 	}
 
-	/** The real profile with the simulated levels swapped in; quests and everything else untouched. */
+	/** The real profile with the simulated levels swapped in, and the quest log blanked when asked. */
 	public PlayerProfile apply(PlayerProfile real)
 	{
 		PlayerProfile base = real == null ? PlayerProfile.empty() : real;
+		if (zeroQuests)
+		{
+			base = base.withoutQuests();
+		}
 		if (levelOverrides.isEmpty())
 		{
 			return base;

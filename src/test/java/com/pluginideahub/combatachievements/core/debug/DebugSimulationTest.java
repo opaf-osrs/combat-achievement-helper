@@ -66,10 +66,35 @@ public class DebugSimulationTest
 	@Test
 	public void simulatingLevelsLeavesQuestsAlone()
 	{
-		// Only levels are simulated, so quest-gated content stays unlocked — the panel must keep showing
-		// what the real account has actually unlocked.
+		// Levels alone must not touch the quest log — that is a separate switch.
 		PlayerProfile simulated = DebugSimulation.of(DebugSimulation.allSkillsAt(1), false).apply(maxed());
 		assertTrue("real quest completions survive", simulated.hasCompleted("Dragon Slayer II"));
+	}
+
+	@Test
+	public void zeroQuestsBlanksTheQuestLogButKeepsTheLevels()
+	{
+		// Needed to reproduce a beginner: with the real quest log intact, quest-gated content stays
+		// unlocked and "Unlock next" stays empty, because a quest already done is not an unlock.
+		DebugSimulation sim = DebugSimulation.of(Collections.emptyMap(), false, true);
+		PlayerProfile simulated = sim.apply(maxed());
+
+		assertTrue("blanking quests alone is a simulation", sim.isActive());
+		assertTrue(sim.zeroQuests());
+		assertFalse("no quest reads as completed", simulated.hasCompleted("Dragon Slayer II"));
+		assertFalse("nor as started", simulated.hasStarted("Dragon Slayer II"));
+		assertEquals("levels are untouched", 99, simulated.levelOf("Attack"));
+	}
+
+	@Test
+	public void levelsAndQuestsCanBeSimulatedTogether()
+	{
+		PlayerProfile simulated = DebugSimulation
+			.of(DebugSimulation.allSkillsAt(1), true, true)
+			.apply(maxed());
+
+		assertEquals("a full fresh-account simulation", 3, simulated.combatLevel());
+		assertFalse(simulated.hasCompleted("Priest in Peril"));
 	}
 
 	@Test

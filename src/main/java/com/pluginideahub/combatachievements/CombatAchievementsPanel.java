@@ -141,6 +141,7 @@ public class CombatAchievementsPanel extends PluginPanel
 	private final JPanel devBody = new JPanel();
 	private final JLabel devHeader = new JLabel();
 	private final JCheckBox devZeroCas = new JCheckBox("No CAs completed");
+	private final JCheckBox devZeroQuests = new JCheckBox("No quests done");
 	private final transient Map<String, JSpinner> devSpinners = new LinkedHashMap<>();
 	private final JTextField searchField = new JTextField();
 	private final JComboBox<Sort> sortBox = new JComboBox<>(Sort.values());
@@ -329,16 +330,17 @@ public class CombatAchievementsPanel extends PluginPanel
 		devBody.add(fullWidth(presets));
 		devBody.add(spacer());
 
-		devZeroCas.setFont(FontManager.getRunescapeSmallFont());
-		devZeroCas.setOpaque(false);
-		devZeroCas.setForeground(ColorScheme.LIGHT_GRAY_COLOR);
-		devZeroCas.setFocusPainted(false);
-		devZeroCas.setToolTipText("Hide your completed CAs, so the panel treats you as having 0 points");
-		devZeroCas.addActionListener(e -> publishSimulation());
-		JPanel zeroRow = new JPanel(new BorderLayout());
-		zeroRow.setOpaque(false);
-		zeroRow.add(devZeroCas, BorderLayout.WEST);
-		devBody.add(fullWidth(zeroRow));
+		styleDevCheckBox(devZeroCas,
+			"Hide your completed CAs, so the panel treats you as having 0 points");
+		// Without this a simulated beginner keeps your real quest log, so quest-gated content stays
+		// unlocked and "Unlock next" comes back empty — a quest you have done is not an unlock.
+		styleDevCheckBox(devZeroQuests,
+			"Pretend no quest is done, so quest-gated content locks like a new account's");
+		JPanel switches = new JPanel(new GridLayout(0, 1, 0, 1));
+		switches.setOpaque(false);
+		switches.add(devZeroCas);
+		switches.add(devZeroQuests);
+		devBody.add(fullWidth(switches));
 		devBody.add(spacer());
 
 		// Two columns: at three, the label plus the spinner's arrows exceed the cell and the last column's
@@ -353,6 +355,16 @@ public class CombatAchievementsPanel extends PluginPanel
 
 		devSection.add(devBody, BorderLayout.CENTER);
 		refreshDevHeader();
+	}
+
+	private void styleDevCheckBox(JCheckBox box, String tooltip)
+	{
+		box.setFont(FontManager.getRunescapeSmallFont());
+		box.setOpaque(false);
+		box.setForeground(ColorScheme.LIGHT_GRAY_COLOR);
+		box.setFocusPainted(false);
+		box.setToolTipText(tooltip);
+		box.addActionListener(e -> publishSimulation());
 	}
 
 	/** One "Att [ 1]" cell of the per-skill grid. */
@@ -455,6 +467,13 @@ public class CombatAchievementsPanel extends PluginPanel
 		publishSimulation();
 	}
 
+	/** Test hook: flips the "No quests done" switch as a click would. */
+	void setZeroQuests(boolean on)
+	{
+		devZeroQuests.setSelected(on);
+		publishSimulation();
+	}
+
 	/** Test hook: the level currently shown for one skill. */
 	int devSpinnerValue(String skill)
 	{
@@ -520,7 +539,8 @@ public class CombatAchievementsPanel extends PluginPanel
 				}
 			}
 		}
-		debugSimulation = DebugSimulation.of(levels, devZeroCas.isSelected());
+		debugSimulation = DebugSimulation.of(levels, devZeroCas.isSelected(),
+			devZeroQuests.isSelected());
 		refreshDevHeader();
 		emit(PanelAction.REFRESH);
 	}

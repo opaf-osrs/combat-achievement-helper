@@ -109,6 +109,16 @@ public final class PlayerProfile
 	}
 
 	/**
+	 * A copy with no quest completed or started, levels untouched. Developer-mode only: simulating a fresh
+	 * account needs the quest log blanked too, or quest-gated content stays unlocked and the "Unlock next"
+	 * suggestions stay empty — a quest you have already done is not an unlock.
+	 */
+	public PlayerProfile withoutQuests()
+	{
+		return new PlayerProfile(new HashMap<>(levels), new HashSet<>(), new HashSet<>());
+	}
+
+	/**
 	 * The account's OSRS combat level, by the game's own formula. Used to tell a genuinely new account apart
 	 * from an established player who simply hasn't started Combat Achievements yet — the latter has 0 CA
 	 * points but should never be treated as a beginner.
