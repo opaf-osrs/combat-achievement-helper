@@ -1,0 +1,29 @@
+# Build output
+build/
+.gradle/
+out/
+*.jar
+!gradle/wrapper/gradle-wrapper.jar
+
+# Curation sources — the CSVs, spreadsheets and scripts the bundled datasets are compiled from.
+# The plugin ships the compiled JSON in src/main/resources; these stay local.
+data/
+
+# Internal design notes and research
+docs/
+
+# Local dev helpers
+run-client.bat
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.settings/
+.classpath
+.project
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini

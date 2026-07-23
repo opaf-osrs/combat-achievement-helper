@@ -1,0 +1,3 @@
+{
+ "_comment": "Curated task-id -> [guide video URL]. Keys MUST be numeric task ids (the '_comment' key is ignored). Tasks without an entry fall back to a YouTube search link automatically, so this can stay sparse. See docs/DESIGN.md §6d."
+}

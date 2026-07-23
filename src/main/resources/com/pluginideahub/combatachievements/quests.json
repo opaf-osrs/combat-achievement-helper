@@ -1,0 +1,2090 @@
+{
+ "version": "2026-06-29",
+ "source": "OSRS Wiki quest pages (per-quest research agents), CA-relevant quest universe",
+ "note": "Quest-effort graph for the quests that gate Combat Achievements (gating quests + full prerequisite chains). estMinutes/effortScore are heuristics derived from the wiki Length/Difficulty so the plugin can compare doing a quest chain vs grinding a CA. directPrerequisiteQuests forms the dependency graph.",
+ "questCount": 111,
+ "quests": {
+  "A Kingdom Divided": {
+   "name": "A Kingdom Divided",
+   "difficulty": "Experienced",
+   "length": "Long",
+   "estMinutes": 40,
+   "effortScore": 6,
+   "questPoints": 2,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Agility": 54,
+    "Thieving": 52,
+    "Woodcutting": 52,
+    "Herblore": 50,
+    "Mining": 42,
+    "Crafting": 38,
+    "Magic": 35
+   },
+   "directPrerequisiteQuests": [
+    "The Depths of Despair",
+    "The Queen of Thieves",
+    "The Ascent of Arceuus",
+    "The Forsaken Tower",
+    "Tale of the Righteous",
+    "Client of Kourend",
+    "X Marks the Spot"
+   ],
+   "series": "Great Kourend",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/A_Kingdom_Divided"
+  },
+  "A Tail of Two Cats": {
+   "name": "A Tail of Two Cats",
+   "difficulty": "Intermediate",
+   "length": "Medium",
+   "estMinutes": 20,
+   "effortScore": 4,
+   "questPoints": 2,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {},
+   "directPrerequisiteQuests": [
+    "Icthlarin's Little Helper",
+    "Gertrude's Cat"
+   ],
+   "series": "Dragonkin",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/A_Tail_of_Two_Cats"
+  },
+  "Animal Magnetism": {
+   "name": "Animal Magnetism",
+   "difficulty": "Intermediate",
+   "length": "Medium",
+   "estMinutes": 20,
+   "effortScore": 4,
+   "questPoints": 1,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Slayer": 18,
+    "Crafting": 19,
+    "Ranged": 30,
+    "Woodcutting": 35
+   },
+   "directPrerequisiteQuests": [
+    "The Restless Ghost",
+    "Ernest the Chicken",
+    "Priest in Peril"
+   ],
+   "series": "",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Animal_Magnetism"
+  },
+  "Below Ice Mountain": {
+   "name": "Below Ice Mountain",
+   "difficulty": "Novice",
+   "length": "Short",
+   "estMinutes": 8,
+   "effortScore": 2,
+   "questPoints": 1,
+   "members": false,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Mining": 10
+   },
+   "directPrerequisiteQuests": [],
+   "series": "",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Below_Ice_Mountain"
+  },
+  "Beneath Cursed Sands": {
+   "name": "Beneath Cursed Sands",
+   "difficulty": "Master",
+   "length": "Medium",
+   "estMinutes": 20,
+   "effortScore": 7,
+   "questPoints": 2,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Agility": 62,
+    "Crafting": 55,
+    "Firemaking": 55
+   },
+   "directPrerequisiteQuests": [
+    "Contact!",
+    "Prince Ali Rescue",
+    "Icthlarin's Little Helper",
+    "Gertrude's Cat"
+   ],
+   "series": "Kharidian",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Beneath_Cursed_Sands"
+  },
+  "Big Chompy Bird Hunting": {
+   "name": "Big Chompy Bird Hunting",
+   "difficulty": "Intermediate",
+   "length": "Short",
+   "estMinutes": 8,
+   "effortScore": 3,
+   "questPoints": 2,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Fletching": 5,
+    "Cooking": 30,
+    "Ranged": 30
+   },
+   "directPrerequisiteQuests": [],
+   "series": "",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Big_Chompy_Bird_Hunting"
+  },
+  "Biohazard": {
+   "name": "Biohazard",
+   "difficulty": "Novice",
+   "length": "Short",
+   "estMinutes": 8,
+   "effortScore": 2,
+   "questPoints": 3,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {},
+   "directPrerequisiteQuests": [
+    "Plague City"
+   ],
+   "series": "Elf",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Biohazard"
+  },
+  "Black Knights' Fortress": {
+   "name": "Black Knights' Fortress",
+   "difficulty": "Intermediate",
+   "length": "Very Short",
+   "estMinutes": 20,
+   "effortScore": 4,
+   "questPoints": 3,
+   "members": false,
+   "combatRequirement": null,
+   "skillRequirements": {},
+   "directPrerequisiteQuests": [],
+   "series": "",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Black_Knights%27_Fortress"
+  },
+  "Bone Voyage": {
+   "name": "Bone Voyage",
+   "difficulty": "Intermediate",
+   "length": "Short",
+   "estMinutes": 8,
+   "effortScore": 3,
+   "questPoints": 1,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {},
+   "directPrerequisiteQuests": [
+    "The Dig Site"
+   ],
+   "series": "",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Bone_Voyage"
+  },
+  "Children of the Sun": {
+   "name": "Children of the Sun",
+   "difficulty": "Novice",
+   "length": "Very Short",
+   "estMinutes": 20,
+   "effortScore": 3,
+   "questPoints": 1,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {},
+   "directPrerequisiteQuests": [],
+   "series": "Twilight Emissaries",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Children_of_the_Sun"
+  },
+  "Client of Kourend": {
+   "name": "Client of Kourend",
+   "difficulty": "Novice",
+   "length": "Short",
+   "estMinutes": 8,
+   "effortScore": 2,
+   "questPoints": 1,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {},
+   "directPrerequisiteQuests": [
+    "X Marks the Spot"
+   ],
+   "series": "Great Kourend",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Client_of_Kourend"
+  },
+  "Cold War": {
+   "name": "Cold War",
+   "difficulty": "Intermediate",
+   "length": "Medium",
+   "estMinutes": 20,
+   "effortScore": 4,
+   "questPoints": 1,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Hunter": 10,
+    "Agility": 30,
+    "Crafting": 30,
+    "Construction": 34,
+    "Thieving": 15
+   },
+   "directPrerequisiteQuests": [],
+   "series": "Penguin",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Cold_War"
+  },
+  "Contact!": {
+   "name": "Contact!",
+   "difficulty": "Experienced",
+   "length": "Short",
+   "estMinutes": 8,
+   "effortScore": 4,
+   "questPoints": 1,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {},
+   "directPrerequisiteQuests": [
+    "Prince Ali Rescue",
+    "Icthlarin's Little Helper"
+   ],
+   "series": "Desert",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Contact!"
+  },
+  "Cook's Assistant": {
+   "name": "Cook's Assistant",
+   "difficulty": "Novice",
+   "length": "Very Short",
+   "estMinutes": 20,
+   "effortScore": 3,
+   "questPoints": 1,
+   "members": false,
+   "combatRequirement": null,
+   "skillRequirements": {},
+   "directPrerequisiteQuests": [],
+   "series": "",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Cook%27s_Assistant"
+  },
+  "Creature of Fenkenstrain": {
+   "name": "Creature of Fenkenstrain",
+   "difficulty": "Intermediate",
+   "length": "Medium",
+   "estMinutes": 20,
+   "effortScore": 4,
+   "questPoints": 2,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Crafting": 20,
+    "Thieving": 25
+   },
+   "directPrerequisiteQuests": [
+    "Priest in Peril",
+    "The Restless Ghost"
+   ],
+   "series": "",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Creature_of_Fenkenstrain"
+  },
+  "Curse of the Empty Lord": {
+   "name": "Curse of the Empty Lord",
+   "difficulty": "Experienced",
+   "length": "Medium",
+   "estMinutes": 20,
+   "effortScore": 5,
+   "questPoints": 0,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Thieving": 53,
+    "Prayer": 31
+   },
+   "directPrerequisiteQuests": [
+    "Desert Treasure I",
+    "The Restless Ghost"
+   ],
+   "series": "Mahjarrat",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Curse_of_the_Empty_Lord"
+  },
+  "Death Plateau": {
+   "name": "Death Plateau",
+   "difficulty": "Novice",
+   "length": "Short",
+   "estMinutes": 8,
+   "effortScore": 2,
+   "questPoints": 1,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {},
+   "directPrerequisiteQuests": [],
+   "series": "Troll",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Death_Plateau"
+  },
+  "Defender of Varrock": {
+   "name": "Defender of Varrock",
+   "difficulty": "Experienced",
+   "length": "Medium",
+   "estMinutes": 20,
+   "effortScore": 5,
+   "questPoints": 2,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Smithing": 55,
+    "Hunter": 52
+   },
+   "directPrerequisiteQuests": [
+    "Shield of Arrav",
+    "Temple of Ikov",
+    "Below Ice Mountain",
+    "Family Crest",
+    "Garden of Tranquillity",
+    "What Lies Below",
+    "Romeo & Juliet",
+    "Demon Slayer"
+   ],
+   "series": "Mahjarrat",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Defender_of_Varrock"
+  },
+  "Demon Slayer": {
+   "name": "Demon Slayer",
+   "difficulty": "Novice",
+   "length": "Short",
+   "estMinutes": 8,
+   "effortScore": 2,
+   "questPoints": 3,
+   "members": false,
+   "combatRequirement": null,
+   "skillRequirements": {},
+   "directPrerequisiteQuests": [],
+   "series": "Demon Slayer",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Demon_Slayer"
+  },
+  "Desert Treasure I": {
+   "name": "Desert Treasure I",
+   "difficulty": "Master",
+   "length": "Long",
+   "estMinutes": 40,
+   "effortScore": 8,
+   "questPoints": 3,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Magic": 50,
+    "Firemaking": 50,
+    "Slayer": 10,
+    "Thieving": 53
+   },
+   "directPrerequisiteQuests": [
+    "The Dig Site",
+    "Temple of Ikov",
+    "The Tourist Trap",
+    "Troll Stronghold",
+    "Priest in Peril",
+    "Waterfall Quest"
+   ],
+   "series": "Mahjarrat",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Desert_Treasure_I"
+  },
+  "Desert Treasure II - The Fallen Empire": {
+   "name": "Desert Treasure II - The Fallen Empire",
+   "difficulty": "Grandmaster",
+   "length": "Very Long",
+   "estMinutes": 75,
+   "effortScore": 13,
+   "questPoints": 5,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Firemaking": 75,
+    "Magic": 75,
+    "Thieving": 70,
+    "Herblore": 62,
+    "Runecraft": 60,
+    "Construction": 60
+   },
+   "directPrerequisiteQuests": [
+    "Desert Treasure I",
+    "Secrets of the North",
+    "Enakhra's Lament",
+    "Temple of the Eye",
+    "The Garden of Death",
+    "Below Ice Mountain",
+    "His Faithful Servants"
+   ],
+   "series": "Mahjarrat",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Desert_Treasure_II_-_The_Fallen_Empire"
+  },
+  "Devious Minds": {
+   "name": "Devious Minds",
+   "difficulty": "Experienced",
+   "length": "Short",
+   "estMinutes": 8,
+   "effortScore": 4,
+   "questPoints": 1,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Smithing": 65,
+    "Runecraft": 50,
+    "Fletching": 50
+   },
+   "directPrerequisiteQuests": [
+    "Wanted!",
+    "Troll Stronghold",
+    "Doric's Quest"
+   ],
+   "series": "Mahjarrat",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Devious_Minds"
+  },
+  "Doric's Quest": {
+   "name": "Doric's Quest",
+   "difficulty": "Novice",
+   "length": "Very Short",
+   "estMinutes": 20,
+   "effortScore": 3,
+   "questPoints": 1,
+   "members": false,
+   "combatRequirement": null,
+   "skillRequirements": {},
+   "directPrerequisiteQuests": [],
+   "series": "",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Doric%27s_Quest"
+  },
+  "Dragon Slayer I": {
+   "name": "Dragon Slayer I",
+   "difficulty": "Experienced",
+   "length": "Medium",
+   "estMinutes": 20,
+   "effortScore": 5,
+   "questPoints": 2,
+   "members": false,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Crafting": 8
+   },
+   "directPrerequisiteQuests": [],
+   "series": "Dragonkin",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Dragon_Slayer_I"
+  },
+  "Dragon Slayer II": {
+   "name": "Dragon Slayer II",
+   "difficulty": "Grandmaster",
+   "length": "Very Long",
+   "estMinutes": 75,
+   "effortScore": 13,
+   "questPoints": 5,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Magic": 75,
+    "Smithing": 70,
+    "Mining": 68,
+    "Crafting": 62,
+    "Agility": 60,
+    "Thieving": 60,
+    "Construction": 50,
+    "Hitpoints": 50
+   },
+   "directPrerequisiteQuests": [
+    "Legends' Quest",
+    "Dream Mentor",
+    "A Tail of Two Cats",
+    "Animal Magnetism",
+    "Ghosts Ahoy",
+    "Bone Voyage",
+    "Client of Kourend"
+   ],
+   "series": "Dragonkin",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Dragon_Slayer_II"
+  },
+  "Dream Mentor": {
+   "name": "Dream Mentor",
+   "difficulty": "Master",
+   "length": "Medium",
+   "estMinutes": 20,
+   "effortScore": 7,
+   "questPoints": 2,
+   "members": true,
+   "combatRequirement": 85,
+   "skillRequirements": {},
+   "directPrerequisiteQuests": [
+    "Lunar Diplomacy",
+    "Eadgar's Ruse"
+   ],
+   "series": "Fremennik",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Dream_Mentor"
+  },
+  "Druidic Ritual": {
+   "name": "Druidic Ritual",
+   "difficulty": "Novice",
+   "length": "Very Short",
+   "estMinutes": 20,
+   "effortScore": 3,
+   "questPoints": 4,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {},
+   "directPrerequisiteQuests": [],
+   "series": "",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Druidic_Ritual"
+  },
+  "Eadgar's Ruse": {
+   "name": "Eadgar's Ruse",
+   "difficulty": "Intermediate",
+   "length": "Medium",
+   "estMinutes": 20,
+   "effortScore": 4,
+   "questPoints": 1,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Herblore": 31
+   },
+   "directPrerequisiteQuests": [
+    "Druidic Ritual",
+    "Troll Stronghold"
+   ],
+   "series": "Troll",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Eadgar%27s_Ruse"
+  },
+  "Enakhra's Lament": {
+   "name": "Enakhra's Lament",
+   "difficulty": "Experienced",
+   "length": "Medium",
+   "estMinutes": 20,
+   "effortScore": 5,
+   "questPoints": 2,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Crafting": 50,
+    "Firemaking": 45,
+    "Prayer": 43,
+    "Magic": 39
+   },
+   "directPrerequisiteQuests": [],
+   "series": "Mahjarrat",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Enakhra%27s_Lament"
+  },
+  "Enlightened Journey": {
+   "name": "Enlightened Journey",
+   "difficulty": "Intermediate",
+   "length": "Short",
+   "estMinutes": 8,
+   "effortScore": 3,
+   "questPoints": 1,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Firemaking": 20,
+    "Farming": 30,
+    "Crafting": 36
+   },
+   "directPrerequisiteQuests": [],
+   "series": "",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Enlightened_Journey"
+  },
+  "Enter the Abyss": {
+   "name": "Enter the Abyss",
+   "difficulty": "Intermediate",
+   "length": "Very Short",
+   "estMinutes": 20,
+   "effortScore": 4,
+   "questPoints": 0,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {},
+   "directPrerequisiteQuests": [
+    "Rune Mysteries"
+   ],
+   "series": "Order of Wizards",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Enter_the_Abyss"
+  },
+  "Ernest the Chicken": {
+   "name": "Ernest the Chicken",
+   "difficulty": "Novice",
+   "length": "Very Short",
+   "estMinutes": 20,
+   "effortScore": 3,
+   "questPoints": 4,
+   "members": false,
+   "combatRequirement": null,
+   "skillRequirements": {},
+   "directPrerequisiteQuests": [],
+   "series": "",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Ernest_the_Chicken"
+  },
+  "Family Crest": {
+   "name": "Family Crest",
+   "difficulty": "Experienced",
+   "length": "Medium",
+   "estMinutes": 20,
+   "effortScore": 5,
+   "questPoints": 1,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Mining": 40,
+    "Smithing": 40,
+    "Magic": 59,
+    "Crafting": 40
+   },
+   "directPrerequisiteQuests": [],
+   "series": "",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Family_Crest"
+  },
+  "Fight Arena": {
+   "name": "Fight Arena",
+   "difficulty": "Intermediate",
+   "length": "Short",
+   "estMinutes": 8,
+   "effortScore": 3,
+   "questPoints": 2,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {},
+   "directPrerequisiteQuests": [],
+   "series": "Mahjarrat",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Fight_Arena"
+  },
+  "Garden of Tranquillity": {
+   "name": "Garden of Tranquillity",
+   "difficulty": "Intermediate",
+   "length": "Long",
+   "estMinutes": 40,
+   "effortScore": 5,
+   "questPoints": 2,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Farming": 25
+   },
+   "directPrerequisiteQuests": [
+    "Creature of Fenkenstrain"
+   ],
+   "series": "",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Garden_of_Tranquillity"
+  },
+  "Gertrude's Cat": {
+   "name": "Gertrude's Cat",
+   "difficulty": "Novice",
+   "length": "Very Short",
+   "estMinutes": 20,
+   "effortScore": 3,
+   "questPoints": 1,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {},
+   "directPrerequisiteQuests": [],
+   "series": "",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Gertrude%27s_Cat"
+  },
+  "Ghosts Ahoy": {
+   "name": "Ghosts Ahoy",
+   "difficulty": "Intermediate",
+   "length": "Medium",
+   "estMinutes": 20,
+   "effortScore": 4,
+   "questPoints": 2,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Agility": 25,
+    "Cooking": 20
+   },
+   "directPrerequisiteQuests": [
+    "Priest in Peril",
+    "The Restless Ghost"
+   ],
+   "series": "",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Ghosts_Ahoy"
+  },
+  "Goblin Diplomacy": {
+   "name": "Goblin Diplomacy",
+   "difficulty": "Novice",
+   "length": "Very Short",
+   "estMinutes": 20,
+   "effortScore": 3,
+   "questPoints": 5,
+   "members": false,
+   "combatRequirement": null,
+   "skillRequirements": {},
+   "directPrerequisiteQuests": [],
+   "series": "",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Goblin_Diplomacy"
+  },
+  "Hazeel Cult": {
+   "name": "Hazeel Cult",
+   "difficulty": "Novice",
+   "length": "Very Short",
+   "estMinutes": 20,
+   "effortScore": 3,
+   "questPoints": 1,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {},
+   "directPrerequisiteQuests": [],
+   "series": "Mahjarrat",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Hazeel_Cult"
+  },
+  "Heroes' Quest": {
+   "name": "Heroes' Quest",
+   "difficulty": "Experienced",
+   "length": "Medium",
+   "estMinutes": 20,
+   "effortScore": 5,
+   "questPoints": 1,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Cooking": 53,
+    "Fishing": 53,
+    "Herblore": 25,
+    "Mining": 50
+   },
+   "directPrerequisiteQuests": [
+    "Shield of Arrav",
+    "Lost City",
+    "Merlin's Crystal",
+    "Dragon Slayer I"
+   ],
+   "series": "",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Heroes%27_Quest"
+  },
+  "His Faithful Servants": {
+   "name": "His Faithful Servants",
+   "difficulty": "Experienced",
+   "length": "Very Short",
+   "estMinutes": 20,
+   "effortScore": 5,
+   "questPoints": 0,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {},
+   "directPrerequisiteQuests": [
+    "Priest in Peril"
+   ],
+   "series": "Mahjarrat",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/His_Faithful_Servants"
+  },
+  "Icthlarin's Little Helper": {
+   "name": "Icthlarin's Little Helper",
+   "difficulty": "Intermediate",
+   "length": "Medium",
+   "estMinutes": 20,
+   "effortScore": 4,
+   "questPoints": 2,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {},
+   "directPrerequisiteQuests": [
+    "Gertrude's Cat"
+   ],
+   "series": "Kharidian",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Icthlarin%27s_Little_Helper"
+  },
+  "Jungle Potion": {
+   "name": "Jungle Potion",
+   "difficulty": "Novice",
+   "length": "Short",
+   "estMinutes": 8,
+   "effortScore": 2,
+   "questPoints": 1,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Herblore": 3
+   },
+   "directPrerequisiteQuests": [
+    "Druidic Ritual"
+   ],
+   "series": "",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Jungle_Potion"
+  },
+  "Legends' Quest": {
+   "name": "Legends' Quest",
+   "difficulty": "Master",
+   "length": "Long",
+   "estMinutes": 40,
+   "effortScore": 8,
+   "questPoints": 4,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Agility": 50,
+    "Crafting": 50,
+    "Herblore": 45,
+    "Magic": 56,
+    "Mining": 52,
+    "Prayer": 42,
+    "Smithing": 50,
+    "Strength": 50,
+    "Thieving": 50,
+    "Woodcutting": 50
+   },
+   "directPrerequisiteQuests": [
+    "Family Crest",
+    "Heroes' Quest",
+    "Shilo Village",
+    "Underground Pass",
+    "Waterfall Quest"
+   ],
+   "series": "",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Legends%27_Quest"
+  },
+  "Lost City": {
+   "name": "Lost City",
+   "difficulty": "Intermediate",
+   "length": "Short",
+   "estMinutes": 8,
+   "effortScore": 3,
+   "questPoints": 3,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Crafting": 31,
+    "Woodcutting": 36
+   },
+   "directPrerequisiteQuests": [],
+   "series": "",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Lost_City"
+  },
+  "Lunar Diplomacy": {
+   "name": "Lunar Diplomacy",
+   "difficulty": "Experienced",
+   "length": "Long",
+   "estMinutes": 40,
+   "effortScore": 6,
+   "questPoints": 2,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Herblore": 5,
+    "Crafting": 61,
+    "Defence": 40,
+    "Firemaking": 49,
+    "Magic": 65,
+    "Mining": 60,
+    "Woodcutting": 55
+   },
+   "directPrerequisiteQuests": [
+    "The Fremennik Trials",
+    "Lost City",
+    "Rune Mysteries",
+    "Shilo Village"
+   ],
+   "series": "Fremennik",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Lunar_Diplomacy"
+  },
+  "Making Friends with My Arm": {
+   "name": "Making Friends with My Arm",
+   "difficulty": "Master",
+   "length": "Medium",
+   "estMinutes": 20,
+   "effortScore": 7,
+   "questPoints": 2,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Firemaking": 66,
+    "Mining": 72,
+    "Construction": 35,
+    "Agility": 68
+   },
+   "directPrerequisiteQuests": [
+    "My Arm's Big Adventure",
+    "Swan Song",
+    "Cold War",
+    "Romeo & Juliet"
+   ],
+   "series": "Troll",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Making_Friends_with_My_Arm"
+  },
+  "Making History": {
+   "name": "Making History",
+   "difficulty": "Intermediate",
+   "length": "Short",
+   "estMinutes": 8,
+   "effortScore": 3,
+   "questPoints": 3,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Crafting": 24
+   },
+   "directPrerequisiteQuests": [
+    "Priest in Peril",
+    "The Restless Ghost"
+   ],
+   "series": "",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Making_History"
+  },
+  "Merlin's Crystal": {
+   "name": "Merlin's Crystal",
+   "difficulty": "Intermediate",
+   "length": "Short",
+   "estMinutes": 8,
+   "effortScore": 3,
+   "questPoints": 6,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {},
+   "directPrerequisiteQuests": [],
+   "series": "Camelot",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Merlin%27s_Crystal"
+  },
+  "Monkey Madness I": {
+   "name": "Monkey Madness I",
+   "difficulty": "Master",
+   "length": "Long",
+   "estMinutes": 40,
+   "effortScore": 8,
+   "questPoints": 3,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Smithing": 40,
+    "Magic": 33,
+    "Thieving": 5
+   },
+   "directPrerequisiteQuests": [
+    "The Grand Tree",
+    "Tree Gnome Village"
+   ],
+   "series": "Gnome",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Monkey_Madness_I"
+  },
+  "Monkey Madness II": {
+   "name": "Monkey Madness II",
+   "difficulty": "Grandmaster",
+   "length": "Very Long",
+   "estMinutes": 75,
+   "effortScore": 13,
+   "questPoints": 4,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Slayer": 69,
+    "Crafting": 70,
+    "Hunter": 60,
+    "Agility": 55,
+    "Thieving": 55,
+    "Firemaking": 60
+   },
+   "directPrerequisiteQuests": [
+    "Enlightened Journey",
+    "The Eyes of Glouphrie",
+    "Recipe for Disaster",
+    "Troll Stronghold",
+    "Watchtower"
+   ],
+   "series": "Gnome",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Monkey_Madness_II"
+  },
+  "Mountain Daughter": {
+   "name": "Mountain Daughter",
+   "difficulty": "Intermediate",
+   "length": "Medium",
+   "estMinutes": 20,
+   "effortScore": 4,
+   "questPoints": 2,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Agility": 20
+   },
+   "directPrerequisiteQuests": [],
+   "series": "",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Mountain_Daughter"
+  },
+  "Mourning's End Part I": {
+   "name": "Mourning's End Part I",
+   "difficulty": "Master",
+   "length": "Medium",
+   "estMinutes": 20,
+   "effortScore": 7,
+   "questPoints": 2,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Ranged": 60,
+    "Thieving": 50
+   },
+   "directPrerequisiteQuests": [
+    "Roving Elves",
+    "Big Chompy Bird Hunting",
+    "Sheep Herder"
+   ],
+   "series": "Elf",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Mourning%27s_End_Part_I"
+  },
+  "Mourning's End Part II": {
+   "name": "Mourning's End Part II",
+   "difficulty": "Master",
+   "length": "Long",
+   "estMinutes": 40,
+   "effortScore": 8,
+   "questPoints": 2,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {},
+   "directPrerequisiteQuests": [
+    "Mourning's End Part I"
+   ],
+   "series": "Elf",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Mourning%27s_End_Part_II"
+  },
+  "My Arm's Big Adventure": {
+   "name": "My Arm's Big Adventure",
+   "difficulty": "Experienced",
+   "length": "Medium",
+   "estMinutes": 20,
+   "effortScore": 5,
+   "questPoints": 1,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Farming": 29,
+    "Woodcutting": 10
+   },
+   "directPrerequisiteQuests": [
+    "Eadgar's Ruse",
+    "The Feud",
+    "Jungle Potion"
+   ],
+   "series": "Troll",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/My_Arm%27s_Big_Adventure"
+  },
+  "Nature Spirit": {
+   "name": "Nature Spirit",
+   "difficulty": "Intermediate",
+   "length": "Short",
+   "estMinutes": 8,
+   "effortScore": 3,
+   "questPoints": 2,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Crafting": 18
+   },
+   "directPrerequisiteQuests": [
+    "Priest in Peril",
+    "The Restless Ghost"
+   ],
+   "series": "",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Nature_Spirit"
+  },
+  "One Small Favour": {
+   "name": "One Small Favour",
+   "difficulty": "Experienced",
+   "length": "Long",
+   "estMinutes": 40,
+   "effortScore": 6,
+   "questPoints": 2,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Agility": 36,
+    "Crafting": 25,
+    "Herblore": 18,
+    "Smithing": 30
+   },
+   "directPrerequisiteQuests": [
+    "Rune Mysteries",
+    "Shilo Village"
+   ],
+   "series": "",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/One_Small_Favour"
+  },
+  "Pandemonium": {
+   "name": "Pandemonium",
+   "difficulty": "Novice",
+   "length": "Short",
+   "estMinutes": 8,
+   "effortScore": 2,
+   "questPoints": 1,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {},
+   "directPrerequisiteQuests": [],
+   "series": "",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Pandemonium"
+  },
+  "Perilous Moons": {
+   "name": "Perilous Moons",
+   "difficulty": "Master",
+   "length": "Medium",
+   "estMinutes": 20,
+   "effortScore": 7,
+   "questPoints": 2,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Slayer": 48,
+    "Hunter": 20,
+    "Fishing": 20,
+    "Runecraft": 20,
+    "Construction": 10
+   },
+   "directPrerequisiteQuests": [
+    "Twilight's Promise",
+    "Children of the Sun"
+   ],
+   "series": "",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Perilous_Moons"
+  },
+  "Plague City": {
+   "name": "Plague City",
+   "difficulty": "Novice",
+   "length": "Very Short",
+   "estMinutes": 20,
+   "effortScore": 3,
+   "questPoints": 1,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {},
+   "directPrerequisiteQuests": [],
+   "series": "Elf",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Plague_City"
+  },
+  "Priest in Peril": {
+   "name": "Priest in Peril",
+   "difficulty": "Novice",
+   "length": "Short",
+   "estMinutes": 8,
+   "effortScore": 2,
+   "questPoints": 1,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {},
+   "directPrerequisiteQuests": [],
+   "series": "",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Priest_in_Peril"
+  },
+  "Prince Ali Rescue": {
+   "name": "Prince Ali Rescue",
+   "difficulty": "Novice",
+   "length": "Short",
+   "estMinutes": 8,
+   "effortScore": 2,
+   "questPoints": 3,
+   "members": false,
+   "combatRequirement": null,
+   "skillRequirements": {},
+   "directPrerequisiteQuests": [],
+   "series": "Kharidian",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Prince_Ali_Rescue"
+  },
+  "Recipe for Disaster: Another Cook's Quest": {
+   "name": "Recipe for Disaster: Another Cook's Quest",
+   "difficulty": "Special",
+   "length": "Short",
+   "estMinutes": 8,
+   "effortScore": 3,
+   "questPoints": 1,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Cooking": 10
+   },
+   "directPrerequisiteQuests": [
+    "Cook's Assistant"
+   ],
+   "series": "Recipe for Disaster",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Recipe_for_Disaster/Another_Cook%27s_Quest"
+  },
+  "Recipe for Disaster/Freeing King Awowogei": {
+   "name": "Recipe for Disaster/Freeing King Awowogei",
+   "difficulty": "Special",
+   "length": "Long",
+   "estMinutes": 40,
+   "effortScore": 5,
+   "questPoints": 1,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Cooking": 70,
+    "Agility": 48
+   },
+   "directPrerequisiteQuests": [
+    "Monkey Madness I",
+    "Recipe for Disaster/Another Cook's Quest"
+   ],
+   "series": "Recipe for Disaster",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Recipe_for_Disaster/Freeing_King_Awowogei"
+  },
+  "Recruitment Drive": {
+   "name": "Recruitment Drive",
+   "difficulty": "Novice",
+   "length": "Short",
+   "estMinutes": 8,
+   "effortScore": 2,
+   "questPoints": 1,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Strength": 5
+   },
+   "directPrerequisiteQuests": [
+    "Black Knights' Fortress",
+    "Druidic Ritual"
+   ],
+   "series": "Temple Knight",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Recruitment_Drive"
+  },
+  "Regicide": {
+   "name": "Regicide",
+   "difficulty": "Experienced",
+   "length": "Long",
+   "estMinutes": 40,
+   "effortScore": 6,
+   "questPoints": 3,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Crafting": 10,
+    "Agility": 56
+   },
+   "directPrerequisiteQuests": [
+    "Underground Pass"
+   ],
+   "series": "Elf",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Regicide"
+  },
+  "Romeo & Juliet": {
+   "name": "Romeo & Juliet",
+   "difficulty": "Novice",
+   "length": "Short",
+   "estMinutes": 8,
+   "effortScore": 2,
+   "questPoints": 5,
+   "members": false,
+   "combatRequirement": null,
+   "skillRequirements": {},
+   "directPrerequisiteQuests": [],
+   "series": "",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Romeo_%26_Juliet"
+  },
+  "Roving Elves": {
+   "name": "Roving Elves",
+   "difficulty": "Experienced",
+   "length": "Short",
+   "estMinutes": 8,
+   "effortScore": 4,
+   "questPoints": 1,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Agility": 56
+   },
+   "directPrerequisiteQuests": [
+    "Regicide",
+    "Waterfall Quest"
+   ],
+   "series": "Elf",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Roving_Elves"
+  },
+  "Rune Mysteries": {
+   "name": "Rune Mysteries",
+   "difficulty": "Novice",
+   "length": "Short",
+   "estMinutes": 8,
+   "effortScore": 2,
+   "questPoints": 1,
+   "members": false,
+   "combatRequirement": null,
+   "skillRequirements": {},
+   "directPrerequisiteQuests": [],
+   "series": "Order of Wizards",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Rune_Mysteries"
+  },
+  "Secrets of the North": {
+   "name": "Secrets of the North",
+   "difficulty": "Master",
+   "length": "Medium",
+   "estMinutes": 20,
+   "effortScore": 7,
+   "questPoints": 2,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Agility": 69,
+    "Thieving": 64,
+    "Hunter": 56
+   },
+   "directPrerequisiteQuests": [
+    "Making Friends with My Arm",
+    "The General's Shadow",
+    "Devious Minds",
+    "Hazeel Cult"
+   ],
+   "series": "Mahjarrat",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Secrets_of_the_North"
+  },
+  "Sheep Herder": {
+   "name": "Sheep Herder",
+   "difficulty": "Novice",
+   "length": "Short",
+   "estMinutes": 8,
+   "effortScore": 2,
+   "questPoints": 4,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {},
+   "directPrerequisiteQuests": [],
+   "series": "",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Sheep_Herder"
+  },
+  "Shield of Arrav": {
+   "name": "Shield of Arrav",
+   "difficulty": "Novice",
+   "length": "Short",
+   "estMinutes": 8,
+   "effortScore": 2,
+   "questPoints": 1,
+   "members": false,
+   "combatRequirement": null,
+   "skillRequirements": {},
+   "directPrerequisiteQuests": [],
+   "series": "",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Shield_of_Arrav"
+  },
+  "Shilo Village": {
+   "name": "Shilo Village",
+   "difficulty": "Intermediate",
+   "length": "Medium",
+   "estMinutes": 20,
+   "effortScore": 4,
+   "questPoints": 2,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Crafting": 20,
+    "Agility": 32,
+    "Smithing": 4
+   },
+   "directPrerequisiteQuests": [
+    "Jungle Potion",
+    "Druidic Ritual"
+   ],
+   "series": "",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Shilo_Village"
+  },
+  "Song of the Elves": {
+   "name": "Song of the Elves",
+   "difficulty": "Grandmaster",
+   "length": "Very Long",
+   "estMinutes": 75,
+   "effortScore": 13,
+   "questPoints": 50,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Agility": 70,
+    "Construction": 70,
+    "Farming": 70,
+    "Herblore": 70,
+    "Hunter": 70,
+    "Mining": 70,
+    "Smithing": 70,
+    "Woodcutting": 70
+   },
+   "directPrerequisiteQuests": [
+    "Mourning's End Part II",
+    "Making History",
+    "Druidic Ritual"
+   ],
+   "series": "Elf",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Song_of_the_Elves"
+  },
+  "Swan Song": {
+   "name": "Swan Song",
+   "difficulty": "Master",
+   "length": "Medium",
+   "estMinutes": 20,
+   "effortScore": 7,
+   "questPoints": 2,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Magic": 66,
+    "Cooking": 62,
+    "Fishing": 62,
+    "Smithing": 45,
+    "Firemaking": 42,
+    "Crafting": 40
+   },
+   "directPrerequisiteQuests": [
+    "One Small Favour",
+    "Garden of Tranquillity"
+   ],
+   "series": "",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Swan_Song"
+  },
+  "Tale of the Righteous": {
+   "name": "Tale of the Righteous",
+   "difficulty": "Intermediate",
+   "length": "Short",
+   "estMinutes": 8,
+   "effortScore": 3,
+   "questPoints": 1,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Strength": 16,
+    "Mining": 10
+   },
+   "directPrerequisiteQuests": [
+    "Client of Kourend",
+    "X Marks the Spot"
+   ],
+   "series": "Great Kourend",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Tale_of_the_Righteous"
+  },
+  "Tears of Guthix": {
+   "name": "Tears of Guthix",
+   "difficulty": "Intermediate",
+   "length": "Very Short",
+   "estMinutes": 20,
+   "effortScore": 4,
+   "questPoints": 1,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Firemaking": 49,
+    "Crafting": 20,
+    "Mining": 20
+   },
+   "directPrerequisiteQuests": [],
+   "series": "",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Tears_of_Guthix"
+  },
+  "Temple of Ikov": {
+   "name": "Temple of Ikov",
+   "difficulty": "Intermediate",
+   "length": "Medium",
+   "estMinutes": 20,
+   "effortScore": 4,
+   "questPoints": 1,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Thieving": 42,
+    "Ranged": 40
+   },
+   "directPrerequisiteQuests": [],
+   "series": "Mahjarrat",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Temple_of_Ikov"
+  },
+  "Temple of the Eye": {
+   "name": "Temple of the Eye",
+   "difficulty": "Intermediate",
+   "length": "Short",
+   "estMinutes": 8,
+   "effortScore": 3,
+   "questPoints": 1,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Runecraft": 10
+   },
+   "directPrerequisiteQuests": [
+    "Enter the Abyss",
+    "Rune Mysteries"
+   ],
+   "series": "Order of Wizards",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Temple_of_the_Eye"
+  },
+  "The Ascent of Arceuus": {
+   "name": "The Ascent of Arceuus",
+   "difficulty": "Intermediate",
+   "length": "Short",
+   "estMinutes": 8,
+   "effortScore": 3,
+   "questPoints": 1,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Hunter": 12
+   },
+   "directPrerequisiteQuests": [
+    "Client of Kourend",
+    "X Marks the Spot"
+   ],
+   "series": "Great Kourend",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/The_Ascent_of_Arceuus"
+  },
+  "The Depths of Despair": {
+   "name": "The Depths of Despair",
+   "difficulty": "Intermediate",
+   "length": "Short",
+   "estMinutes": 8,
+   "effortScore": 3,
+   "questPoints": 1,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Agility": 18
+   },
+   "directPrerequisiteQuests": [
+    "Client of Kourend",
+    "X Marks the Spot"
+   ],
+   "series": "Great Kourend",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/The_Depths_of_Despair"
+  },
+  "The Dig Site": {
+   "name": "The Dig Site",
+   "difficulty": "Intermediate",
+   "length": "Medium",
+   "estMinutes": 20,
+   "effortScore": 4,
+   "questPoints": 2,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Agility": 10,
+    "Herblore": 10,
+    "Thieving": 25
+   },
+   "directPrerequisiteQuests": [],
+   "series": "Mahjarrat",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/The_Dig_Site"
+  },
+  "The Eyes of Glouphrie": {
+   "name": "The Eyes of Glouphrie",
+   "difficulty": "Intermediate",
+   "length": "Medium",
+   "estMinutes": 20,
+   "effortScore": 4,
+   "questPoints": 2,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Construction": 5,
+    "Magic": 46
+   },
+   "directPrerequisiteQuests": [
+    "The Grand Tree"
+   ],
+   "series": "Gnome",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/The_Eyes_of_Glouphrie"
+  },
+  "The Feud": {
+   "name": "The Feud",
+   "difficulty": "Intermediate",
+   "length": "Medium",
+   "estMinutes": 20,
+   "effortScore": 4,
+   "questPoints": 1,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Thieving": 30
+   },
+   "directPrerequisiteQuests": [],
+   "series": "Desert",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/The_Feud"
+  },
+  "The Final Dawn": {
+   "name": "The Final Dawn",
+   "difficulty": "Master",
+   "length": "Long",
+   "estMinutes": 40,
+   "effortScore": 8,
+   "questPoints": 3,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Thieving": 66,
+    "Runecraft": 52,
+    "Fletching": 52
+   },
+   "directPrerequisiteQuests": [
+    "The Heart of Darkness",
+    "Perilous Moons"
+   ],
+   "series": "Twilight Emissaries",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/The_Final_Dawn"
+  },
+  "The Forsaken Tower": {
+   "name": "The Forsaken Tower",
+   "difficulty": "Intermediate",
+   "length": "Short",
+   "estMinutes": 8,
+   "effortScore": 3,
+   "questPoints": 1,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {},
+   "directPrerequisiteQuests": [
+    "Client of Kourend",
+    "X Marks the Spot"
+   ],
+   "series": "Kourend",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/The_Forsaken_Tower"
+  },
+  "The Fremennik Exiles": {
+   "name": "The Fremennik Exiles",
+   "difficulty": "Master",
+   "length": "Medium",
+   "estMinutes": 20,
+   "effortScore": 7,
+   "questPoints": 2,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Crafting": 65,
+    "Slayer": 60,
+    "Smithing": 60,
+    "Fishing": 60,
+    "Mining": 60,
+    "Runecraft": 55
+   },
+   "directPrerequisiteQuests": [
+    "The Fremennik Isles",
+    "Lunar Diplomacy",
+    "Mountain Daughter",
+    "Heroes' Quest"
+   ],
+   "series": "Fremennik",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/The_Fremennik_Exiles"
+  },
+  "The Fremennik Isles": {
+   "name": "The Fremennik Isles",
+   "difficulty": "Experienced",
+   "length": "Medium",
+   "estMinutes": 20,
+   "effortScore": 5,
+   "questPoints": 1,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Construction": 20
+   },
+   "directPrerequisiteQuests": [
+    "The Fremennik Trials"
+   ],
+   "series": "Fremennik",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/The_Fremennik_Isles"
+  },
+  "The Fremennik Trials": {
+   "name": "The Fremennik Trials",
+   "difficulty": "Intermediate",
+   "length": "Medium",
+   "estMinutes": 20,
+   "effortScore": 4,
+   "questPoints": 3,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Fletching": 25,
+    "Woodcutting": 40,
+    "Crafting": 40
+   },
+   "directPrerequisiteQuests": [],
+   "series": "Fremennik",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/The_Fremennik_Trials"
+  },
+  "The Garden of Death": {
+   "name": "The Garden of Death",
+   "difficulty": "Intermediate",
+   "length": "Short",
+   "estMinutes": 8,
+   "effortScore": 3,
+   "questPoints": 1,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Farming": 20
+   },
+   "directPrerequisiteQuests": [],
+   "series": "Twisted Tales",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/The_Garden_of_Death"
+  },
+  "The General's Shadow": {
+   "name": "The General's Shadow",
+   "difficulty": "Experienced",
+   "length": "Medium",
+   "estMinutes": 20,
+   "effortScore": 5,
+   "questPoints": 0,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {},
+   "directPrerequisiteQuests": [
+    "Curse of the Empty Lord",
+    "Desert Treasure I",
+    "Fight Arena"
+   ],
+   "series": "Mahjarrat",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/The_General%27s_Shadow"
+  },
+  "The Grand Tree": {
+   "name": "The Grand Tree",
+   "difficulty": "Intermediate",
+   "length": "Medium",
+   "estMinutes": 20,
+   "effortScore": 4,
+   "questPoints": 5,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Agility": 25
+   },
+   "directPrerequisiteQuests": [],
+   "series": "Gnome",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/The_Grand_Tree"
+  },
+  "The Hand in the Sand": {
+   "name": "The Hand in the Sand",
+   "difficulty": "Intermediate",
+   "length": "Short",
+   "estMinutes": 8,
+   "effortScore": 3,
+   "questPoints": 1,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Thieving": 17,
+    "Crafting": 49
+   },
+   "directPrerequisiteQuests": [],
+   "series": "",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/The_Hand_in_the_Sand"
+  },
+  "The Heart of Darkness": {
+   "name": "The Heart of Darkness",
+   "difficulty": "Experienced",
+   "length": "Medium",
+   "estMinutes": 20,
+   "effortScore": 5,
+   "questPoints": 2,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Mining": 55,
+    "Thieving": 48,
+    "Slayer": 48,
+    "Agility": 46
+   },
+   "directPrerequisiteQuests": [
+    "Twilight's Promise",
+    "Children of the Sun"
+   ],
+   "series": "Twilight Emissaries",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/The_Heart_of_Darkness"
+  },
+  "The Ides of Milk": {
+   "name": "The Ides of Milk",
+   "difficulty": "Novice",
+   "length": "Short",
+   "estMinutes": 8,
+   "effortScore": 2,
+   "questPoints": 1,
+   "members": false,
+   "combatRequirement": null,
+   "skillRequirements": {},
+   "directPrerequisiteQuests": [],
+   "series": "",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/The_Ides_of_Milk"
+  },
+  "The Lost Tribe": {
+   "name": "The Lost Tribe",
+   "difficulty": "Intermediate",
+   "length": "Short",
+   "estMinutes": 8,
+   "effortScore": 3,
+   "questPoints": 1,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Agility": 13,
+    "Thieving": 13,
+    "Mining": 17
+   },
+   "directPrerequisiteQuests": [
+    "Goblin Diplomacy",
+    "Rune Mysteries"
+   ],
+   "series": "Dorgeshuun",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/The_Lost_Tribe"
+  },
+  "The Path of Glouphrie": {
+   "name": "The Path of Glouphrie",
+   "difficulty": "Experienced",
+   "length": "Medium",
+   "estMinutes": 20,
+   "effortScore": 5,
+   "questPoints": 2,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Strength": 60,
+    "Slayer": 56,
+    "Thieving": 56,
+    "Ranged": 47,
+    "Agility": 45
+   },
+   "directPrerequisiteQuests": [
+    "The Eyes of Glouphrie",
+    "The Grand Tree",
+    "Waterfall Quest",
+    "Tree Gnome Village"
+   ],
+   "series": "Gnome",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/The_Path_of_Glouphrie"
+  },
+  "The Queen of Thieves": {
+   "name": "The Queen of Thieves",
+   "difficulty": "Intermediate",
+   "length": "Very Short",
+   "estMinutes": 20,
+   "effortScore": 4,
+   "questPoints": 1,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Thieving": 20,
+    "Cooking": 25
+   },
+   "directPrerequisiteQuests": [
+    "Client of Kourend",
+    "X Marks the Spot"
+   ],
+   "series": "Great Kourend",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/The_Queen_of_Thieves"
+  },
+  "The Restless Ghost": {
+   "name": "The Restless Ghost",
+   "difficulty": "Novice",
+   "length": "Short",
+   "estMinutes": 8,
+   "effortScore": 2,
+   "questPoints": 1,
+   "members": false,
+   "combatRequirement": null,
+   "skillRequirements": {},
+   "directPrerequisiteQuests": [],
+   "series": "",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/The_Restless_Ghost"
+  },
+  "The Tourist Trap": {
+   "name": "The Tourist Trap",
+   "difficulty": "Intermediate",
+   "length": "Medium",
+   "estMinutes": 20,
+   "effortScore": 4,
+   "questPoints": 2,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Fletching": 10,
+    "Smithing": 20
+   },
+   "directPrerequisiteQuests": [],
+   "series": "",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/The_Tourist_Trap"
+  },
+  "Tree Gnome Village": {
+   "name": "Tree Gnome Village",
+   "difficulty": "Intermediate",
+   "length": "Short",
+   "estMinutes": 8,
+   "effortScore": 3,
+   "questPoints": 2,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {},
+   "directPrerequisiteQuests": [],
+   "series": "Gnome",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Tree_Gnome_Village"
+  },
+  "Troll Stronghold": {
+   "name": "Troll Stronghold",
+   "difficulty": "Intermediate",
+   "length": "Short",
+   "estMinutes": 8,
+   "effortScore": 3,
+   "questPoints": 1,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Agility": 15
+   },
+   "directPrerequisiteQuests": [
+    "Death Plateau"
+   ],
+   "series": "Troll",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Troll_Stronghold"
+  },
+  "Troubled Tortugans": {
+   "name": "Troubled Tortugans",
+   "difficulty": "Experienced",
+   "length": "Medium",
+   "estMinutes": 20,
+   "effortScore": 5,
+   "questPoints": 1,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Slayer": 51,
+    "Construction": 48,
+    "Sailing": 45,
+    "Hunter": 45,
+    "Woodcutting": 40,
+    "Crafting": 34
+   },
+   "directPrerequisiteQuests": [
+    "Pandemonium"
+   ],
+   "series": "Tortugan",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Troubled_Tortugans"
+  },
+  "Twilight's Promise": {
+   "name": "Twilight's Promise",
+   "difficulty": "Intermediate",
+   "length": "Short",
+   "estMinutes": 8,
+   "effortScore": 3,
+   "questPoints": 1,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {},
+   "directPrerequisiteQuests": [
+    "Children of the Sun"
+   ],
+   "series": "Twilight Emissaries",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Twilight%27s_Promise"
+  },
+  "Underground Pass": {
+   "name": "Underground Pass",
+   "difficulty": "Experienced",
+   "length": "Long",
+   "estMinutes": 40,
+   "effortScore": 6,
+   "questPoints": 5,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Ranged": 25
+   },
+   "directPrerequisiteQuests": [
+    "Biohazard"
+   ],
+   "series": "Elf",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Underground_Pass"
+  },
+  "Wanted!": {
+   "name": "Wanted!",
+   "difficulty": "Intermediate",
+   "length": "Medium",
+   "estMinutes": 20,
+   "effortScore": 4,
+   "questPoints": 1,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {},
+   "directPrerequisiteQuests": [
+    "Recruitment Drive",
+    "The Lost Tribe",
+    "Priest in Peril",
+    "Enter the Abyss"
+   ],
+   "series": "Temple Knight",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Wanted!"
+  },
+  "Watchtower": {
+   "name": "Watchtower",
+   "difficulty": "Intermediate",
+   "length": "Medium",
+   "estMinutes": 20,
+   "effortScore": 4,
+   "questPoints": 4,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Magic": 14,
+    "Thieving": 15,
+    "Agility": 25,
+    "Herblore": 14,
+    "Mining": 40
+   },
+   "directPrerequisiteQuests": [],
+   "series": "",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Watchtower"
+  },
+  "Waterfall Quest": {
+   "name": "Waterfall Quest",
+   "difficulty": "Intermediate",
+   "length": "Short",
+   "estMinutes": 8,
+   "effortScore": 3,
+   "questPoints": 1,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {},
+   "directPrerequisiteQuests": [],
+   "series": "",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Waterfall_Quest"
+  },
+  "What Lies Below": {
+   "name": "What Lies Below",
+   "difficulty": "Intermediate",
+   "length": "Short",
+   "estMinutes": 8,
+   "effortScore": 3,
+   "questPoints": 1,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Runecraft": 35
+   },
+   "directPrerequisiteQuests": [
+    "Rune Mysteries"
+   ],
+   "series": "",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/What_Lies_Below"
+  },
+  "While Guthix Sleeps": {
+   "name": "While Guthix Sleeps",
+   "difficulty": "Grandmaster",
+   "length": "Very Long",
+   "estMinutes": 75,
+   "effortScore": 13,
+   "questPoints": 5,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Thieving": 72,
+    "Magic": 67,
+    "Agility": 66,
+    "Farming": 65,
+    "Herblore": 65,
+    "Hunter": 62,
+    "Firemaking": 49
+   },
+   "directPrerequisiteQuests": [
+    "Defender of Varrock",
+    "The Path of Glouphrie",
+    "Fight Arena",
+    "Dream Mentor",
+    "The Hand in the Sand",
+    "Wanted!",
+    "Temple of the Eye",
+    "Tears of Guthix",
+    "Nature Spirit",
+    "A Tail of Two Cats"
+   ],
+   "series": "Mahjarrat",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/While_Guthix_Sleeps"
+  },
+  "X Marks the Spot": {
+   "name": "X Marks the Spot",
+   "difficulty": "Novice",
+   "length": "Very Short",
+   "estMinutes": 20,
+   "effortScore": 3,
+   "questPoints": 1,
+   "members": false,
+   "combatRequirement": null,
+   "skillRequirements": {},
+   "directPrerequisiteQuests": [],
+   "series": "Great Kourend",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/X_Marks_the_Spot"
+  }
+ }
+}

@@ -1,0 +1,32 @@
+{
+ "version": "2026-06-28",
+ "note": "Authored route guides. A guide with a targetTier also renders the player's live optimal route to that tier. Drop a YouTube URL in videoUrl on release. Steps are tips; a step may set taskId to link a specific task.",
+ "guides": [
+  {
+   "id": "zero-to-medium",
+   "title": "0 → Medium: The Fastest Path",
+   "author": "",
+   "summary": "A direct route from zero points to the Medium tier reward (Ghommal's Hilt 1) at 161 points, using the cheapest tasks you can do right now. The live route below updates as you complete tasks.",
+   "videoUrl": "",
+   "targetTier": "Medium",
+   "tags": ["beginner", "route", "medium"],
+   "steps": [
+    { "note": "Clear every Easy task first — each is 1 point and most are a single kill or a quick mechanic. That alone is 41 of the 161 points." },
+    { "note": "Then cherry-pick the cheapest Medium and Hard tasks the planner highlights below — a Hard Kill Count can be worth more points-per-minute than an awkward Medium." },
+    { "note": "Skip anything gated behind gear or a quest you don't have yet; the 'Doable now' filter keeps those out of your route." }
+   ]
+  },
+  {
+   "id": "to-grandmaster",
+   "title": "Road to Grandmaster (WIP)",
+   "author": "",
+   "summary": "The full endgame route to Grandmaster, which requires completing every task. Detailed routing to come. The live list below already shows every remaining task, easiest first.",
+   "videoUrl": "",
+   "targetTier": "Grandmaster",
+   "tags": ["endgame", "route", "grandmaster"],
+   "steps": [
+    { "note": "Grandmaster is the only tier that needs 100% completion, not just a points threshold — there are no shortcuts, only an efficient order." }
+   ]
+  }
+ ]
+}

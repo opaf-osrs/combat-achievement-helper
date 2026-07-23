@@ -1,0 +1,105 @@
+plugins {
+	id 'java'
+}
+
+repositories {
+	mavenLocal()
+	maven {
+		url = 'https://repo.runelite.net'
+		content {
+			includeGroupByRegex("net\\.runelite.*")
+		}
+	}
+	mavenCentral()
+}
+
+def runeLiteVersion = 'latest.release'
+def pluginMainClass = 'com.pluginideahub.combatachievements.CombatAchievementsPluginTestClient'
+
+dependencies {
+	compileOnly group: 'net.runelite', name: 'client', version: runeLiteVersion
+
+	// The RuneLite client bundles Gson at runtime, so it is provided (compileOnly) for the real
+	// plugin. It is declared explicitly (rather than relied on transitively) so the dataset loader
+	// has a pinned, audited parser; see docs/DESIGN.md §2.1.
+	compileOnly group: 'com.google.code.gson', name: 'gson', version: '2.10.1'
+
+	testImplementation 'junit:junit:4.13.2'
+	testImplementation group: 'net.runelite', name: 'client', version: runeLiteVersion
+	testImplementation group: 'net.runelite', name: 'jshell', version: runeLiteVersion
+	testImplementation group: 'com.google.code.gson', name: 'gson', version: '2.10.1'
+}
+
+group = 'com.pluginideahub'
+version = '0.1.0'
+
+tasks.withType(JavaCompile).configureEach {
+	options.encoding = 'UTF-8'
+	options.release.set(11)
+}
+
+// Some tests build the real Swing panel. Without this, running them starts AWT and Windows pops up a
+// Java window every time the suite runs.
+tasks.withType(Test).configureEach {
+	systemProperty 'java.awt.headless', 'true'
+}
+
+tasks.register('run', JavaExec) {
+	classpath = sourceSets.test.runtimeClasspath
+	mainClass = project.findProperty('mainClass') ?: pluginMainClass
+
+	jvmArgs "-ea"
+	args "--developer-mode", "--debug"
+}
+
+// Headless render of the real Swing panel to PNGs in build/ui-preview/ (no game, no display).
+tasks.register('renderUi', JavaExec) {
+	group = 'application'
+	description = 'Render the Combat Achievement Helper side panel to PNGs without launching the client.'
+	classpath = sourceSets.test.runtimeClasspath
+	mainClass = 'com.pluginideahub.combatachievements.PanelPreview'
+	systemProperty 'java.awt.headless', 'true'
+}
+
+// Export the per-task easy-heuristic score (build/curation/heuristic_scores.csv) for the curation
+// spreadsheet, computed by the real LowHangingFruitRanker so the sheet stays aligned with the plugin.
+tasks.register('curationExport', JavaExec) {
+	group = 'application'
+	description = 'Export per-task easy-heuristic scores for the curation spreadsheet.'
+	classpath = sourceSets.test.runtimeClasspath
+	mainClass = 'com.pluginideahub.combatachievements.CurationExport'
+	systemProperty 'java.awt.headless', 'true'
+}
+
+// Throwaway: render the Quest-Helper-style layout mockup to build/ui-preview/mock-*.png.
+tasks.register('mockupUi', JavaExec) {
+	group = 'application'
+	description = 'Render the Quest-Helper-style CA panel mockup (visual proposal, not wired).'
+	classpath = sourceSets.test.runtimeClasspath
+	mainClass = 'com.pluginideahub.combatachievements.QuestHelperStyleMockup'
+	systemProperty 'java.awt.headless', 'true'
+}
+
+tasks.register('shadowJar', Jar) {
+	dependsOn configurations.testRuntimeClasspath
+	manifest {
+		attributes('Main-Class': pluginMainClass, 'Multi-Release': true)
+	}
+
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+	from sourceSets.main.output
+	from sourceSets.test.output
+	from {
+		configurations.testRuntimeClasspath.collect { file -> file.isDirectory() ? file : zipTree(file) }
+	}
+
+	exclude 'META-INF/INDEX.LIST'
+	exclude 'META-INF/*.SF'
+	exclude 'META-INF/*.DSA'
+	exclude 'META-INF/*.RSA'
+	exclude '**/module-info.class'
+
+	group = BasePlugin.BUILD_GROUP
+	archiveClassifier.set('shadow')
+	archiveFileName.set("${rootProject.name}-${project.version}-all.jar")
+}

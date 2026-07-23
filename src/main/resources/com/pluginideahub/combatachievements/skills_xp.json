@@ -1,0 +1,826 @@
+{
+ "version": "2026-06-29",
+ "source": "OSRS Wiki training guides (per-skill agents). Normal methods only — excludes 3t/2t manipulation and whale/very-expensive setups.",
+ "note": "Representative XP/hour by level bracket, so the plugin can estimate hours to train a skill X->Y as part of a quest's true unlock cost. Buyable skills (Prayer/Construction/Herblore) are gp-limited not click-limited; rates assume the standard method.",
+ "skillCount": 23,
+ "missing": [],
+ "skills": {
+  "Attack": {
+   "skill": "Attack",
+   "brackets": [
+    {
+     "fromLevel": 1,
+     "toLevel": 30,
+     "method": "Low-level monsters (chickens/cows/goblins) in bronze/iron — slow until gear and crabs open up (Waterfall Quest can skip Attack/Strength to 30)",
+     "xpPerHour": 10000,
+     "members": true
+    },
+    {
+     "fromLevel": 30,
+     "toLevel": 50,
+     "method": "Sand/Ammonite crabs (AFK), Waterfall Quest gets 1-30 instantly",
+     "xpPerHour": 35000,
+     "members": true
+    },
+    {
+     "fromLevel": 50,
+     "toLevel": 70,
+     "method": "Nightmare Zone normal rumble with absorption potions (AFK)",
+     "xpPerHour": 60000,
+     "members": true
+    },
+    {
+     "fromLevel": 70,
+     "toLevel": 90,
+     "method": "Nightmare Zone with best gear (dragon scimitar/whip), absorption method",
+     "xpPerHour": 80000,
+     "members": true
+    },
+    {
+     "fromLevel": 90,
+     "toLevel": 99,
+     "method": "Nightmare Zone with whip/best gear, absorption method",
+     "xpPerHour": 90000,
+     "members": true
+    }
+   ],
+   "notes": "Rates are for the standard AFK/normal methods, not sweaty or whale setups. Nightmare Zone (NMZ) is the commonly-recommended \"express\" melee XP route from ~50 onward and is the source of these rates; it's semi-AFK with absorption potions. Excluded: flinching/Dharok manipulation and the expensive Venator bow NMZ setup (~150k/hr) which is a whale/click-intensive method. F2P is much slower (no NMZ, no good crabs - roughly half these rates via regular monsters). Slayer gives lower raw Attack XP per hour than NMZ but is what many players default to for profit and gear unlocks. Crabs and NMZ are both members-only; the realistic member progression is crabs early then NMZ. Rates scale heavily with gear/combat level, so within-bracket numbers are representative midpoints."
+  },
+  "Strength": {
+   "skill": "Strength",
+   "brackets": [
+    {
+     "fromLevel": 1,
+     "toLevel": 30,
+     "method": "Low-level monsters (chickens/cows/goblins) in bronze/iron — slow until gear and crabs open up (Waterfall Quest can skip Attack/Strength to 30)",
+     "xpPerHour": 10000,
+     "members": true
+    },
+    {
+     "fromLevel": 30,
+     "toLevel": 50,
+     "method": "Sand Crabs / Ammonite Crabs (AFK melee on high-HP, low-defence targets)",
+     "xpPerHour": 35000,
+     "members": true
+    },
+    {
+     "fromLevel": 50,
+     "toLevel": 70,
+     "method": "Nightmare Zone (normal rumble, AFK) or continued Sand/Ammonite Crabs",
+     "xpPerHour": 65000,
+     "members": true
+    },
+    {
+     "fromLevel": 70,
+     "toLevel": 90,
+     "method": "Nightmare Zone with Obsidian armour + Berserker necklace (overloads, semi-AFK)",
+     "xpPerHour": 95000,
+     "members": true
+    },
+    {
+     "fromLevel": 90,
+     "toLevel": 99,
+     "method": "Nightmare Zone with Dharok's set at low HP (overloads + absorptions)",
+     "xpPerHour": 135000,
+     "members": true
+    }
+   ],
+   "notes": "All rates are members methods; Strength has no efficient F2P equivalent (F2P is limited to regular monsters at roughly 10-20k/hr, much slower). Rates are click-limited/AFK-limited, not gp-limited, except NMZ's small recurring cost for potions/absorptions which is trivial. 1-50: crabs scale from ~25-30k early up to ~50-60k by level 50 as combat/gear improves; 35k is a representative low-mid average. Waterfall Quest gives ~13k one-time Str/Att XP at level 1 and is commonly done first but isn't a sustained rate. 70-90 Obsidian/Berserker NMZ setup is the cheap standard before 92 HP unlocks Dharok's. 90-99 Dharok's NMZ is the standard high-end melee method; cited 300-400k figures are total combat XP across Att/Str/Def/HP or sweaty 1-HP flicking, so realistic sustained Strength-only XP is ~120-150k/hr. Excluded: 3t/2t manipulation (not used here) and whale-only setups; Dharok's NMZ is the commonly-recommended endgame method, not a whale method."
+  },
+  "Ranged": {
+   "skill": "Ranged",
+   "brackets": [
+    {
+     "fromLevel": 1,
+     "toLevel": 30,
+     "method": "Shortbow with bronze/iron arrows on low-level monsters — slow and arrow-limited",
+     "xpPerHour": 10000,
+     "members": true
+    },
+    {
+     "fromLevel": 30,
+     "toLevel": 50,
+     "method": "Dwarf Multicannon on ogres/Slayer tasks early, transitioning to chinning maniacal monkeys (MM2) once chins are equippable (~45+); crabs/Nightmare Zone are AFK alternatives",
+     "xpPerHour": 20000,
+     "members": true
+    },
+    {
+     "fromLevel": 50,
+     "toLevel": 70,
+     "method": "Chinning maniacal monkeys in the Monkey Madness II tunnels with grey/red chinchompas",
+     "xpPerHour": 300000,
+     "members": true
+    },
+    {
+     "fromLevel": 70,
+     "toLevel": 90,
+     "method": "Chinning maniacal monkeys (MM2 tunnels) with red, then black chinchompas",
+     "xpPerHour": 550000,
+     "members": true
+    },
+    {
+     "fromLevel": 90,
+     "toLevel": 99,
+     "method": "Chinning maniacal monkeys (MM2 tunnels) with black chinchompas",
+     "xpPerHour": 800000,
+     "members": true
+    }
+   ],
+   "notes": "Chinning maniacal monkeys in the MM2 tunnels is the universally-recommended standard fast method for Ranged 45-99 (not a 2t/3t exploit), so it is used here rather than slower combat. It is click-intensive and very expensive (chinchompas are consumed every throw), so rates are partly cost/skill-limited: realistic focused players hit ~250-300k at low Ranged, ~400-700k mid, and ~700k-1M+ at 90+ (peak ~1M with black chins + perfect stacking, which I've kept just below for a realistic average). Requires Monkey Madness II (Chapter II) to access the tunnels. For 1-50 the cheaper standard path is the Dwarf Multicannon (~40k+ from cannon alone) on ogres or Slayer tasks plus early questing, blending to ~80k once chinning begins around 45. F2P Ranged is much slower (no chins/cannon viable for mass training): standard F2P is cannonless combat/training on monsters at roughly 20-40k/hr. NMZ (~140-190k) and Venator bow monkeys (~140-240k) are good AFK/buyable alternatives but slower than chinning. Buyable element: chinning rate is gated by chinchompa supply/cost and click intensity, not purely by clicks."
+  },
+  "Prayer": {
+   "skill": "Prayer",
+   "brackets": [
+    {
+     "fromLevel": 1,
+     "toLevel": 30,
+     "method": "Burying bones / regular altar with what you pick up — no gilded altar and no bone budget this early, so it is a fraction of the buyable rate",
+     "xpPerHour": 15000,
+     "members": true
+    },
+    {
+     "fromLevel": 30,
+     "toLevel": 50,
+     "method": "Dragon bones on a gilded altar (POH) with both incense burners lit",
+     "xpPerHour": 100000,
+     "members": true
+    },
+    {
+     "fromLevel": 50,
+     "toLevel": 70,
+     "method": "Dragon bones on a gilded altar (POH) with both incense burners lit",
+     "xpPerHour": 580000,
+     "members": true
+    },
+    {
+     "fromLevel": 70,
+     "toLevel": 90,
+     "method": "Dragon bones on a gilded altar (POH) with both incense burners lit",
+     "xpPerHour": 600000,
+     "members": true
+    },
+    {
+     "fromLevel": 90,
+     "toLevel": 99,
+     "method": "Superior dragon bones on a gilded altar (POH) with both incense burners lit",
+     "xpPerHour": 1250000,
+     "members": true
+    }
+   ],
+   "notes": "Prayer is a BUYABLE skill: the rate is gp-limited, not click-limited. All rates assume a player-owned-house gilded altar with both incense burners lit (350% XP per bone) and manual clicking of bones onto the altar at ~2,200-2,400 bones/hr (the wiki's 2,550 bones/hr is a near-perfect ceiling; realistic focused rates sit just under it). The standard progression is cost-driven, not level-gated: cheaper dragon bones (~12 gp/xp) carry most players through ~1-90, and most switch to superior dragon bones (~42 gp/xp) only at high levels when they want to finish fast and have the budget. Wiki theoretical maxes: dragon bones 642,600 xp/hr, superior dragon bones 1,338,750 xp/hr. EXCLUDED the Chaos Temple/Wilderness altar (50% bone-save but PvP/risk-intensive and not the standard method) and ensouled-heads (much slower passive method). A gilded altar requires 70 Construction or a friend's house, so realistically very early/poor players use regular or big bones at first; dragon bones are the standard recommended buyable method as soon as affordable. F2P has no gilded altar - F2P Prayer (bones on regular altars / buried) is dramatically slower and not represented here."
+  },
+  "Magic": {
+   "skill": "Magic",
+   "brackets": [
+    {
+     "fromLevel": 1,
+     "toLevel": 30,
+     "method": "Low-level combat spells (wind/water strike) on weak monsters — rune-limited and very slow per cast",
+     "xpPerHour": 10000,
+     "members": true
+    },
+    {
+     "fromLevel": 30,
+     "toLevel": 50,
+     "method": "Quests (e.g. Imp Catcher, Witch's Potion) then cast spells / curse spells on combat dummies or low-level monsters; transition to alching around 30+. Practically, most rush early levels via quests.",
+     "xpPerHour": 15000,
+     "members": true
+    },
+    {
+     "fromLevel": 50,
+     "toLevel": 70,
+     "method": "Bursting at Nightmare Zone / Ancient Magicks bursting once unlocked (Desert Treasure); before that, High Alchemy or curse/combat spells on tasks. Standard fast option is Ice Burst on monkeys/NMZ from 70.",
+     "xpPerHour": 80000,
+     "members": true
+    },
+    {
+     "fromLevel": 70,
+     "toLevel": 90,
+     "method": "Ice Burst on Maniacal Monkeys (stacking monkeys in the tunnels). The commonly recommended high-XP standard method.",
+     "xpPerHour": 250000,
+     "members": true
+    },
+    {
+     "fromLevel": 90,
+     "toLevel": 99,
+     "method": "Ice Barrage on Maniacal Monkeys (from 94 Magic); Ice Burst until 94.",
+     "xpPerHour": 320000,
+     "members": true
+    }
+   ],
+   "notes": "Members method throughout; F2P Magic is dramatically slower (limited to splashing/High Alch/combat spells, roughly 20k-50k/hr). Excluded splashing as too slow per instructions. Maniacal monkeys bursting/barraging is the mainstream recommended fast method (not 3-tick manipulation) but it is EXPENSIVE and gp-limited rather than click-limited in cost terms - it burns runes (~900-1000gp/cast) with no drops to offset, so rate quoted is the realistic semi-active/AFK-with-auto-retaliate rate (active stacking can reach ~310k Ice Burst / ~400k Ice Barrage). Cheaper standard alternatives at all levels: High Alchemy (~78k/hr standing still, often profitable/breakeven) and bursting on Slayer tasks (dust devils, nechryael) which offsets cost with drops at slightly lower Magic XP/hr. Early levels (1-50) are typically rushed via quests for fast cheap XP. Sources: https://oldschool.runescape.wiki/w/Pay-to-play_Magic_training and https://oldschool.runescape.wiki/w/Maniacal_monkey/Strategies"
+  },
+  "Runecraft": {
+   "skill": "Runecraft",
+   "brackets": [
+    {
+     "fromLevel": 1,
+     "toLevel": 50,
+     "method": "Guardians of the Rift (GOTR) minigame",
+     "xpPerHour": 30000,
+     "members": true
+    },
+    {
+     "fromLevel": 50,
+     "toLevel": 70,
+     "method": "Guardians of the Rift (GOTR) minigame",
+     "xpPerHour": 42000,
+     "members": true
+    },
+    {
+     "fromLevel": 70,
+     "toLevel": 90,
+     "method": "Blood runes at the Arceuus blood altar (or continued GOTR)",
+     "xpPerHour": 42000,
+     "members": true
+    },
+    {
+     "fromLevel": 90,
+     "toLevel": 99,
+     "method": "Blood runes at the Arceuus blood altar",
+     "xpPerHour": 45000,
+     "members": true
+    }
+   ],
+   "notes": "All standard methods are members-only; F2P Runecraft is dramatically slower (low-level air/body running, well under 10k xp/hr). GOTR (Guardians of the Rift) is the modern default 1-99 method: low-effort, profitable, and it grants the Raiments of the Eye outfit (+bonus runes) plus passive Mining/Crafting xp. GOTR scales with level, roughly 25-40k early and ~40-50k at high levels. Blood runes (77+) are the AFK-friendly, profitable staple for the back half (~38-45k xp/hr). EXCLUDED as sweaty/whale: solo lava runes via abyss/binding-necklace running and Daeyalt essence (~50-100k+ but extremely click-intensive), and Aether runes with 4 essence runners (up to ~445k xp/hr but ~160 gp/xp and needs paid runners). Blood runes are buyable/AFK so the rate is effort-limited but very sustainable rather than click-capped."
+  },
+  "Hitpoints": {
+   "skill": "Hitpoints",
+   "brackets": [
+    {
+     "fromLevel": 1,
+     "toLevel": 30,
+     "method": "Passive XP from early melee training on low-level monsters",
+     "xpPerHour": 10000,
+     "members": true
+    },
+    {
+     "fromLevel": 30,
+     "toLevel": 50,
+     "method": "Passive combat on Sand/Ammonite Crabs or early Slayer tasks (aggressive/controlled melee or ranged)",
+     "xpPerHour": 40000,
+     "members": true
+    },
+    {
+     "fromLevel": 50,
+     "toLevel": 70,
+     "method": "Nightmare Zone with absorptions, or standard Slayer / Ammonite Crabs (combat trains HP passively)",
+     "xpPerHour": 70000,
+     "members": true
+    },
+    {
+     "fromLevel": 70,
+     "toLevel": 90,
+     "method": "Ice Burst/Barrage Slayer tasks (Nechryael, Dust devils) - Magic-on-combat gives strong passive HP",
+     "xpPerHour": 90000,
+     "members": true
+    },
+    {
+     "fromLevel": 90,
+     "toLevel": 99,
+     "method": "Chinning (chinchompas) maniacal monkeys, or bursting maniacal monkeys - high-throughput combat",
+     "xpPerHour": 150000,
+     "members": true
+    }
+   ],
+   "notes": "Hitpoints is NEVER trained directly - it is gained passively through combat, at 1.33 HP XP per damage point dealt (roughly 33% of the combat XP on aggressive/controlled melee and ranged styles, and gained alongside Magic when bursting/barraging). The HP rate is therefore set entirely by whichever combat method you choose, so it is effectively buyable/AFK rather than a HP-specific click ceiling. Rates given are representative for an average focused player using commonly-recommended methods, excluding tick-manipulation and whale-only setups. Top-end chinning maniacal monkeys can push HP to ~250k/hr at max gear/level; the 150k figure reflects a typical (not perfectly optimized) player. F2P is much slower - HP is gained only through standard melee/ranged combat on free monsters, with no bursting or chinning available, putting realistic F2P rates well below the members figures (roughly 20-50k/hr at higher levels). Members-only methods (NMZ, bursting, maniacal monkey chinning) are flagged members=true; the underlying passive-combat principle applies to F2P as well but at much lower throughput."
+  },
+  "Crafting": {
+   "skill": "Crafting",
+   "brackets": [
+    {
+     "fromLevel": 1,
+     "toLevel": 50,
+     "method": "Cutting gems with a chisel (sapphire 20 -> emerald 27 -> ruby 34 -> diamond 43); leather/gold jewellery early",
+     "xpPerHour": 90000,
+     "members": true
+    },
+    {
+     "fromLevel": 50,
+     "toLevel": 70,
+     "method": "Crafting green/blue dragonhide bodies (battlestaves a viable alt ~250-340k)",
+     "xpPerHour": 330000,
+     "members": true
+    },
+    {
+     "fromLevel": 70,
+     "toLevel": 90,
+     "method": "Crafting red then black dragonhide bodies",
+     "xpPerHour": 400000,
+     "members": true
+    },
+    {
+     "fromLevel": 90,
+     "toLevel": 99,
+     "method": "Crafting black dragonhide bodies",
+     "xpPerHour": 435000,
+     "members": true
+    }
+   ],
+   "notes": "Rates are for an average focused player using standard, commonly-recommended methods; 3-tick/costume-needle tricks excluded (those push black d'hide to ~450k). Crafting is heavily click-limited (bank-craft loop), NOT gp-limited at high levels: d'hide bodies are the fastest standard path 50-99 and actually turn a profit. D'hide rates rise within each bracket (green ~300k, blue ~354k, red ~394k, black ~435k); listed values are bracket-representative midpoints. 1-50 gem cutting is cheap but the rate is averaged across slow early gems (sapphire ~139k) and fast diamonds (~299k). Popular profitable ALTERNATIVES that are gp/buyable rather than click-limited: dragonstone bracelets/jewellery (~150-154k xp/hr, big profit) and diamond bracelets (~130k xp/hr) -- chosen by players prioritizing money over speed; slower than d'hide. Superglass Make (needs 77 Magic, ~108-153k) and amethyst cutting (~165k) are slower secondary options. All methods listed are members-only; F2P Crafting (gold jewellery, basic gems/leather) is far slower and caps the realistic ceiling well below these rates."
+  },
+  "Mining": {
+   "skill": "Mining",
+   "brackets": [
+    {
+     "fromLevel": 1,
+     "toLevel": 50,
+     "method": "Mine copper/tin to ~15, then iron ore (drop-mining or Mining Guild)",
+     "xpPerHour": 40000,
+     "members": false
+    },
+    {
+     "fromLevel": 50,
+     "toLevel": 70,
+     "method": "Motherlode Mine (mine pay-dirt, deposit in hopper)",
+     "xpPerHour": 45000,
+     "members": true
+    },
+    {
+     "fromLevel": 70,
+     "toLevel": 90,
+     "method": "Volcanic Mine (team minigame)",
+     "xpPerHour": 68000,
+     "members": true
+    },
+    {
+     "fromLevel": 90,
+     "toLevel": 99,
+     "method": "Volcanic Mine (team minigame) at high level",
+     "xpPerHour": 80000,
+     "members": true
+    }
+   ],
+   "notes": "Rates are for standard, non-tick-manipulation methods; 3-tick granite (~120k+/hr) and 3-tick gem/iron are excluded per the 'normal' criterion as they are extremely click-intensive. Mining is a gather skill so rates are click/attention-limited, not gp-limited.\n\n1-50: Iron ore is the universally recommended early method. Works in F2P (~50k/hr at high success) and P2P; ~45-55k/hr standard, lower early while leveling from copper/tin, so ~40k is a fair bracket average. F2P viable throughout.\n\n50-70: Motherlode Mine is the most commonly used standard members method - low intensity and profitable (gems/nuggets/coal), scaling ~40-55k/hr with level. Iron at the Mining Guild (~70-80k/hr) is a faster but more active alternative. Members-only.\n\n70-90: Volcanic Mine is the standard recommended high-level method most active players use (~60-75k/hr depending on team and level); the faster option (3-tick granite, ~110k+/hr) is excluded as sweaty. Members-only.\n\n90-99: Volcanic Mine with an efficient team reaches ~75-85k/hr at level 99 - the best 'normal' (non-3-tick) rate. Amethyst (~20-25k/hr) and Motherlode (~55-62k/hr) are lower-effort but slower alternatives. Members-only."
+  },
+  "Smithing": {
+   "skill": "Smithing",
+   "brackets": [
+    {
+     "fromLevel": 1,
+     "toLevel": 50,
+     "method": "Quest to ~40 (The Knight's Sword, Sleeping Giants, etc.), then Blast Furnace gold bars with goldsmith gauntlets from level 40",
+     "xpPerHour": 70000,
+     "members": true
+    },
+    {
+     "fromLevel": 50,
+     "toLevel": 70,
+     "method": "Blast Furnace gold bars with goldsmith gauntlets",
+     "xpPerHour": 380000,
+     "members": true
+    },
+    {
+     "fromLevel": 70,
+     "toLevel": 90,
+     "method": "Blast Furnace gold bars with goldsmith gauntlets",
+     "xpPerHour": 380000,
+     "members": true
+    },
+    {
+     "fromLevel": 90,
+     "toLevel": 99,
+     "method": "Blast Furnace gold bars with goldsmith gauntlets",
+     "xpPerHour": 380000,
+     "members": true
+    }
+   ],
+   "notes": "Smithing is a BUYABLE skill - rates are gp/material-limited, not click-limited. The dominant standard method at virtually every level from 40+ is Blast Furnace gold bars with goldsmith gauntlets (~380k xp/hr at normal pace; ~390k+ with 0-tick banking, which is excluded as a sweaty technique; 530k-680k with paid runners, excluded as whale/click-intensive). Gold bars require level 40, so the 1-50 bracket is a blend: players quest to ~40 (questing gives ~37k xp, ~1-39) and do slow early anvil/bronze smithing (~14k-75k xp/hr) before transitioning to gold bars at 40, hence the lower representative ~200k. Gold bars give NO bar profit (you smith gold ore into bars and sell at a loss), so they cost roughly 1-1.5 gp/xp - the limiter is money, not clicks. Lower-effort/cheaper alternatives that some prefer: Giants' Foundry (~198k xp/hr at lvl 70, ~250k at 85, much more relaxed and less ore cost) and anvil platebodies (mithril ~200k at lvl 68+, adamant ~240k at lvl 88+). F2P is far slower - no Blast Furnace, so F2P relies on Knight's Sword quest then anvil platebodies/cannonballs at a fraction of these rates. Cannonballs (~14k-28k xp/hr) are very slow and AFK, used for profit not xp."
+  },
+  "Fishing": {
+   "skill": "Fishing",
+   "brackets": [
+    {
+     "fromLevel": 1,
+     "toLevel": 50,
+     "method": "Fly fishing trout/salmon at Barbarian Village/Shilo (or quest skips early)",
+     "xpPerHour": 25000,
+     "members": true
+    },
+    {
+     "fromLevel": 50,
+     "toLevel": 70,
+     "method": "Barbarian fishing (normal clicking, no tick manipulation)",
+     "xpPerHour": 42000,
+     "members": true
+    },
+    {
+     "fromLevel": 70,
+     "toLevel": 90,
+     "method": "Barbarian fishing (normal clicking) / Tempoross",
+     "xpPerHour": 52000,
+     "members": true
+    },
+    {
+     "fromLevel": 90,
+     "toLevel": 99,
+     "method": "Barbarian fishing (normal clicking) or Tempoross",
+     "xpPerHour": 60000,
+     "members": true
+    }
+   ],
+   "notes": "Click-limited, not gp-limited (Fishing is a gatherer skill - it produces resources, methods listed are free to do). Rates exclude 3-tick/2-tick manipulation per instructions: with tick manipulation fly fishing reaches ~61k and harpooning swordfish/tuna reaches 78k-132k XP/h, but those are sweaty methods excluded here. The realistic \"normal\" backbone for 50-99 is Barbarian fishing with standard clicking (~37k at lvl 58, ~48k at 70, ~57k at 99) - the wiki's recommended low-effort standard method. Tempoross is the popular active minigame alternative at higher levels (~70k regular harpoon, ~95k crystal harpoon at lvl 99) and gives no tick-manip is needed. 1-50: fly fishing ramps 13k (lvl 20) to 34k (lvl 50); early levels 1-24 often skipped via quests (Sea Slug, Fishing Contest, RFD). Drift net fishing (lvl 47+) is ~53k-88k but those numbers are SHARED/split with Hunter, so pure Fishing rate is lower. F2P Fishing is much slower (shrimp/lobster, no barbarian fishing) - all listed methods are members-only."
+  },
+  "Cooking": {
+   "skill": "Cooking",
+   "brackets": [
+    {
+     "fromLevel": 1,
+     "toLevel": 50,
+     "method": "Cook fish at a range/fire (shrimp -> trout/salmon -> tuna -> lobster); transition to Jugs of wine from level 35",
+     "xpPerHour": 150000,
+     "members": false
+    },
+    {
+     "fromLevel": 50,
+     "toLevel": 70,
+     "method": "Jugs of wine (grapes + jug of water at the Culinaromancer's Chest / Cooking Guild)",
+     "xpPerHour": 350000,
+     "members": false
+    },
+    {
+     "fromLevel": 70,
+     "toLevel": 90,
+     "method": "Jugs of wine (no fail rate past level 68)",
+     "xpPerHour": 480000,
+     "members": false
+    },
+    {
+     "fromLevel": 90,
+     "toLevel": 99,
+     "method": "Jugs of wine",
+     "xpPerHour": 490000,
+     "members": false
+    }
+   ],
+   "notes": "Rates EXCLUDE 1-tick karambwan, which is what the wiki headlines (464k-950k/hr) but is tick manipulation and explicitly out of scope. The standard \"normal\" buyable method is Jugs of wine: ~200k/hr at level 35 ramping to ~470-490k/hr at level 68+ where failing stops entirely. Wines are fast-clicking but NOT 3t/2t tick manipulation - they're the universally recommended buyable power-cooking method, and they work in F2P (grapes + jug of water). Cooking is heavily BUYABLE/gp-limited, not click-limited: the whole 35-99 wine grind costs ~3.5-4M gp. Early levels (1-50) most players just cook fish at a range/fire (trout/salmon/tuna/lobster, ~120-165k/hr) which is cheaper/profitable and less click-intensive than wines; the 150k figure reflects this fish-cooking phase. All listed methods work in F2P (members=false). Members alternatives at fires: cooking karambwan (non-tick, ~200k/hr) or anglerfish (~305-330k/hr) for those who prefer profit/less intensity over wine speed."
+  },
+  "Firemaking": {
+   "skill": "Firemaking",
+   "brackets": [
+    {
+     "fromLevel": 1,
+     "toLevel": 50,
+     "method": "Burning logs at the Grand Exchange (regular -> oak -> willow -> maple as level allows)",
+     "xpPerHour": 90000,
+     "members": false
+    },
+    {
+     "fromLevel": 50,
+     "toLevel": 70,
+     "method": "Wintertodt minigame",
+     "xpPerHour": 170000,
+     "members": true
+    },
+    {
+     "fromLevel": 70,
+     "toLevel": 90,
+     "method": "Wintertodt minigame",
+     "xpPerHour": 250000,
+     "members": true
+    },
+    {
+     "fromLevel": 90,
+     "toLevel": 99,
+     "method": "Wintertodt minigame",
+     "xpPerHour": 310000,
+     "members": true
+    }
+   ],
+   "notes": "Wintertodt (members-only, unlockable at level 50) is the standard recommended Firemaking method for the overwhelming majority of players from 50+: low-effort, profitable rather than costly, and rewards supplies/loot. Its rates scale roughly linearly with level (~160k-200k at 50, ~250k at 70-90, ~300-320k at 99). The wiki's much higher pure log-burning rates (e.g. willow 133k, yew 300k, magic 451k, redwood 520k XP/hr) assume tick-perfect burning at ~1,485 logs/hr at the GE, which is a sweaty/click-intensive optimal that average focused players do NOT sustain - so I used realistic Wintertodt rates as the \"normal\" method for 50+. Excluded the 1-tick pyre-log method (tick manipulation). For 1-50, Wintertodt is unavailable, so the standard method is burning logs at the GE; this bracket is buyable (cost/gp-limited) and the ~90k figure is a representative average across the regular/oak/willow/maple progression without tick manipulation. F2P: same log-burning applies (regular -> oak -> willow -> maple -> yew); F2P cannot access Wintertodt at all, so a free player must burn logs the whole way, which is much slower/grindier than Wintertodt and the only option above 50."
+  },
+  "Defence": {
+   "skill": "Defence",
+   "brackets": [
+    {
+     "fromLevel": 1,
+     "toLevel": 30,
+     "method": "Low-level monsters on Defensive style in bronze/iron — slow until gear and crabs open up",
+     "xpPerHour": 10000,
+     "members": true
+    },
+    {
+     "fromLevel": 30,
+     "toLevel": 50,
+     "method": "Sand crabs / ammonite crabs on Defensive attack style (or early quests like Waterfall for lump-sum XP)",
+     "xpPerHour": 25000,
+     "members": true
+    },
+    {
+     "fromLevel": 50,
+     "toLevel": 70,
+     "method": "Nightmare Zone on Defensive style, or Slayer with whip on Controlled/Defensive style",
+     "xpPerHour": 50000,
+     "members": true
+    },
+    {
+     "fromLevel": 70,
+     "toLevel": 90,
+     "method": "Nightmare Zone (absorptions) on Defensive style, or Slayer on Controlled style",
+     "xpPerHour": 75000,
+     "members": true
+    },
+    {
+     "fromLevel": 90,
+     "toLevel": 99,
+     "method": "Nightmare Zone on Defensive style (AFK), or Slayer on Controlled style",
+     "xpPerHour": 90000,
+     "members": true
+    }
+   ],
+   "notes": "Defence is trained through normal combat (same as Attack/Strength), just with Defensive attack style for pure Defence XP, or Controlled style to share XP across Attack/Str/Def. Rates given are for single-skill (Defence-focused) training; NMZ solo gives ~200k/hr but that splits across multiple skills, so focused Defence is roughly 60-100k/hr at high levels. F2P is much slower (crabs/monsters only, ~10-20k/hr) and has no NMZ or Slayer. Slayer is the popular choice because it adds Slayer XP and gp profit, but its raw Defence rate (50-80k/hr) is lower than dedicated NMZ. EXCLUDED: chinning on Maniacal Monkeys / black chinchompas (up to 350k Defence/hr) which is a Ranged-skill sweaty/expensive method, and alt-account NMZ special-transfer setups (200-400k/hr) which are whale methods. Crab AFK rates depend on world crowding. Numbers cross-referenced from osrstoolkit, tonsofxp, and theoatrix combat guides; the wiki's dedicated guide lives on the Pay-to-play melee training page."
+  },
+  "Woodcutting": {
+   "skill": "Woodcutting",
+   "brackets": [
+    {
+     "fromLevel": 1,
+     "toLevel": 50,
+     "method": "Regular trees (1-15) then oak trees (15-35), then teak trees at Hardwood Grove / Fossil Island; F2P alternative is willows",
+     "xpPerHour": 40000,
+     "members": false
+    },
+    {
+     "fromLevel": 50,
+     "toLevel": 70,
+     "method": "Teak trees (non-tick-manipulation) at Hardwood Grove or Fossil Island",
+     "xpPerHour": 55000,
+     "members": true
+    },
+    {
+     "fromLevel": 70,
+     "toLevel": 90,
+     "method": "Sulliuscep mushrooms in the Tar Swamp on Fossil Island (low-effort, AFK-friendly)",
+     "xpPerHour": 92000,
+     "members": true
+    },
+    {
+     "fromLevel": 90,
+     "toLevel": 99,
+     "method": "Redwood trees in the Woodcutting Guild with a dragon or infernal axe (low-effort, AFK-friendly)",
+     "xpPerHour": 60000,
+     "members": true
+    }
+   ],
+   "notes": "Click-limited gathering skill, not gp-limited - rates reflect an average focused player, not tick manipulators. Rates EXCLUDE 1.5-tick/2-tick/3-tick manipulation, which roughly doubles or triples XP/hr (e.g. ~126k-173k teak, ~180k redwood) but is extremely sweaty. 1-50 bracket is mostly F2P-viable (regular trees, oaks, willows); teak from 35+ is members-only, so a F2P player would use oaks/willows at lower rates (~40k). From 50+ the strong methods are members-only. Sulliuscep (70-90) is the standard recommended AFK method at ~90-95k XP/hr and notably faster than the otherwise-iconic redwoods. Redwoods (90-99) give only ~55-65k XP/hr but are the classic low-effort go-to; crystal axe pushes to ~70-75k. Crystal/infernal/dragon axe assumed; without dragon axe rates drop. (Note: the current wiki guide also lists Sailing-gated Ironwood/Rosewood trees and Forestry events, but the bracket picks above reflect the long-established standard methods.)"
+  },
+  "Agility": {
+   "skill": "Agility",
+   "brackets": [
+    {
+     "fromLevel": 1,
+     "toLevel": 50,
+     "method": "Standard rooftop courses (Gnome Stronghold/Draynor -> Al Kharid -> Varrock -> Canifis), running the agility laps and walking failures",
+     "xpPerHour": 14000,
+     "members": false
+    },
+    {
+     "fromLevel": 50,
+     "toLevel": 70,
+     "method": "Falador rooftop (50-60) then Seers' Village rooftop (60-70), ideally with Kandarin Hard Diary teleport",
+     "xpPerHour": 40000,
+     "members": true
+    },
+    {
+     "fromLevel": 70,
+     "toLevel": 90,
+     "method": "Hallowed Sepulchre (floors 1-4) - the commonly-recommended fast method; alternatively Pollnivneach/Rellekka rooftops at ~50-63k/hr",
+     "xpPerHour": 75000,
+     "members": true
+    },
+    {
+     "fromLevel": 90,
+     "toLevel": 99,
+     "method": "Hallowed Sepulchre full loop (all 5 floors); alternatively Ardougne rooftop at ~66-70k/hr",
+     "xpPerHour": 100000,
+     "members": true
+    }
+   ],
+   "notes": "Click-limited, NOT buyable/gp-limited - rates depend on focus and consistency. Lower brackets are slow grinds; rates climb steeply with level. The 1-50 figure is an average: ~9-10k/hr at Draynor rising to ~17k/hr at Canifis. F2P is limited to the Gnome Stronghold course (no rooftops) and is much slower; F2P realistically caps Agility training around 8-12k/hr. For 50-70, Seers' Village hits ~50-56k/hr with the Kandarin Hard Diary teleport vs ~40-44k without. For 70-99 I treated the Hallowed Sepulchre as the 'normal' fast method since it is the commonly-recommended go-to and is NOT tick-manipulation; it requires the 'Sins of the Father' quest plus Construction 56/Prayer 54/Ranged 62 setup. Players avoiding Sepulchre use standard rooftops: Pollnivneach (70-80, ~53-58k), Rellekka (80-90, ~59-63k), Ardougne (90-99, ~66-70k) with the relevant hard/elite diaries. Marks of Grace from rooftops fund the Graceful outfit (reduced weight, +30% energy restore). Excluded: 3-tick/2-tick teleport-running tricks and the Agility Pyramid (money method, low xp)."
+  },
+  "Herblore": {
+   "skill": "Herblore",
+   "brackets": [
+    {
+     "fromLevel": 1,
+     "toLevel": 50,
+     "method": "Making low-level potions by adding secondaries to unfinished potions (e.g. attack/antipoison up to ~lvl 12, then strength/energy potions; from lvl 38 prayer potions). Standard inventory-cycling with bank presets.",
+     "xpPerHour": 70000,
+     "members": true
+    },
+    {
+     "fromLevel": 50,
+     "toLevel": 70,
+     "method": "Super attack/super defence potions, then super energy and super restore (lvl 63). Add secondary to unfinished potion, bank, repeat.",
+     "xpPerHour": 250000,
+     "members": true
+    },
+    {
+     "fromLevel": 70,
+     "toLevel": 90,
+     "method": "Ranging potions (72), then Saradomin brews (81) / Saradomin brew or super defence; standard secondary-mixing with bank presets.",
+     "xpPerHour": 380000,
+     "members": true
+    },
+    {
+     "fromLevel": 90,
+     "toLevel": 99,
+     "method": "Super combat potions (lvl 90) - combine super attack, super strength, super defence and torstol. Standard inventory cycling.",
+     "xpPerHour": 400000,
+     "members": true
+    }
+   ],
+   "notes": "Herblore is a fully BUYABLE skill - the real constraint is GP, not clicks. Rates assume efficient inventory cycling with bank presets (~2,000-2,500 potions/hr); a focused average player hits the figures given here, which sit slightly below the wiki's theoretical maximums. XP/hr rises steadily as higher-level potions give more XP each, so within each bracket the rate climbs as you level up (e.g. ~62k at lvl 3 attack pots up to ~219k at lvl 38 prayer pots in the 1-50 bracket). Super combat potions (90+) cost very high GP (hundreds of millions for 90-99) - the 400k/hr is achievable but expensive; Saradomin brews are a cheaper standard alternative in the 80s. All methods listed are members-only. F2P Herblore effectively does not exist past the early Druidic Ritual quest range. These exclude 3-tick/2-tick stamina-potion manipulation and any sweaty click-intensive tricks per the normal-method requirement. Sources: https://oldschool.runescape.wiki/w/Pay-to-play_Herblore_training , https://oldschool.runescape.wiki/w/Herblore_training , https://www.theoatrix.net/post/updated-1-99-herblore-guide"
+  },
+  "Thieving": {
+   "skill": "Thieving",
+   "brackets": [
+    {
+     "fromLevel": 1,
+     "toLevel": 50,
+     "method": "Early quests for fast levels, then pickpocketing/stalls (e.g. Hosidius fruit stalls) and Chambers of Xeric thieving chests",
+     "xpPerHour": 40000,
+     "members": true
+    },
+    {
+     "fromLevel": 50,
+     "toLevel": 70,
+     "method": "Blackjacking (bandits/Menaphite thugs in Pollnivneach) - the standard fast route; Ardougne Knights is a lower-effort alternative",
+     "xpPerHour": 150000,
+     "members": true
+    },
+    {
+     "fromLevel": 70,
+     "toLevel": 90,
+     "method": "Pickpocketing Knights of Ardougne (low-cost, low-attention standard method); blackjacking is faster but more click-intensive",
+     "xpPerHour": 180000,
+     "members": true
+    },
+    {
+     "fromLevel": 90,
+     "toLevel": 99,
+     "method": "Pyramid Plunder (last-room golden chest + urns) - the standard endgame method at 91+; Ardougne Knights remains a viable AFK alternative",
+     "xpPerHour": 270000,
+     "members": true
+    }
+   ],
+   "notes": "All rates are members-only; F2P Thieving is much slower and effectively caps out on cake/silk/gem stalls and low-level pickpocketing. These are click-limited (effort) rates, not gp-limited, since Thieving is mostly free/profitable. Levels 1-50 are very fast and best skipped via quests (Biohazard, Hazeel Cult, Fight Arena, Tower of Life, Tribal Totem give ~7.2k combined); the 40k/hr figure represents fruit-stall/Chambers thieving once active. Blackjacking gives the highest standard rates (up to ~250-265k/hr at 99) but is click-intensive and trips guards; Ardougne Knights (~120-240k/hr depending on level, near 100% success at 94+ with hard Ardougne Diary + dodgy necklace/Shadow Veil) is the popular lower-effort choice. Pyramid Plunder (~270k/hr at 91+) is the classic 90s method. Excluded: Rogues' Castle chests (~280-300k/hr but deep-Wilderness PKer risk) and TzHaar-Hur (~250k/hr, requires fire cape access) as non-standard. Key gear: hard Ardougne Diary (+10% pickpocket success globally), dodgy necklace (avoid stun), rogue equipment (double loot, no extra XP)."
+  },
+  "Fletching": {
+   "skill": "Fletching",
+   "brackets": [
+    {
+     "fromLevel": 1,
+     "toLevel": 50,
+     "method": "Cut-and-string bows (short/long > oak > willow); use a fletching knife",
+     "xpPerHour": 60000,
+     "members": false
+    },
+    {
+     "fromLevel": 50,
+     "toLevel": 70,
+     "method": "Cut-and-string willow > maple > yew longbows",
+     "xpPerHour": 110000,
+     "members": false
+    },
+    {
+     "fromLevel": 70,
+     "toLevel": 90,
+     "method": "Cut-and-string yew > magic longbows",
+     "xpPerHour": 175000,
+     "members": false
+    },
+    {
+     "fromLevel": 90,
+     "toLevel": 99,
+     "method": "Cut-and-string magic longbows (redwood shields alternative at 92+)",
+     "xpPerHour": 210000,
+     "members": false
+    }
+   ],
+   "notes": "Buyable skill - rates are gp-limited, not click-limited, since logs/strings come from the GE. Standard method is cutting then stringing bows, the commonly recommended progression. Bow fletching works in F2P too, but the higher tiers used in the upper brackets (maple+, magic longbows, redwood shields, plus battlestaves/amethyst) are members-only - a strict F2P account is capped around oak/willow/yew unstrung and is much slower. Quoted rates are averaged across each bracket with a fletching knife and focused (not AFK) clicking; the bottom of the 1-50 bracket is far slower (early shortbows ~9-18k/hr) and the rate climbs steeply with level. EXCLUDED dart-making (rune/adamant/amethyst darts), which can hit 500k-1M+ XP/hr but only via extremely fast spam-clicking or 2-tick/4-dart-per-tick manipulation - that is the click-intensive sweaty method the task says to omit when a cheaper standard exists. Also excluded broad bolts/arrows (Slayer-point gated) and pure stringing-only setups."
+  },
+  "Slayer": {
+   "skill": "Slayer",
+   "brackets": [
+    {
+     "fromLevel": 1,
+     "toLevel": 50,
+     "method": "Low-level tasks from Mazchna then Vannaka, killed with melee (and ranged/cannon where useful). Combat level is the main bottleneck early on; just clear assigned tasks.",
+     "xpPerHour": 25000,
+     "members": true
+    },
+    {
+     "fromLevel": 50,
+     "toLevel": 70,
+     "method": "Vannaka/Chaeldar tasks with a Dwarf multicannon on melee tasks, plus early Ice Burst bursting once unlocked (e.g. dust devils at 65 Slayer/70 Magic) in multi-combat areas.",
+     "xpPerHour": 50000,
+     "members": true
+    },
+    {
+     "fromLevel": 70,
+     "toLevel": 90,
+     "method": "Nieve/Konar (later Duradel) tasks, Ice Barrage/Burst stacking monsters in the Catacombs of Kourend (nechryaels, dust devils) and cannoning tasks like dagannoths/dark beasts.",
+     "xpPerHour": 80000,
+     "members": true
+    },
+    {
+     "fromLevel": 90,
+     "toLevel": 99,
+     "method": "Duradel tasks, barraging stacked smoke devils/nechryaels in multi-combat, and cannon+venator-bow tasks (e.g. araxytes). Standard focused play; ~150k/hr is only with fully maxed gear/setup.",
+     "xpPerHour": 110000,
+     "members": true
+    }
+   ],
+   "notes": "Slayer is members-only (no F2P Slayer). Rates assume normal focused play, NOT 3t/2t tick manipulation. Bursting/barraging requires Desert Treasure (Ancient Magicks) and 70+ Magic; before that, rates are combat-limited. The often-quoted 150k/hr peak needs maxed gear, full point/blocking optimization, and high combat stats, so the 90-99 figure here uses a realistic average-player rate. Slayer also yields large passive combat-skill XP alongside these Slayer rates. Faster low-level setups exist if you push combat/Magic early, so 1-50 is the most variable bracket."
+  },
+  "Farming": {
+   "skill": "Farming",
+   "brackets": [
+    {
+     "fromLevel": 1,
+     "toLevel": 50,
+     "method": "Daily tree runs (oak/willow) plus allotments and herb runs; quests carry much of 1-38",
+     "xpPerDay": 20000,
+     "members": true
+    },
+    {
+     "fromLevel": 50,
+     "toLevel": 99,
+     "method": "Daily tree + fruit-tree runs (maple/yew/magic, hardwood) plus herb runs",
+     "xpPerDay": 50000,
+     "members": true
+    }
+   ],
+   "notes": "Farming is DAILY-GATED, not click-gated: tree/fruit/hardwood patches grow on multi-hour to multi-day timers, so progress is bounded by the calendar, not by how long you play. The wiki's headline figures are 'per actively spent hour' (1.2m-2.5m xp/hr), which this model previously took literally and so believed 70-90 took about 27 minutes. ADJUSTED for the plugin: the rate is expressed as xpPerDay and the engine spreads it over 24 elapsed hours, so training time reads in calendar days. Amounts: 20,000/day to 50 (low-level trees give little, and you are still unlocking patches), 50,000/day from 50 (roughly a tree run a day). Deliberately conservative - there are ways around the timers (Tithe Farm from 74 is genuinely continuous at ~90-100k/hr, bagged plants, contracts), so a funded player who games it will beat this. Members-only; F2P has effectively no Farming training."
+  },
+  "Construction": {
+   "skill": "Construction",
+   "brackets": [
+    {
+     "fromLevel": 1,
+     "toLevel": 50,
+     "method": "Oak larders / oak doors on a butler (planks from butler); cheap junk builds below level 33",
+     "xpPerHour": 80000,
+     "members": true
+    },
+    {
+     "fromLevel": 50,
+     "toLevel": 70,
+     "method": "Oak larders, transitioning to mahogany tables (level 52) with a demon butler",
+     "xpPerHour": 500000,
+     "members": true
+    },
+    {
+     "fromLevel": 70,
+     "toLevel": 90,
+     "method": "Mahogany tables / oak dungeon doors (level 74) with a demon butler",
+     "xpPerHour": 550000,
+     "members": true
+    },
+    {
+     "fromLevel": 90,
+     "toLevel": 99,
+     "method": "Mahogany tables on a demon butler (build/remove cycle)",
+     "xpPerHour": 600000,
+     "members": true
+    }
+   ],
+   "notes": "Construction is a buyable skill: the practical limit is gp (plank cost), not clicks, so most players choose a rate they can afford rather than the maximum. Rates given are for a focused normal player using a butler/demon butler, EXCLUDING hyper-efficient 3-tick-style gnome/teak bench micro (the wiki's ~900k-1.1M X/hr peak figures) and tick-perfect butler manipulation. Members-only skill: a player house, butlers, and plank methods all require membership; there is no meaningful F2P Construction training (F2P is limited to basic low-level builds and is extremely slow/expensive). The 1-50 average is dragged down by slow, cheap early levels (oak larders unlock at 33); steady ~480k oak-larder rates only begin around level 50. Mahogany Homes (Adept/Expert contracts, ~150-200k XP/hr) is a much cheaper, slower alternative for low-cash players."
+  },
+  "Hunter": {
+   "skill": "Hunter",
+   "brackets": [
+    {
+     "fromLevel": 1,
+     "toLevel": 50,
+     "method": "Birdhouse runs (passive) supplemented by trap hunting (ruby harvests, red crabs, embertailed jerboas)",
+     "xpPerHour": 45000,
+     "members": true
+    },
+    {
+     "fromLevel": 50,
+     "toLevel": 70,
+     "method": "Red chinchompas (carnivorous chinchompas, 63+) with multiple traps",
+     "xpPerHour": 100000,
+     "members": true
+    },
+    {
+     "fromLevel": 70,
+     "toLevel": 90,
+     "method": "Black chinchompas (solo, no tick manipulation) or Hunters' Rumours as the non-Wilderness alternative",
+     "xpPerHour": 170000,
+     "members": true
+    },
+    {
+     "fromLevel": 90,
+     "toLevel": 99,
+     "method": "Black chinchompas (solo, no tick manipulation); herbiboar as low-effort alternative",
+     "xpPerHour": 210000,
+     "members": true
+    }
+   ],
+   "notes": "All methods are members-only; Hunter is effectively a P2P skill (F2P has no real Hunter content). Rates are realistic solo rates EXCLUDING 1-tick/2-tick chinchompa manipulation and alt-account multilogging, which can push black chins to ~250-300k/hr. 1-50: birdhouse runs are the commonly-recommended low-effort backbone (~40-50k/hr effective, passive between runs); active trap hunting in this range climbs from ~13k (weasels) to ~50k/hr (jerboas/falconry). 50-70: red chinchompas without tick manipulation run ~90-115k/hr; drift net fishing is a buyable AFK-ish alternative. 70-99: black chinchompas are the standard fastest method (Wilderness risk) - solo no-tick rates scale ~145k at 73, ~197k at 90, ~225k at 99; Hunters' Rumours (~160-195k/hr at 72-91) is the recommended safe non-Wilderness alternative with similar XP. 90-99: black chins (~197-225k/hr) remain fastest; herbiboar (~157-171k/hr) is the popular low-attention option. These methods are click-intensive/active, not gp-limited."
+  }
+ }
+}
