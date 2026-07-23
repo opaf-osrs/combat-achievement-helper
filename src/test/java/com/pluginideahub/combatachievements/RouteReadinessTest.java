@@ -151,9 +151,10 @@ public class RouteReadinessTest
 		SidePanelViewModel vm = viewModelFor(account(1));
 		assertFalse("a level-3 is still told what quest to do", vm.unlocks().isEmpty());
 		assertFalse("and is told what to train", vm.trainings().isEmpty());
-		// The Route itself renders no out-of-reach CA, so those two sections are all a level-3 is shown.
-		assertTrue("nothing in the route is beyond reach",
-			vm.path().steps.stream().allMatch(s -> s.detail.withinReach));
+		// The Route lists only CAs that can be attempted now — nothing out of reach and nothing behind a
+		// quest — so for a level-3 those two sections are the whole page.
+		assertTrue("every route step is doable now",
+			vm.path().steps.stream().allMatch(s -> s.detail.doableNow && s.detail.withinReach));
 
 		// Order still respects reach: the short novice quest leads, not a 25-hour questline.
 		assertTrue("a quick quest leads the list, not a grandmaster one (" + vm.unlocks().get(0).questName

@@ -1408,24 +1408,16 @@ public class CombatAchievementsPanel extends PluginPanel
 			content.add(fullWidth(new JLabel(sb.toString())));
 			content.add(spacer());
 
-			// The route's doable steps + the CAs the unlocks would open, grouped by boss (do the same boss
-			// in one trip) with groups ordered by their quickest task. CAs the account is not within reach
-			// of are left out entirely: the Route is a plan to follow, and listing content forty levels
-			// away made the whole thing read as if it were all available. An account with nothing in reach
-			// is therefore left with the two sections that DO apply to it — what to train, and what to quest.
+			// Only CAs the player can go and do right now, grouped by boss so one trip clears several.
+			// Nothing out of reach and nothing behind a quest: the Route is a plan to follow, and listing
+			// content that cannot be attempted made the whole thing read as if it were all available. The
+			// quest that would open more is recommended above, in Unlock next, where it can be acted on.
 			List<SidePanelViewModel.CaDetail> route = new ArrayList<>();
 			for (SidePanelViewModel.PathRow step : path.steps)
 			{
 				if (step.detail != null)
 				{
 					route.add(step.detail);
-				}
-			}
-			for (SidePanelViewModel.CaDetail locked : path.lockedCas)
-			{
-				if (locked.withinReach)
-				{
-					route.add(locked);
 				}
 			}
 			renderRouteGroups(route);
