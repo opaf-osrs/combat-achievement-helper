@@ -166,10 +166,13 @@ public class LowHangingFruitRankerTest
 	{
 		// Two identical tasks (same points, same neutral effort, no difficulty data). The only difference:
 		// task 21's player is 40 summed levels below its soft recommended stats, so it must rank lower.
-		CombatAchievement metStats = new CombatAchievement(20, "Ready", AchievementTier.HARD, "Boss",
+		// Different bosses so the entry-kill reprice (which lifts a "kill once" to its best boss-mate)
+		// does not couple them — in reality two tasks at one boss share rec-stats and cannot differ like
+		// this anyway.
+		CombatAchievement metStats = new CombatAchievement(20, "Ready", AchievementTier.HARD, "Boss A",
 			TaskType.KILL_COUNT, 3, "", "", "");
 		CombatAchievement underLevelled = new CombatAchievement(21, "Underlevelled", AchievementTier.HARD,
-			"Boss", TaskType.KILL_COUNT, 3, "", "", "");
+			"Boss B", TaskType.KILL_COUNT, 3, "", "", "");
 		EffortDataLibrary el = EffortDataLibrary.load(stream("{\"tasks\":{}}"));
 		SignalsProvider sig = id -> id == 20
 			? new TaskLiveSignals(true, true, false, true, 0)
@@ -186,6 +189,29 @@ public class LowHangingFruitRankerTest
 		// Squaring is what stops a high-point task far out of reach from still looking like good value.
 		assertEquals(2.0 * ranked.get(0).effort(), ranked.get(1).effort(), 1e-6);
 		assertEquals(ranked.get(0).score() / 2.0, ranked.get(1).score(), 1e-6);
+	}
+
+	@Test
+	public void aSingleKillEntryTaskLeadsItsBoss()
+	{
+		// "Kill Nex once" is completed for free by any other Nex task — you cannot do "kill Nex 25 times"
+		// or "kill Nex without her healing" without a first kill — so it must never rank behind them just
+		// because they are worth an extra point. Same boss, same rec-stats; only the wording differs.
+		CombatAchievement once = new CombatAchievement(30, "Nex Veteran", AchievementTier.MASTER, "Nex",
+			TaskType.KILL_COUNT, 4, "Kill Nex once.", "", "");
+		CombatAchievement grind = new CombatAchievement(31, "Nex Master", AchievementTier.MASTER, "Nex",
+			TaskType.KILL_COUNT, 5, "Kill Nex 25 times.", "", "");
+		CombatAchievement restricted = new CombatAchievement(32, "A siphon will solve this",
+			AchievementTier.MASTER, "Nex", TaskType.MECHANICAL, 5, "Kill Nex without her healing.", "", "");
+		EffortDataLibrary el = EffortDataLibrary.load(stream("{\"tasks\":{}}"));
+		SignalsProvider sig = id -> new TaskLiveSignals(true, true, false, true, 0);
+
+		List<RankedTask> ranked = new LowHangingFruitRanker(el, EffortModel.standard())
+			.rank(Arrays.asList(grind, restricted, once), Collections.emptySet(), sig, false);
+
+		assertEquals("the single kill leads its boss", 30, ranked.get(0).achievement().id());
+		assertTrue("and it is flagged as the entry kill", ranked.get(0).isEntryKill());
+		assertFalse("a 25-kill task is not an entry kill", ranked.get(1).isEntryKill());
 	}
 
 	private static ByteArrayInputStream stream(String json)

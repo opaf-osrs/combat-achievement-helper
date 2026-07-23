@@ -8,7 +8,9 @@ import com.pluginideahub.combatachievements.core.achievement.TaskDifficultyLibra
 import com.pluginideahub.combatachievements.core.achievement.TaskEffortData;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -108,10 +110,52 @@ public final class LowHangingFruitRanker
 				lockReason(effort, sig), doableNow, effort.curated(), difficulty, sig.recStatsShortfall()));
 		}
 
+		// An "entry" kill (kill the boss once) is completed for free by ANY other task at that boss — you
+		// cannot do "kill Nex without her healing" or "kill Nex 25 times" without first killing Nex once. So
+		// it can never really cost more than the cheapest task at its boss: clamp its effort down to that
+		// minimum and rescore. Without this a harder, higher-point task at the same boss outranked the very
+		// task it completes on the way (Nex Master, "kill 25 times", above Nex Veteran, "kill once").
+		reprice(ranked);
+
 		ranked.sort(Comparator
 			.comparingDouble(RankedTask::score).reversed()
+			.thenComparing(Comparator.comparing(RankedTask::isEntryKill).reversed())
 			.thenComparingInt(rt -> rt.achievement().id()));
 		return ranked;
+	}
+
+	/**
+	 * Lifts each entry kill to at least the best score among its boss's tasks. Any of them completes the
+	 * single kill for free, so the entry kill is worth no less than the best of them — including a
+	 * higher-point grind like "kill 25 times", which the abstract effort model otherwise scores above a
+	 * single kill purely on points. Paired with the entry-kill tie-break, this makes "kill it once" lead
+	 * its boss.
+	 */
+	private void reprice(List<RankedTask> ranked)
+	{
+		Map<String, Double> bestByBoss = new HashMap<>();
+		for (RankedTask rt : ranked)
+		{
+			String boss = rt.achievement().monster();
+			if (boss == null || boss.isEmpty())
+			{
+				continue;
+			}
+			bestByBoss.merge(boss, rt.score(), Math::max);
+		}
+		for (int i = 0; i < ranked.size(); i++)
+		{
+			RankedTask rt = ranked.get(i);
+			if (!rt.isEntryKill())
+			{
+				continue;
+			}
+			double best = bestByBoss.getOrDefault(rt.achievement().monster(), rt.score());
+			if (best > rt.score())
+			{
+				ranked.set(i, rt.withScore(best));
+			}
+		}
 	}
 
 	private static String rationale(CombatAchievement task, TaskEffortData effort, TaskLiveSignals sig)

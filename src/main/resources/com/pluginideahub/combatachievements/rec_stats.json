@@ -11953,6 +11953,13 @@
      ],
      "level": 74,
      "mode": "all"
+    },
+    {
+     "skills": [
+      "Magic"
+     ],
+     "level": 76,
+     "mode": "all"
     }
    ]
   },
@@ -11985,6 +11992,13 @@
      ],
      "level": 74,
      "mode": "all"
+    },
+    {
+     "skills": [
+      "Magic"
+     ],
+     "level": 76,
+     "mode": "all"
     }
    ]
   },
@@ -12016,6 +12030,13 @@
       "Prayer"
      ],
      "level": 74,
+     "mode": "all"
+    },
+    {
+     "skills": [
+      "Magic"
+     ],
+     "level": 76,
      "mode": "all"
     }
    ]
@@ -12204,6 +12225,13 @@
       "Prayer"
      ],
      "level": 74,
+     "mode": "all"
+    },
+    {
+     "skills": [
+      "Magic"
+     ],
+     "level": 76,
      "mode": "all"
     }
    ]

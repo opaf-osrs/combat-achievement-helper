@@ -2,6 +2,8 @@ package com.pluginideahub.combatachievements.core.ranking;
 
 import com.pluginideahub.combatachievements.core.achievement.CombatAchievement;
 import com.pluginideahub.combatachievements.core.achievement.TaskDifficulty;
+import com.pluginideahub.combatachievements.core.achievement.TaskType;
+import com.pluginideahub.combatachievements.core.effort.TaskTimeModel;
 
 /**
  * A task scored by the low-hanging-fruit ranker: its computed effort, its points-per-effort score,
@@ -65,6 +67,29 @@ public final class RankedTask
 	public double score()
 	{
 		return score;
+	}
+
+	/**
+	 * An "entry" task: a Kill Count task needing a single kill of its boss. It is completed for free by
+	 * ANY other task at that boss — you cannot do "kill Nex without her healing" without first killing Nex
+	 * — so it should never rank behind a harder task at the same boss just because that task is worth an
+	 * extra point. The ranker floats these to the front so a boss's "kill it once" always leads.
+	 */
+	public boolean isEntryKill()
+	{
+		return achievement.type() == TaskType.KILL_COUNT
+			&& TaskTimeModel.requiredKills(achievement.description()) <= 1;
+	}
+
+	/**
+	 * A copy with the score raised to {@code newScore}. Used to lift an entry kill to the value of the
+	 * best task at its boss, which completes it for free. Effort is left as-is (it is the real effort of
+	 * the single kill); only the ranking value changes.
+	 */
+	public RankedTask withScore(double newScore)
+	{
+		return new RankedTask(achievement, effort, Math.max(score, newScore), rationale, lockReason,
+			doableNow, curated, difficulty, recStatsShortfall);
 	}
 
 	public String rationale()
