@@ -96,7 +96,7 @@ public final class Palette
 		Palette build() { return new Palette(this); }
 	}
 
-	/** The original identity — orange names, green points, gold headers (unchanged current look). */
+	/** Orange names, green points, gold headers. The panel's default look. */
 	public static final Palette CLASSIC = builder()
 		.name("#FF9D33").points("#7FC24A").headerAccent("#FFD98A").desc("#B6AE96")
 		.positive("#4CAF50").negative("#D86A5A").locked("#969696").neutralMeta("#8A8A8A")
@@ -105,8 +105,8 @@ public final class Palette
 		.tierEasy("#78C878").tierMedium("#78B4DC").tierHard("#C8AA5A")
 		.tierElite("#BE78C8").tierMaster("#DC786E").tierGrandmaster("#E6C85A").build();
 
-	/** Refined identity: deeper amber names vs brighter gold headers (brightness gap), teal→violet→coral
-	 *  difficulty ramp that never collides with points-green or header-gold. */
+	/** Deeper amber names against brighter gold headers, with a teal-violet-coral difficulty ramp so a
+	 *  difficulty never reads as the points green or the header gold. */
 	public static final Palette MOLTEN_GAUNTLET = builder()
 		.name("#E28F30").points("#8BD450").headerAccent("#F2C34E").desc("#BDB49A")
 		.positive("#5CB85C").negative("#E4756A").locked("#8F8F8F").neutralMeta("#969696")
@@ -115,7 +115,7 @@ public final class Palette
 		.tierEasy("#8BD48B").tierMedium("#78B4DC").tierHard("#C8AA5A")
 		.tierElite("#C88FD2").tierMaster("#DC8A78").tierGrandmaster("#E6C85A").build();
 
-	/** Native RuneLite: ColorScheme greys + BRAND_ORANGE identity + green/red state; header owns the gold. */
+	/** RuneLite's own greys and brand orange, with green/red for state. Headers take the gold. */
 	public static final Palette RUNELITE_CITIZEN = builder()
 		.name("#E8A44C").points("#5FD07A").headerAccent("#DC8A00").desc("#A9A28C")
 		.positive("#55C25A").negative("#EA7264").locked("#969696").neutralMeta("#9A9A9A")
@@ -124,7 +124,7 @@ public final class Palette
 		.tierEasy("#6FC26F").tierMedium("#6FB0DC").tierHard("#D8B45A")
 		.tierElite("#C888D0").tierMaster("#E0786E").tierGrandmaster("#E6C85A").build();
 
-	/** Modern dark, single warm accent; neutral near-white headers separate by weight, not a third hue. */
+	/** One warm accent and near-white headers, so headings separate by weight rather than a third colour. */
 	public static final Palette MODERN_DARK = builder()
 		.name("#E8935C").points("#6FB749").headerAccent("#F0F0F0").desc("#B0A99A")
 		.positive("#6FB749").negative("#E8795F").locked("#969696").neutralMeta("#969696")
@@ -133,7 +133,7 @@ public final class Palette
 		.tierEasy("#6FB749").tierMedium("#5AA9E0").tierHard("#D9A441")
 		.tierElite("#BB84DA").tierMaster("#E8795F").tierGrandmaster("#E6C85A").build();
 
-	/** OSRS-authentic warm: parchment-gold on stone, reward-gem tier hues. */
+	/** Warmer and softer throughout: muted gold on stone, with tier colours drawn from the reward gems. */
 	public static final Palette OSRS_WARM = builder()
 		.name("#E8A13C").points("#86C34A").headerAccent("#F2D08A").desc("#C9B99A")
 		.positive("#7FBF5A").negative("#E07A5F").locked("#999488").neutralMeta("#A39D91")
@@ -142,7 +142,8 @@ public final class Palette
 		.tierEasy("#8FD08A").tierMedium("#74B4DC").tierHard("#E0C060")
 		.tierElite("#C48ACF").tierMaster("#E08A6E").tierGrandmaster("#F0D24E").build();
 
-	/** High-contrast, colour-blind-safe: cyan value, blue→amber→red difficulty; nearly all pairs AAA. */
+	/** Brighter, and picked to stay legible for colour-blind readers: cyan for value, blue-amber-red for
+	 *  difficulty. Nearly every pairing meets AAA contrast. */
 	public static final Palette HIGH_CONTRAST = builder()
 		.name("#FFB84D").points("#5FD3C6").headerAccent("#FFD98A").desc("#C9C2B0")
 		.positive("#5FD3C6").negative("#FF9E85").locked("#9A9A9A").neutralMeta("#9A9A9A")
