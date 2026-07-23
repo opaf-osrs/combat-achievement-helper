@@ -143,8 +143,6 @@ public class CombatAchievementsPlugin extends Plugin
 		panel = new CombatAchievementsPanel(this::onAction);
 		panel.applyTheme(config.panelTheme().palette());
 		panel.setHowToDefault(config.showHowTo());
-		panel.setTripOverheadMinutes(config.tripOverheadMinutes());
-		panel.setBossTimeWeight(config.bossTimeWeight() / 100.0);
 		panel.setDeveloperMode(config.developerMode());
 		navigationButton = NavigationButton.builder()
 			.tooltip("Combat Achievement Helper")
@@ -354,8 +352,6 @@ public class CombatAchievementsPlugin extends Plugin
 			{
 				panel.applyTheme(config.panelTheme().palette());
 				panel.setHowToDefault(config.showHowTo());
-				panel.setTripOverheadMinutes(config.tripOverheadMinutes());
-				panel.setBossTimeWeight(config.bossTimeWeight() / 100.0);
 				panel.setDeveloperMode(config.developerMode());
 			}
 			requestRefresh();
@@ -425,22 +421,18 @@ public class CombatAchievementsPlugin extends Plugin
 			: SignalsProvider.defaults();
 		CombatExperience experience = loggedIn ? killCountTracker.snapshot() : CombatExperience.empty();
 
-		EffortModel model = EffortModel.fromConfig(config.effortSensitivity(),
-			config.caGearWeight() / 100.0, config.caRngWeight() / 100.0, config.caSupplyWeight() / 100.0,
-			config.caGroupWeight() / 100.0, config.caLearningWeight() / 100.0);
+		// The ranking/effort weights are no longer user-tunable — everything runs at the neutral defaults
+		// (EffortModel.standard(), builder weights 1.0, trip overhead 6). The dials were removed from the
+		// config panel; the engine still uses the figures, just not adjustable ones.
 		SidePanelViewModelBuilder builder = new SidePanelViewModelBuilder(
-			library, effortLibrary, videoLibrary, guideLibrary, tierRewardLibrary, model)
+			library, effortLibrary, videoLibrary, guideLibrary, tierRewardLibrary, EffortModel.standard())
 			.difficulty(taskDifficultyLibrary)
 			.recStats(recStatsLibrary)
 			.bossDifficulty(com.pluginideahub.combatachievements.core.effort.BossDifficultyLibrary.loadBundled())
-			.rankingWeights(config.caPointsWeight() / 100.0, config.caDifficultyWeight() / 100.0)
-			.unlockWeights(config.routeUnlockBias() / 100.0, config.routeUnlockDifficultyWeight() / 100.0)
-			.routePathWeights(config.routePathPointsWeight() / 100.0, config.routePathDifficultyWeight() / 100.0)
 			.routeShuffle(routeShuffleSeed)
 			.detail(taskDetailLibrary)
 			.scaling(scalingLibrary)
-			.effortEngine(bossTimingLibrary, questEffortLibrary, skillXpLibrary, experience, profile,
-				config.tripOverheadMinutes());
+			.effortEngine(bossTimingLibrary, questEffortLibrary, skillXpLibrary, experience, profile, 6);
 		SidePanelViewModel viewModel = builder.build(snapshot, signals, null);
 		panel.render(viewModel);
 	}

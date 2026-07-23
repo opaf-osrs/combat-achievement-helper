@@ -9,9 +9,8 @@ public enum PanelTheme
 	// user's chosen theme.
 	CLASSIC("Classic", Palette.CLASSIC),
 	MOLTEN_GAUNTLET("Vivid", Palette.MOLTEN_GAUNTLET),
-	RUNELITE_CITIZEN("RuneLite", Palette.RUNELITE_CITIZEN),
+	RUNELITE_CITIZEN("Slate", Palette.RUNELITE_CITIZEN),
 	MODERN_DARK("Plain", Palette.MODERN_DARK),
-	OSRS_WARM("Warm", Palette.OSRS_WARM),
 	HIGH_CONTRAST("High contrast", Palette.HIGH_CONTRAST);
 
 	private final String label;

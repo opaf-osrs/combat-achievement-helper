@@ -133,15 +133,6 @@ public final class Palette
 		.tierEasy("#6FB749").tierMedium("#5AA9E0").tierHard("#D9A441")
 		.tierElite("#BB84DA").tierMaster("#E8795F").tierGrandmaster("#E6C85A").build();
 
-	/** Warmer and softer throughout: muted gold on stone, with tier colours drawn from the reward gems. */
-	public static final Palette OSRS_WARM = builder()
-		.name("#E8A13C").points("#86C34A").headerAccent("#F2D08A").desc("#C9B99A")
-		.positive("#7FBF5A").negative("#E07A5F").locked("#999488").neutralMeta("#A39D91")
-		.accent("#DC8A00").modeSelected("#A05E0E").modeSelectedText("#FFFFFF")
-		.diffEasy("#86C34A").diffMid("#E8B84B").diffHard("#E07A5F")
-		.tierEasy("#8FD08A").tierMedium("#74B4DC").tierHard("#E0C060")
-		.tierElite("#C48ACF").tierMaster("#E08A6E").tierGrandmaster("#F0D24E").build();
-
 	/** Brighter, and picked to stay legible for colour-blind readers: cyan for value, blue-amber-red for
 	 *  difficulty. Nearly every pairing meets AAA contrast. */
 	public static final Palette HIGH_CONTRAST = builder()

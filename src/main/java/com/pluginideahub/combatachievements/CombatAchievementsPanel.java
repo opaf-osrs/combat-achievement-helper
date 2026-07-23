@@ -1525,10 +1525,7 @@ public class CombatAchievementsPanel extends PluginPanel
 				.append(CombatAchievementsTheme.hex(difficultyColor(c.difficulty)))
 				.append("'>diff ").append(c.difficulty).append("</span>");
 		}
-		if (c.totalMinutes() > 0)
-		{
-			sb.append(" <span style='color:" + metaHex() + "'>· ~").append(c.totalMinutes()).append(" min</span>");
-		}
+		// Time estimates are intentionally not shown — the engine still uses them for ordering.
 		// When not under a boss header, name the boss so a solo route step still tells you where to go.
 		if (!grouped && !c.monster.isEmpty())
 		{
@@ -1585,8 +1582,7 @@ public class CombatAchievementsPanel extends PluginPanel
 			.append("'><b>").append(escape(t.label)).append("</b></span>");
 		sb.append("<br><span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.POSITIVE))
 			.append("'>opens ").append(t.unlockedTaskCount).append(" CAs (").append(t.unlockedPoints)
-			.append(" pts)</span> <span style='color:" + metaHex() + "'>· ~")
-			.append(formatMinutes(t.trainingMinutes, t.calendarTime)).append("</span>");
+			.append(" pts)</span>");
 		if (t.unlocksHint != null && !t.unlocksHint.isEmpty())
 		{
 			sb.append("<br><span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.DESC))
@@ -1596,34 +1592,6 @@ public class CombatAchievementsPanel extends PluginPanel
 		card.add(new JLabel(sb.toString()), BorderLayout.CENTER);
 		addHover(card, ColorScheme.DARK_GRAY_COLOR, ColorScheme.DARK_GRAY_HOVER_COLOR);
 		return fullWidth(card);
-	}
-
-	static String formatMinutes(int minutes)
-	{
-		return formatMinutes(minutes, false);
-	}
-
-	/**
-	 * Minutes below the hour, hours above it — and hours all the way up however long it runs, because the
-	 * figure is read as time spent playing. The exception is a daily-gated skill (Farming), where the
-	 * estimate is elapsed time waiting on patch timers: "290 hr" would read as a grind you could sit down
-	 * and do, so those alone are shown in days.
-	 */
-	static String formatMinutes(int minutes, boolean calendarTime)
-	{
-		if (minutes < 60)
-		{
-			return Math.max(1, minutes) + " min";
-		}
-		double hours = minutes / 60.0;
-		if (calendarTime && hours >= 48)
-		{
-			double days = hours / 24.0;
-			return (days < 10 ? String.format(Locale.ROOT, "%.1f", days) : String.valueOf(Math.round(days)))
-				+ " days";
-		}
-		return (hours < 10 ? String.format(Locale.ROOT, "%.1f", hours) : String.valueOf(Math.round(hours)))
-			+ " hr";
 	}
 
 	private JPanel unlockCard(SidePanelViewModel.UnlockView u)
@@ -1643,7 +1611,7 @@ public class CombatAchievementsPanel extends PluginPanel
 		}
 		sb.append("<br><span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.POSITIVE))
 			.append("'>unlocks ").append(u.unlockedTaskCount).append(" CAs (").append(u.unlockedPoints)
-			.append(" pts)</span> <span style='color:" + metaHex() + "'>· ~").append(u.totalMinutes).append(" min</span>");
+			.append(" pts)</span>");
 		if (u.prerequisites != null && !u.prerequisites.isEmpty())
 		{
 			sb.append("<br><span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.DESC))
@@ -1734,13 +1702,6 @@ public class CombatAchievementsPanel extends PluginPanel
 		content.add(fullWidth(new JLabel(diff.toString())));
 		content.add(spacer());
 
-		if (d.estMinutes > 0)
-		{
-			content.add(sectionHeader("Effort"));
-			content.add(fullWidth(new JLabel(
-				"<html><body style='width:182px'>~" + d.estMinutes + " min</body></html>")));
-			content.add(spacer());
-		}
 
 		// Curated how-to (stats/setup/items/strategy) behind a collapsible arrow so the detail stays lean;
 		// the config option seeds whether it starts expanded.
