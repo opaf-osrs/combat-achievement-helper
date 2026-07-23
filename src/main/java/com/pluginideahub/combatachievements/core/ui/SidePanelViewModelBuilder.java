@@ -798,7 +798,7 @@ public final class SidePanelViewModelBuilder
 			.plan(all, completedIds, effortLib, recStatsLib, profile, TRAININGS_LIMIT))
 		{
 			views.add(new SidePanelViewModel.TrainingView(s.label(), s.unlockedTaskCount(),
-				s.unlockedPoints(), s.trainingMinutes(), s.unlocksHint()));
+				s.unlockedPoints(), s.trainingMinutes(), s.unlocksHint(), s.isCalendarTime()));
 		}
 		return views;
 	}

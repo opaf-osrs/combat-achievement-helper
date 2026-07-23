@@ -167,9 +167,14 @@ public final class TrainingPlanner
 			return; // trains nothing open — not worth suggesting
 		}
 		double hours = 0;
+		boolean calendarTime = false;
 		for (Map.Entry<String, Integer> e : raise.entrySet())
 		{
-			hours += Math.max(0, skillXp.hoursToTrain(e.getKey(), profile.levelOf(e.getKey()), e.getValue()));
+			int have = profile.levelOf(e.getKey());
+			hours += Math.max(0, skillXp.hoursToTrain(e.getKey(), have, e.getValue()));
+			// Farming is bounded by patch timers, so its estimate is elapsed time and reads in days. A goal
+			// you simply have to sit and play stays in hours however long it runs.
+			calendarTime |= skillXp.isDailyGated(e.getKey(), have, e.getValue());
 		}
 		String hint = byMonster.entrySet().stream()
 			.max(Map.Entry.comparingByValue())
@@ -177,7 +182,7 @@ public final class TrainingPlanner
 			.orElse("");
 		int target = raise.values().stream().max(Integer::compareTo).orElse(0);
 		out.add(new TrainingSuggestion(label, new ArrayList<>(raise.keySet()), target, count, points,
-			(int) Math.round(hours * 60), hint));
+			(int) Math.round(hours * 60), hint, calendarTime));
 	}
 
 	/** Tasks that are both doable and within reach — the set a training goal is trying to grow. */

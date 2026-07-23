@@ -1582,7 +1582,7 @@ public class CombatAchievementsPanel extends PluginPanel
 		sb.append("<br><span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.POSITIVE))
 			.append("'>opens ").append(t.unlockedTaskCount).append(" CAs (").append(t.unlockedPoints)
 			.append(" pts)</span> <span style='color:" + metaHex() + "'>· ~")
-			.append(formatMinutes(t.trainingMinutes)).append("</span>");
+			.append(formatMinutes(t.trainingMinutes, t.calendarTime)).append("</span>");
 		if (t.unlocksHint != null && !t.unlocksHint.isEmpty())
 		{
 			sb.append("<br><span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.DESC))
@@ -1594,18 +1594,30 @@ public class CombatAchievementsPanel extends PluginPanel
 		return fullWidth(card);
 	}
 
-	/**
-	 * Minutes below the hour, hours above it — and hours all the way up, never days. A long estimate is
-	 * still read as "how much game time is this", so switching units at the top just makes two rows in the
-	 * same list incomparable at a glance.
-	 */
 	static String formatMinutes(int minutes)
+	{
+		return formatMinutes(minutes, false);
+	}
+
+	/**
+	 * Minutes below the hour, hours above it — and hours all the way up however long it runs, because the
+	 * figure is read as time spent playing. The exception is a daily-gated skill (Farming), where the
+	 * estimate is elapsed time waiting on patch timers: "290 hr" would read as a grind you could sit down
+	 * and do, so those alone are shown in days.
+	 */
+	static String formatMinutes(int minutes, boolean calendarTime)
 	{
 		if (minutes < 60)
 		{
 			return Math.max(1, minutes) + " min";
 		}
 		double hours = minutes / 60.0;
+		if (calendarTime && hours >= 48)
+		{
+			double days = hours / 24.0;
+			return (days < 10 ? String.format(Locale.ROOT, "%.1f", days) : String.valueOf(Math.round(days)))
+				+ " days";
+		}
 		return (hours < 10 ? String.format(Locale.ROOT, "%.1f", hours) : String.valueOf(Math.round(hours)))
 			+ " hr";
 	}

@@ -16,10 +16,19 @@ public final class TrainingSuggestion
 	private final int unlockedPoints;
 	private final int trainingMinutes;
 	private final String unlocksHint;
+	private final boolean calendarTime;
 
 	public TrainingSuggestion(String label, List<String> skills, int targetLevel, int unlockedTaskCount,
 		int unlockedPoints, int trainingMinutes, String unlocksHint)
 	{
+		this(label, skills, targetLevel, unlockedTaskCount, unlockedPoints, trainingMinutes, unlocksHint,
+			false);
+	}
+
+	public TrainingSuggestion(String label, List<String> skills, int targetLevel, int unlockedTaskCount,
+		int unlockedPoints, int trainingMinutes, String unlocksHint, boolean calendarTime)
+	{
+		this.calendarTime = calendarTime;
 		this.label = label == null ? "" : label;
 		this.skills = Collections.unmodifiableList(
 			skills == null ? Collections.emptyList() : skills);
@@ -61,6 +70,15 @@ public final class TrainingSuggestion
 	public int trainingMinutes()
 	{
 		return trainingMinutes;
+	}
+
+	/**
+	 * True when {@link #trainingMinutes()} is elapsed time on a daily-gated skill (Farming's patch timers)
+	 * rather than time spent playing — the panel reads those in days, and everything else in hours.
+	 */
+	public boolean isCalendarTime()
+	{
+		return calendarTime;
 	}
 
 	/** The most-unlocked boss/activity, e.g. "Tempoross" — the reason this goal is worth it. */

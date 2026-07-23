@@ -206,6 +206,38 @@ public final class SkillXpLibrary
 		return hours;
 	}
 
+	/**
+	 * Whether training {@code skill} across this range is bounded by the calendar rather than by time at
+	 * the keyboard — true when any bracket involved is daily-gated (Farming's patch timers). Lets the panel
+	 * read such an estimate in days, while a skill you simply have to sit and play stays in hours however
+	 * long it takes.
+	 */
+	public boolean isDailyGated(String skill, int fromLevel, int toLevel)
+	{
+		if (skill == null)
+		{
+			return false;
+		}
+		List<Bracket> brackets = bySkill.get(skill.trim().toLowerCase(Locale.ROOT));
+		if (brackets == null || brackets.isEmpty())
+		{
+			return false;
+		}
+		int from = Math.max(1, Math.min(99, fromLevel));
+		int to = Math.max(1, Math.min(99, toLevel));
+		for (int level = from; level < Math.max(from + 1, to); level++)
+		{
+			for (Bracket b : brackets)
+			{
+				if (level >= b.fromLevel && level < b.toLevel && b.xpPerDay > 0)
+				{
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 	/** XP per elapsed hour for one level, from the covering bracket (or the nearest one). */
 	private static double rateAt(List<Bracket> brackets, int level)
 	{

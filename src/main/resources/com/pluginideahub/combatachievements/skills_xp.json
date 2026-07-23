@@ -714,25 +714,25 @@
      "fromLevel": 50,
      "toLevel": 70,
      "method": "Vannaka/Chaeldar tasks with a Dwarf multicannon on melee tasks, plus early Ice Burst bursting once unlocked (e.g. dust devils at 65 Slayer/70 Magic) in multi-combat areas.",
-     "xpPerHour": 50000,
+     "xpPerHour": 40000,
      "members": true
     },
     {
      "fromLevel": 70,
      "toLevel": 90,
      "method": "Nieve/Konar (later Duradel) tasks, Ice Barrage/Burst stacking monsters in the Catacombs of Kourend (nechryaels, dust devils) and cannoning tasks like dagannoths/dark beasts.",
-     "xpPerHour": 80000,
+     "xpPerHour": 40000,
      "members": true
     },
     {
      "fromLevel": 90,
      "toLevel": 99,
      "method": "Duradel tasks, barraging stacked smoke devils/nechryaels in multi-combat, and cannon+venator-bow tasks (e.g. araxytes). Standard focused play; ~150k/hr is only with fully maxed gear/setup.",
-     "xpPerHour": 110000,
+     "xpPerHour": 40000,
      "members": true
     }
    ],
-   "notes": "Slayer is members-only (no F2P Slayer). Rates assume normal focused play, NOT 3t/2t tick manipulation. Bursting/barraging requires Desert Treasure (Ancient Magicks) and 70+ Magic; before that, rates are combat-limited. The often-quoted 150k/hr peak needs maxed gear, full point/blocking optimization, and high combat stats, so the 90-99 figure here uses a realistic average-player rate. Slayer also yields large passive combat-skill XP alongside these Slayer rates. Faster low-level setups exist if you push combat/Magic early, so 1-50 is the most variable bracket."
+   "notes": "Slayer is members-only (no F2P Slayer). Rates assume normal focused play, NOT 3t/2t tick manipulation. Bursting/barraging requires Desert Treasure (Ancient Magicks) and 70+ Magic; before that, rates are combat-limited. The often-quoted 150k/hr peak needs maxed gear, full point/blocking optimization, and high combat stats, so the 90-99 figure here uses a realistic average-player rate. Slayer also yields large passive combat-skill XP alongside these Slayer rates. Faster low-level setups exist if you push combat/Magic early, so 1-50 is the most variable bracket. ADJUSTED for the plugin: every bracket is capped at 40,000 xp/hr. The published rates assume barrage-stacking on ideal tasks with a full setup; ordinary Slayer play - including travel, unwanted tasks and skips - does not sustain them, and Slayer is a skill you have to sit and play rather than one you can fund or wait out."
   },
   "Farming": {
    "skill": "Farming",

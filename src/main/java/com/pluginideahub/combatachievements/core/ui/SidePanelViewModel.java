@@ -393,10 +393,22 @@ public final class SidePanelViewModel
 		public final int trainingMinutes;
 		/** The boss/activity this mostly opens up, e.g. "Tempoross"; "" when spread across many. */
 		public final String unlocksHint;
+		/**
+		 * True when {@link #trainingMinutes} is elapsed calendar time on a daily-gated skill (Farming),
+		 * not time spent playing — those read in days, everything else in hours.
+		 */
+		public final boolean calendarTime;
 
 		public TrainingView(String label, int unlockedTaskCount, int unlockedPoints, int trainingMinutes,
 			String unlocksHint)
 		{
+			this(label, unlockedTaskCount, unlockedPoints, trainingMinutes, unlocksHint, false);
+		}
+
+		public TrainingView(String label, int unlockedTaskCount, int unlockedPoints, int trainingMinutes,
+			String unlocksHint, boolean calendarTime)
+		{
+			this.calendarTime = calendarTime;
 			this.label = label == null ? "" : label;
 			this.unlockedTaskCount = unlockedTaskCount;
 			this.unlockedPoints = unlockedPoints;

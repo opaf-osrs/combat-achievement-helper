@@ -3,6 +3,7 @@ package com.pluginideahub.combatachievements.core.effort;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -40,6 +41,27 @@ public class DailyGatedSkillTest
 		assertTrue("70-90 must not read as an afternoon (got " + hours + " hr)", hours > 100);
 		// 70-90 is 4.6m xp — three months of daily runs, not 27 minutes.
 		assertEquals("about 92 days at 50k a day", 92.2, days(hours), 1.0);
+	}
+
+	@Test
+	public void onlyFarmingIsFlaggedAsCalendarTime()
+	{
+		// Drives whether the panel reads an estimate in days. Slayer is long but you have to sit and play
+		// it, so it must never be flagged — showing its 83 hours as "3.5 days" implied it passes offline.
+		assertTrue("Farming waits on patch timers", lib.isDailyGated("Farming", 1, 65));
+		assertFalse("Slayer is time at the keyboard", lib.isDailyGated("Slayer", 1, 92));
+		assertFalse(lib.isDailyGated("Firemaking", 1, 50));
+		assertFalse("an unknown skill is not calendar-gated", lib.isDailyGated("Nonsense", 1, 50));
+	}
+
+	@Test
+	public void slayerRatesAreCappedAtFortyThousand()
+	{
+		// Published Slayer rates assume barrage-stacking ideal tasks with a full setup; ordinary play with
+		// travel, bad tasks and skips does not sustain them.
+		double hours = lib.hoursToTrain("Slayer", 1, 92);
+		assertTrue("1-92 Slayer is a real grind, not a weekend (got " + hours + " hr)",
+			hours > 140 && hours < 200);
 	}
 
 	@Test
