@@ -140,6 +140,87 @@ public class OptimalPathSolverTest
 			plan.steps().get(0).achievement().id());
 	}
 
+	// ---- clustering ---------------------------------------------------------------------------------
+
+	private static RankedTask atBoss(int id, int points, double effort, String boss)
+	{
+		CombatAchievement a = new CombatAchievement(id, "Task " + id, AchievementTier.HARD, boss,
+			TaskType.KILL_COUNT, points, "desc", "General", "url");
+		return new RankedTask(a, effort, points / effort, "r", "", true, true, TaskDifficulty.UNKNOWN);
+	}
+
+	/** The clustered cost of a plan: the per-task cost plus one trip overhead for each distinct boss. */
+	private static double clusteredCost(PathPlan plan, double overhead)
+	{
+		double cost = 0.0;
+		java.util.Set<String> bosses = new java.util.HashSet<>();
+		for (PathStep s : plan.steps())
+		{
+			cost += s.effort();
+			bosses.add(s.achievement().monster());
+		}
+		return cost + overhead * bosses.size();
+	}
+
+	@Test
+	public void clusteringKeepsYouAtOneBossWhenItCanCloseTheGap()
+	{
+		// Boss A alone can cover a gap of 3 (three 1-pt CAs). Boss B has a single cheaper 1-pt CA. With a
+		// real trip overhead, doing all three at A beats two at A + a trip to B.
+		List<RankedTask> tasks = Arrays.asList(
+			atBoss(1, 1, 2.0, "A"), atBoss(2, 1, 2.0, "A"), atBoss(3, 1, 2.0, "A"),
+			atBoss(4, 1, 0.5, "B"));
+
+		PathPlan plan = solver.solveClustered(AchievementTier.ELITE, 3, tasks, RankedTask::effort, 10.0);
+
+		assertTrue("reaches the gap", plan.totalPoints() >= 3);
+		long bosses = plan.steps().stream().map(s -> s.achievement().monster()).distinct().count();
+		assertEquals("stays at a single boss rather than making a second trip", 1, bosses);
+	}
+
+	@Test
+	public void clusteringIsNeverWorseThanScatteringToCloseTheGap()
+	{
+		// Two bosses, three CAs each, mixed effort. For every gap and a range of overheads, the clustered
+		// solver's true cost (with per-boss trips) must not exceed what the boss-blind solver would cost.
+		List<RankedTask> tasks = Arrays.asList(
+			atBoss(1, 2, 3.0, "A"), atBoss(2, 1, 1.0, "A"), atBoss(3, 3, 4.0, "A"),
+			atBoss(4, 2, 2.0, "B"), atBoss(5, 1, 1.5, "B"), atBoss(6, 4, 5.0, "B"));
+		int total = tasks.stream().mapToInt(rt -> rt.achievement().points()).sum();
+
+		for (double overhead : new double[]{0.0, 2.0, 8.0})
+		{
+			for (int gap = 1; gap <= total; gap++)
+			{
+				PathPlan clustered = solver.solveClustered(AchievementTier.ELITE, gap, tasks,
+					RankedTask::effort, overhead);
+				PathPlan scattered = solver.solve(AchievementTier.ELITE, gap, tasks, RankedTask::effort);
+
+				assertTrue("clustered reaches gap " + gap, clustered.totalPoints() >= gap);
+				assertTrue("clustered (overhead " + overhead + ", gap " + gap + ") is no costlier than "
+						+ "scattering once trips are counted",
+					clusteredCost(clustered, overhead) <= clusteredCost(scattered, overhead) + EPS);
+			}
+		}
+	}
+
+	@Test
+	public void withNoTripOverheadClusteringReachesTheSameCostAsThePlainSolver()
+	{
+		// Overhead 0 removes the only reason to cluster, so the two solvers must tie on total cost.
+		int total = CANDIDATES.stream().mapToInt(rt -> rt.achievement().points()).sum();
+		for (int gap = 1; gap <= total; gap++)
+		{
+			PathPlan clustered = solver.solveClustered(AchievementTier.ELITE, gap, CANDIDATES,
+				RankedTask::effort, 0.0);
+			double brute = bruteMinEffort(CANDIDATES, gap);
+			assertEquals("clustered with no overhead is optimal at gap " + gap,
+				brute, clusteredCost(clustered, 0.0), 1e-9);
+		}
+	}
+
+	private static final double EPS = 1e-9;
+
 	private static ByteArrayInputStream stream(String json)
 	{
 		return new ByteArrayInputStream(json.getBytes(StandardCharsets.UTF_8));

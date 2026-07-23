@@ -457,8 +457,10 @@ public final class SidePanelViewModelBuilder
 			// and the solver happily used them to close the gap 80 levels early. Stopping short and handing
 			// over to "Train next" is the honest answer — see the trainFirst flag.
 			trainFirst = readyPoints < pointsGap && doablePoints >= pointsGap;
-			// Quickest path to the tier: minimise total estimated time, tuned by the Route weights.
-			plan = solver.solve(target, pointsGap, ready, this::routeCost);
+			// Quickest path to the tier, boss-aware: a fixed trip overhead per boss makes the solver keep you
+			// at a boss (do several CAs there) rather than scatter one-CA visits across the game and close the
+			// last gap at a far-off boss. tripOverheadMinutes is the clustering-strength dial.
+			plan = solver.solveClustered(target, pointsGap, ready, this::routeCost, tripOverheadMinutes);
 		}
 
 		List<SidePanelViewModel.PathRow> steps = new ArrayList<>();
