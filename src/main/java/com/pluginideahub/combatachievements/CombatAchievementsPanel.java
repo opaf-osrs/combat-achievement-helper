@@ -42,6 +42,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SpinnerNumberModel;
@@ -97,6 +98,8 @@ public class CombatAchievementsPanel extends PluginPanel
 	/** Pinned size of a developer-mode level spinner — see {@link #devSkillCell(String)}. */
 	private static final int SPINNER_WIDTH = 46;
 	private static final int SPINNER_HEIGHT = 18;
+	/** Wrap width for the CA-detail how-to prose, kept clear of the scrollbar the tall view brings in. */
+	private static final int DETAIL_TEXT_WIDTH = 170;
 
 	private final transient Consumer<PanelAction> onAction;
 
@@ -1373,7 +1376,7 @@ public class CombatAchievementsPanel extends PluginPanel
 
 		if (path != null)
 		{
-			StringBuilder sb = new StringBuilder("<html><body style='width:185px'>");
+			StringBuilder sb = new StringBuilder("<html><body style='width:182px'>");
 			sb.append("Goal: <b>").append(escape(path.targetTierName)).append("</b>");
 			if (path.alreadyUnlocked)
 			{
@@ -1678,7 +1681,7 @@ public class CombatAchievementsPanel extends PluginPanel
 			crumb.append(" · ").append(escape(d.type));
 		}
 
-		StringBuilder sb = new StringBuilder("<html><body style='width:185px'>");
+		StringBuilder sb = new StringBuilder("<html><body style='width:182px'>");
 		sb.append("<span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.NAME))
 			.append("'><b style='font-size:11px'>").append(escape(d.name)).append("</b></span>");
 		sb.append("<br><span style='color:" + metaHex() + "'>").append(crumb).append("</span>");
@@ -1713,7 +1716,7 @@ public class CombatAchievementsPanel extends PluginPanel
 
 		content.add(sectionHeader("Difficulty"));
 		double rating = displayedDifficulty(d);
-		StringBuilder diff = new StringBuilder("<html><body style='width:185px'>");
+		StringBuilder diff = new StringBuilder("<html><body style='width:182px'>");
 		diff.append("<span style='color:").append(CombatAchievementsTheme.hex(difficultyColor(d.difficulty)))
 			.append("'>").append(String.format(Locale.ROOT, "%.1f", rating)).append(" / 10</span>");
 		if (d.bossDifficulty > 0)
@@ -1735,7 +1738,7 @@ public class CombatAchievementsPanel extends PluginPanel
 		{
 			content.add(sectionHeader("Effort"));
 			content.add(fullWidth(new JLabel(
-				"<html><body style='width:185px'>~" + d.estMinutes + " min</body></html>")));
+				"<html><body style='width:182px'>~" + d.estMinutes + " min</body></html>")));
 			content.add(spacer());
 		}
 
@@ -1768,9 +1771,27 @@ public class CombatAchievementsPanel extends PluginPanel
 			return;
 		}
 		content.add(sectionHeader(header));
-		content.add(fullWidth(new JLabel("<html><body style='width:185px'><span style='color:"
-			+ CombatAchievementsTheme.hex(CombatAchievementsTheme.DESC) + "'>" + escape(text)
-			+ "</span></body></html>")));
+		// A JTextArea rather than an HTML JLabel: the label's body-width style is unreliable here — a long
+		// word ("thrownhammer") keeps the whole line intact and it clips at the panel edge. A word-wrapping
+		// text area reflows to its actual width every time, which is the whole point.
+		JTextArea body = new JTextArea(text);
+		body.setLineWrap(true);
+		body.setWrapStyleWord(true);
+		body.setEditable(false);
+		body.setFocusable(false);
+		body.setOpaque(false);
+		body.setBorder(null);
+		body.setFont(FontManager.getRunescapeSmallFont());
+		body.setForeground(CombatAchievementsTheme.DESC);
+		body.setAlignmentX(Component.LEFT_ALIGNMENT);
+		// A word-wrapping JTextArea reports a one-line preferred height until it knows its width, so under
+		// BoxLayout it would collapse to a single line. Fix the width first, then the reported height is the
+		// wrapped height; pin both so the layout gives it exactly that.
+		body.setSize(DETAIL_TEXT_WIDTH, Short.MAX_VALUE);
+		int wrappedHeight = body.getPreferredSize().height;
+		body.setPreferredSize(new Dimension(DETAIL_TEXT_WIDTH, wrappedHeight));
+		body.setMaximumSize(new Dimension(DETAIL_TEXT_WIDTH, wrappedHeight));
+		content.add(body);
 		content.add(spacer());
 	}
 
@@ -1778,7 +1799,7 @@ public class CombatAchievementsPanel extends PluginPanel
 	{
 		Color colour = r.met ? CombatAchievementsTheme.POSITIVE : CombatAchievementsTheme.NEGATIVE;
 		String mark = r.met ? "&#10003;" : "&#10007;"; // check / cross
-		StringBuilder sb = new StringBuilder("<html><body style='width:185px'><span style='color:")
+		StringBuilder sb = new StringBuilder("<html><body style='width:182px'><span style='color:")
 			.append(CombatAchievementsTheme.hex(colour)).append("'>").append(mark).append(" ")
 			.append(escape(r.label)).append("</span>");
 		if (!r.note.isEmpty())
@@ -1813,7 +1834,7 @@ public class CombatAchievementsPanel extends PluginPanel
 			return;
 		}
 
-		StringBuilder head = new StringBuilder("<html><body style='width:185px'><span style='color:")
+		StringBuilder head = new StringBuilder("<html><body style='width:182px'><span style='color:")
 			.append(CombatAchievementsTheme.hex(CombatAchievementsTheme.NAME))
 			.append("'><b style='font-size:11px'>").append(escape(boss.monster)).append("</b></span>");
 		if (boss.locked)
@@ -1992,7 +2013,7 @@ public class CombatAchievementsPanel extends PluginPanel
 
 	private JLabel messageLabel(String text)
 	{
-		JLabel label = new JLabel("<html><body style='width:185px'>" + escape(text) + "</body></html>");
+		JLabel label = new JLabel("<html><body style='width:182px'>" + escape(text) + "</body></html>");
 		label.setBorder(BorderFactory.createEmptyBorder(8, 0, 8, 0));
 		return fullWidth(label);
 	}
