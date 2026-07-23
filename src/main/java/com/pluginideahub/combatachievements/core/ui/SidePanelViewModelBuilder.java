@@ -813,16 +813,12 @@ public final class SidePanelViewModelBuilder
 			{
 				break;
 			}
-			if (s.reachableTaskCount() == 0)
-			{
-				// Opens nothing this account could go and do — not a suggestion. (It stays in the list the
-				// Route's locked pile is built from, which is deliberately aspirational.)
-				continue;
-			}
-			// The REACHABLE prize, not the raw one: showing "15 CAs (79 pts)" for content the account is 40
-			// levels short of is the overstatement this section was ranked on before.
+			// Shows what the quest OPENS, not what is doable the same day — a quest is permanent progress
+			// and worth doing before you can use it. Reachability decides the ORDER (so a questline whose
+			// CAs are forty levels away sinks) but never whether the suggestion appears: hiding them left a
+			// new account with no "what quest next" advice at all, which is the one thing this answers.
 			views.add(new SidePanelViewModel.UnlockView(s.questName(), s.difficulty(),
-				s.reachableTaskCount(), s.reachablePoints(), s.totalMinutes(),
+				s.unlockedTaskCount(), s.unlockedPoints(), s.totalMinutes(),
 				String.join(", ", s.remainingPrerequisites()), String.join(", ", s.unmetSkills())));
 		}
 		return views;

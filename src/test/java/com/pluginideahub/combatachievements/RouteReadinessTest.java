@@ -143,16 +143,22 @@ public class RouteReadinessTest
 	}
 
 	@Test
-	public void aLevelThreeIsOfferedNoQuestUnlocksButKeepsTheAspirationalPile()
+	public void aLevelThreeStillGetsToldWhichQuestToDoNext()
 	{
-		// "Unlock next" used to offer a level-3 The Final Dawn (~25 hrs) and A Kingdom Divided (~21 hrs) for
-		// content it could never do. It now shows only quests opening something reachable — none, here.
+		// A quest is permanent progress and worth doing before you can use what it opens, so this section
+		// must never empty out — it is the only place that answers "what quest next". Filtering it on
+		// same-day reachability once left a brand-new account with nothing here at all.
 		SidePanelViewModel vm = viewModelFor(account(1));
-		assertTrue("no quest opens a level-3 anything it could go and do", vm.unlocks().isEmpty());
+		assertFalse("a level-3 is still told what quest to do", vm.unlocks().isEmpty());
+		assertFalse("and is told what to train", vm.trainings().isEmpty());
+		// The Route itself renders no out-of-reach CA, so those two sections are all a level-3 is shown.
+		assertTrue("nothing in the route is beyond reach",
+			vm.path().steps.stream().allMatch(s -> s.detail.withinReach));
 
-		// But the locked "needs <quest>" cards under the route are deliberately aspirational and must
-		// survive — they are built from the same suggestions, so filtering them there would empty this too.
-		assertFalse("the locked pile is kept", vm.path().lockedCas.isEmpty());
+		// Order still respects reach: the short novice quest leads, not a 25-hour questline.
+		assertTrue("a quick quest leads the list, not a grandmaster one (" + vm.unlocks().get(0).questName
+				+ ")",
+			vm.unlocks().get(0).totalMinutes < vm.unlocks().get(vm.unlocks().size() - 1).totalMinutes);
 	}
 
 	@Test

@@ -91,17 +91,20 @@ public class UnlockReachabilityTest
 	}
 
 	@Test
-	public void aQuestThatOpensNothingYouAreReadyForScoresZero()
+	public void questsOpeningNothingReachableAreStillRankedSensiblyAmongThemselves()
 	{
-		// Attack 10 against tasks wanting 80 — a 70-level gap, far past the ready line. The suggestion is
-		// kept (the Route's locked pile is built from this list) but reads as worth nothing, and the
-		// "Unlock next" section drops it on reachableTaskCount.
-		for (UnlockSuggestion u : plan(player(10), recStats(), effort()))
+		// Attack 10 against tasks wanting 80 — a 70-level gap, far past the ready line. The suggestions are
+		// kept, because a quest is permanent progress worth doing before you can use what it opens. They
+		// must still order by value, though: scoring them all at a flat zero made the sort fall through to
+		// alphabetical, which put the 600-minute quest above the 10-minute one.
+		List<UnlockSuggestion> out = plan(player(10), recStats(), effort());
+		assertEquals(2, out.size());
+		for (UnlockSuggestion u : out)
 		{
 			assertEquals("nothing reachable at " + u.questName(), 0, u.reachableTaskCount());
 			assertEquals(0, u.reachablePoints());
-			assertEquals("so it cannot out-rank a real suggestion", 0.0, u.score(), 1e-9);
 		}
+		assertEquals("the 10-minute quest leads the 600-minute one", "Short Quest", out.get(0).questName());
 	}
 
 	@Test

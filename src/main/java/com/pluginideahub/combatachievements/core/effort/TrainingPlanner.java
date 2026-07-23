@@ -3,6 +3,7 @@ package com.pluginideahub.combatachievements.core.effort;
 import com.pluginideahub.combatachievements.core.achievement.CombatAchievement;
 import com.pluginideahub.combatachievements.core.achievement.EffortDataLibrary;
 import com.pluginideahub.combatachievements.core.achievement.RecStatsLibrary;
+import com.pluginideahub.combatachievements.core.achievement.StatRequirement;
 import com.pluginideahub.combatachievements.core.ranking.PlayerProfile;
 import com.pluginideahub.combatachievements.core.ranking.ProfileSignalsProvider;
 import com.pluginideahub.combatachievements.core.ranking.TaskLiveSignals;
@@ -90,6 +91,20 @@ public final class TrainingPlanner
 				if (req.getValue() != null && req.getValue() > profile.levelOf(req.getKey()))
 				{
 					thresholds.computeIfAbsent(req.getKey(), k -> new TreeSet<>()).add(req.getValue());
+				}
+			}
+			// RECOMMENDED levels are candidates too, not just hard gates. Without them the planner could
+			// only aim at levels some quest happens to demand, and would land one short of what the content
+			// actually wants: it suggested "Prayer 42" (a Vorkath gate) for a row about Bryophyta, whose
+			// CAs ask for 43. The goal should be the number the player is actually trying to reach.
+			for (StatRequirement req : rec.softFor(a.id()))
+			{
+				for (String skill : req.skills())
+				{
+					if (req.level() > profile.levelOf(skill))
+					{
+						thresholds.computeIfAbsent(skill, k -> new TreeSet<>()).add(req.level());
+					}
 				}
 			}
 		}
@@ -198,7 +213,11 @@ public final class TrainingPlanner
 				continue;
 			}
 			TaskLiveSignals sig = signals.signalsFor(a.id());
-			if (sig.doableNow() && profile.worstShortfall(rec.softFor(a.id())) <= VIABLE_WORST_GAP)
+			// A training GOAL aims at the level the content actually asks for, not the cheapest level that
+			// brings it inside the tolerance window. Scored on the window, the planner undershot on purpose:
+			// it suggested "Prayer 37" for a row about Bryophyta, whose CAs want 43, because 37 was enough
+			// to land within 15 of it. Someone who trains to the number they were given should arrive ready.
+			if (sig.doableNow() && profile.worstShortfall(rec.softFor(a.id())) == 0)
 			{
 				out.add(a.id());
 			}

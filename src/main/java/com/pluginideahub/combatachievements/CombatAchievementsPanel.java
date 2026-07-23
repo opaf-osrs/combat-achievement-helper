@@ -1409,9 +1409,10 @@ public class CombatAchievementsPanel extends PluginPanel
 			content.add(spacer());
 
 			// The route's doable steps + the CAs the unlocks would open, grouped by boss (do the same boss
-			// in one trip) with groups ordered by their quickest task. Locked CAs the account is nowhere
-			// near go below a divider rather than sitting among them — the pile was dangling a
-			// Speed-Trialist 90 levels away next to the boss's novice task.
+			// in one trip) with groups ordered by their quickest task. CAs the account is not within reach
+			// of are left out entirely: the Route is a plan to follow, and listing content forty levels
+			// away made the whole thing read as if it were all available. An account with nothing in reach
+			// is therefore left with the two sections that DO apply to it — what to train, and what to quest.
 			List<SidePanelViewModel.CaDetail> route = new ArrayList<>();
 			for (SidePanelViewModel.PathRow step : path.steps)
 			{
@@ -1420,29 +1421,14 @@ public class CombatAchievementsPanel extends PluginPanel
 					route.add(step.detail);
 				}
 			}
-			List<SidePanelViewModel.CaDetail> outOfReach = new ArrayList<>();
 			for (SidePanelViewModel.CaDetail locked : path.lockedCas)
 			{
 				if (locked.withinReach)
 				{
 					route.add(locked);
 				}
-				else
-				{
-					outOfReach.add(locked);
-				}
 			}
 			renderRouteGroups(route);
-			if (!outOfReach.isEmpty())
-			{
-				content.add(sectionHeader("Not yet (" + outOfReach.size() + ")"));
-				content.add(spacer());
-				for (SidePanelViewModel.CaDetail d : outOfReach)
-				{
-					content.add(caCard(d));
-					content.add(spacer());
-				}
-			}
 		}
 	}
 

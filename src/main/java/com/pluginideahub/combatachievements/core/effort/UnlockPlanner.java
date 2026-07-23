@@ -25,6 +25,14 @@ import java.util.Set;
  */
 public final class UnlockPlanner
 {
+	/**
+	 * What a CA counts for when the player is not yet within reach of it. Small but non-zero: a quest is
+	 * permanent progress, so opening content you cannot use today is still worth something. Zero made
+	 * every quest tie at nothing for a brand-new account, and the ordering fell through to alphabetical —
+	 * which put a 21-hour grandmaster questline above an 8-minute novice one.
+	 */
+	private static final double OUT_OF_REACH_WEIGHT = 0.15;
+
 	private final QuestEffortLibrary questLib;
 	private final SkillXpLibrary skillLib;
 
@@ -174,14 +182,16 @@ public final class UnlockPlanner
 			double achievable = 0.0;
 			for (CombatAchievement task : tasks)
 			{
-				if (after.worstShortfall(rec.softFor(task.id())) > TrainingPlanner.VIABLE_WORST_GAP)
+				boolean inReach = after.worstShortfall(rec.softFor(task.id()))
+					<= TrainingPlanner.VIABLE_WORST_GAP;
+				if (inReach)
 				{
-					continue;
+					reachableCount++;
+					reachablePoints += task.points();
 				}
-				reachableCount++;
-				reachablePoints += task.points();
 				achievable += task.points()
-					* achievableWeight(diffs.difficultyFor(task.id()).difficulty(), unlockDifficultyWeight);
+					* achievableWeight(diffs.difficultyFor(task.id()).difficulty(), unlockDifficultyWeight)
+					* (inReach ? 1.0 : OUT_OF_REACH_WEIGHT);
 			}
 			// A quest opening nothing reachable keeps a zero score and sinks to the bottom; it is not dropped
 			// here because the Route's locked "needs <quest>" pile is built from this same list and is
