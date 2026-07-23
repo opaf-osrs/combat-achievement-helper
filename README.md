@@ -78,3 +78,7 @@ is reproducible and works offline.
 ## Licence
 
 BSD 2-Clause — see [LICENSE](LICENSE).
+
+The sidebar icon is the in-game Combat Achievements task book, from the
+[OSRS Wiki](https://oldschool.runescape.wiki/w/Combat_Achievements). Old School RuneScape is a
+trademark of Jagex Ltd; game assets remain their property.

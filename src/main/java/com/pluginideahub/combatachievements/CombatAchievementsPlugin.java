@@ -29,7 +29,6 @@ import com.pluginideahub.combatachievements.core.ui.SidePanelViewModelBuilder;
 import com.pluginideahub.combatachievements.core.video.VideoGuideLibrary;
 import com.pluginideahub.combatachievements.varbit.CaVarbitIds;
 import com.pluginideahub.combatachievements.varbit.CombatAchievementVarbitReader;
-import java.awt.image.BufferedImage;
 import javax.inject.Inject;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -51,6 +50,7 @@ import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.ClientToolbar;
 import net.runelite.client.ui.NavigationButton;
+import net.runelite.client.util.ImageUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -148,7 +148,7 @@ public class CombatAchievementsPlugin extends Plugin
 		panel.setDeveloperMode(config.developerMode());
 		navigationButton = NavigationButton.builder()
 			.tooltip("Combat Achievement Helper")
-			.icon(new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB))
+			.icon(ImageUtil.loadImageResource(CombatAchievementsPlugin.class, "icon.png"))
 			.priority(8)
 			.panel(panel)
 			.build();
