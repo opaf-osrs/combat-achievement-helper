@@ -877,11 +877,15 @@ public final class SidePanelViewModelBuilder
 			reqs.add(new SidePanelViewModel.CaReq(qr.quest(), met, ""));
 		}
 
+		// The same ready line the Route builds its path from, carried onto the card so lists can group by it.
+		boolean withinReach = profile.worstShortfall(recStatsLib.softFor(task.id()))
+			<= TrainingPlanner.VIABLE_WORST_GAP;
+
 		return new SidePanelViewModel.CaDetail(task.id(), task.name(), task.monster(),
 			task.tier().displayName(), task.type() == null ? "" : task.type().displayName(), task.points(),
 			task.description(), doableNow, lockReason, diff.difficulty(), diff.bossDifficulty(), diff.bump(),
 			diff.reason(), mins, pph, reqs, det.stats(), det.setup(), det.strategy(), det.items(),
 			task.wikiUrl(), videoLib.bestGuideUrl(task.id(), task.name()), videoLib.hasCuratedGuide(task.id()),
-			extraMinutes);
+			extraMinutes, withinReach);
 	}
 }

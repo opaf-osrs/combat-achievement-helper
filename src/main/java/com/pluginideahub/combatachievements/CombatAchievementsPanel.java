@@ -1409,7 +1409,9 @@ public class CombatAchievementsPanel extends PluginPanel
 			content.add(spacer());
 
 			// The route's doable steps + the CAs the unlocks would open, grouped by boss (do the same boss
-			// in one trip) with groups ordered by their quickest task.
+			// in one trip) with groups ordered by their quickest task. Locked CAs the account is nowhere
+			// near go below a divider rather than sitting among them — the pile was dangling a
+			// Speed-Trialist 90 levels away next to the boss's novice task.
 			List<SidePanelViewModel.CaDetail> route = new ArrayList<>();
 			for (SidePanelViewModel.PathRow step : path.steps)
 			{
@@ -1418,8 +1420,29 @@ public class CombatAchievementsPanel extends PluginPanel
 					route.add(step.detail);
 				}
 			}
-			route.addAll(path.lockedCas);
+			List<SidePanelViewModel.CaDetail> outOfReach = new ArrayList<>();
+			for (SidePanelViewModel.CaDetail locked : path.lockedCas)
+			{
+				if (locked.withinReach)
+				{
+					route.add(locked);
+				}
+				else
+				{
+					outOfReach.add(locked);
+				}
+			}
 			renderRouteGroups(route);
+			if (!outOfReach.isEmpty())
+			{
+				content.add(sectionHeader("Not yet (" + outOfReach.size() + ")"));
+				content.add(spacer());
+				for (SidePanelViewModel.CaDetail d : outOfReach)
+				{
+					content.add(caCard(d));
+					content.add(spacer());
+				}
+			}
 		}
 	}
 
@@ -1836,11 +1859,30 @@ public class CombatAchievementsPanel extends PluginPanel
 			addDetailText("Recommended stats", boss.recommendedStats);
 		}
 
-		if (!boss.doable.isEmpty())
+		// "Doable" only means no hard gate blocks you, so a level-3 saw seven Barrows CAs it was 49-84
+		// levels short of, all reading as available. Split on the ready line: what you could go and do
+		// now, and below it what is ungated but out of reach. Nothing is hidden either way.
+		List<SidePanelViewModel.CaDetail> reachable = new ArrayList<>();
+		List<SidePanelViewModel.CaDetail> notYet = new ArrayList<>();
+		for (SidePanelViewModel.CaDetail d : boss.doable)
 		{
-			content.add(sectionHeader("Doable CAs"));
+			(d.withinReach ? reachable : notYet).add(d);
+		}
+		if (!reachable.isEmpty())
+		{
+			content.add(sectionHeader(notYet.isEmpty() ? "Doable CAs" : "Within reach"));
 			content.add(spacer());
-			for (SidePanelViewModel.CaDetail d : boss.doable)
+			for (SidePanelViewModel.CaDetail d : reachable)
+			{
+				content.add(caCard(d));
+				content.add(spacer());
+			}
+		}
+		if (!notYet.isEmpty())
+		{
+			content.add(sectionHeader("Not yet (" + notYet.size() + ")"));
+			content.add(spacer());
+			for (SidePanelViewModel.CaDetail d : notYet)
 			{
 				content.add(caCard(d));
 				content.add(spacer());

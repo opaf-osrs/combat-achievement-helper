@@ -148,6 +148,42 @@ public class BossReadinessTest
 			established.contains("Chambers of Xeric"));
 	}
 
+	private static SidePanelViewModel.BossRow named(List<SidePanelViewModel.BossRow> rows, String monster)
+	{
+		return rows.stream().filter(b -> b.monster.equals(monster)).findFirst().orElseThrow(
+			() -> new AssertionError("no boss row for " + monster));
+	}
+
+	@Test
+	public void aBossDetailSeparatesWhatYouCanDoFromWhatIsMerelyUngated()
+	{
+		// "Doable" only means no hard gate blocks you. A level-3 was shown all seven Barrows CAs as
+		// available while being 49-84 levels short of every one of them, so the panel groups on reach.
+		SidePanelViewModel.BossRow beginnerBarrows = named(bossesFor(account(1)), "Barrows");
+		assertTrue("precondition: nothing hard-gates Barrows for a level-3",
+			beginnerBarrows.doableCount > 0);
+		assertTrue("but a level-3 is not ready for any of it",
+			beginnerBarrows.doable.stream().noneMatch(d -> d.withinReach));
+
+		// Mid-game is the interesting case: one Barrows CA wants only Magic 50, the rest want 70-85, so
+		// the list must split rather than read as seven equally available tasks.
+		SidePanelViewModel.BossRow midBarrows = named(bossesFor(account(45)), "Barrows");
+		assertTrue("some Barrows CAs are within reach at all-45s",
+			midBarrows.doable.stream().anyMatch(d -> d.withinReach));
+		assertTrue("and some are not",
+			midBarrows.doable.stream().anyMatch(d -> !d.withinReach));
+	}
+
+	@Test
+	public void aMaxedAccountSeesNoNotYetGroup()
+	{
+		for (SidePanelViewModel.BossRow b : bossesFor(account(99)))
+		{
+			assertTrue("a maxed account is within reach of everything it can see (" + b.monster + ")",
+				b.doable.stream().allMatch(d -> d.withinReach));
+		}
+	}
+
 	@Test
 	public void readinessIsCarriedOnTheRowAndIsNeutralByDefault()
 	{

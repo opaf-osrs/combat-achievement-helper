@@ -99,6 +99,12 @@ public final class SidePanelViewModel
 		public final boolean curatedVideo;
 		/** Extra minutes to make this CA doable (amortised unlock/quest time); 0 for already-doable CAs. */
 		public final int extraMinutes;
+		/**
+		 * Whether the player is close enough to this CA's recommended stats to attempt it. Nothing is hidden
+		 * on it — the panel groups by it, so a list can separate what you could go and do from what is
+		 * technically ungated but forty levels away.
+		 */
+		public final boolean withinReach;
 
 		public CaDetail(int id, String name, String monster, String tierName, String type, int points,
 			String description, boolean doableNow, String lockReason, int difficulty, int bossDifficulty,
@@ -106,6 +112,18 @@ public final class SidePanelViewModel
 			String stats, String setup, String strategy, String items, String wikiUrl, String guideUrl,
 			boolean curatedVideo, int extraMinutes)
 		{
+			this(id, name, monster, tierName, type, points, description, doableNow, lockReason, difficulty,
+				bossDifficulty, bump, difficultyReason, estMinutes, pointsPerHour, requirements, stats,
+				setup, strategy, items, wikiUrl, guideUrl, curatedVideo, extraMinutes, true);
+		}
+
+		public CaDetail(int id, String name, String monster, String tierName, String type, int points,
+			String description, boolean doableNow, String lockReason, int difficulty, int bossDifficulty,
+			double bump, String difficultyReason, int estMinutes, int pointsPerHour, List<CaReq> requirements,
+			String stats, String setup, String strategy, String items, String wikiUrl, String guideUrl,
+			boolean curatedVideo, int extraMinutes, boolean withinReach)
+		{
+			this.withinReach = withinReach;
 			this.id = id;
 			this.name = name == null ? "" : name;
 			this.monster = monster == null ? "" : monster;
