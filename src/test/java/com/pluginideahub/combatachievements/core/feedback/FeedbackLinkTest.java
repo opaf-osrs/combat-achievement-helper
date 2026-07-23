@@ -31,10 +31,18 @@ public class FeedbackLinkTest
 	{
 		assertEquals("", FeedbackLink.buildUrl("", prefill()));
 		assertEquals("", FeedbackLink.buildUrl(null, prefill()));
-		// The shipped default is unconfigured, so the button is hidden out of the box.
-		if (!FeedbackLink.isConfigured())
+		if (FeedbackLink.isConfigured())
 		{
-			assertEquals("", FeedbackLink.difficultyUrl(42, "A Smashing Time", "4.5", "Gargoyle (boss 4)"));
+			// A form IS wired up: guard the paste. A typo'd form id or entry id would otherwise ship a
+			// button that opens a broken form, which nobody would notice until reports stopped arriving.
+			String url = FeedbackLink.taskUrl(42);
+			assertTrue("real link points at a Google form", url.startsWith("https://docs.google.com/forms/d/e/"));
+			assertTrue("and carries the task id", url.matches(".*entry\\.\\d+=42$"));
+			assertFalse("the form id placeholder was replaced", url.contains("/d/e//"));
+		}
+		else
+		{
+			assertEquals("unconfigured builds hide the button", "", FeedbackLink.taskUrl(42));
 		}
 	}
 

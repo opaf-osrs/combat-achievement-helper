@@ -22,16 +22,10 @@ public final class FeedbackLink
 	// ---------------------------------------------------------------------------------------------
 
 	/** The long id in the form's URL: .../forms/d/e/<THIS>/viewform. Empty = feedback button hidden. */
-	private static final String FORM_ID = "";
+	private static final String FORM_ID = "1FAIpQLSfcuYJVGfV7QKeoI72h_TTyTuTTESueSro5T5PTJJndB9Bw5g";
 
-	/** entry.NNNNN for the "Task id" field (the sortable key — wire this one up first). */
-	private static final String ENTRY_TASK_ID = "";
-	/** entry.NNNNN for the "Task name" field. */
-	private static final String ENTRY_TASK_NAME = "";
-	/** entry.NNNNN for the "Listed difficulty" field (what the plugin currently shows, e.g. "4.5"). */
-	private static final String ENTRY_LISTED_DIFFICULTY = "";
-	/** entry.NNNNN for the "How it was derived" field (boss rating + task bump + reason). */
-	private static final String ENTRY_BASIS = "";
+	/** entry.NNNNN for the "Task id" field — the only thing the player should not have to type. */
+	private static final String ENTRY_TASK_ID = "entry.602421074";
 
 	// ---------------------------------------------------------------------------------------------
 
@@ -48,21 +42,17 @@ public final class FeedbackLink
 	}
 
 	/**
-	 * A pre-filled feedback URL for one task, or "" when no form is configured.
+	 * A feedback URL for one task, or "" when no form is configured. Only the task id is carried: the
+	 * player is already looking at the achievement, so the form should ask them for the two things the
+	 * plugin cannot know — the difficulty they'd give it, and why — and nothing else. Everything else
+	 * (name, listed rating, how that rating was derived) is recoverable from the id.
 	 *
-	 * @param taskId           the dataset task id (the key the curation CSV is sorted by)
-	 * @param taskName         the task's display name
-	 * @param listedDifficulty the rating the panel showed, e.g. "4.5"
-	 * @param basis            how that rating was derived, e.g. "boss 4 +0.5 (no supplies)" — tells the
-	 *                         curator whether to fix the boss row or just this task's bump
+	 * @param taskId the dataset task id — the key the curation CSV is sorted by
 	 */
-	public static String difficultyUrl(int taskId, String taskName, String listedDifficulty, String basis)
+	public static String taskUrl(int taskId)
 	{
 		Map<String, String> prefill = new LinkedHashMap<>();
 		put(prefill, ENTRY_TASK_ID, String.valueOf(taskId));
-		put(prefill, ENTRY_TASK_NAME, taskName);
-		put(prefill, ENTRY_LISTED_DIFFICULTY, listedDifficulty);
-		put(prefill, ENTRY_BASIS, basis);
 		return buildUrl(FORM_ID, prefill);
 	}
 

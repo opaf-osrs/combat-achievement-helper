@@ -1920,27 +1920,13 @@ public class CombatAchievementsPanel extends PluginPanel
 	}
 
 	/**
-	 * The pre-filled "Suggest fix" link for a task, or "" when no feedback form is configured (button
-	 * hidden). Sends the task's curation context — including HOW the rating was derived — so a report
-	 * points at the right lever: the boss's row in boss_difficulty.csv, or just this task's bump.
+	 * The "Suggest fix" link for a task, or "" when no feedback form is configured (button hidden). Only
+	 * the task id is sent — the player is already looking at the achievement, so the form asks them for
+	 * the difficulty they'd give it and nothing they shouldn't have to type.
 	 */
 	private static String feedbackUrl(SidePanelViewModel.CaDetail d)
 	{
-		if (!FeedbackLink.isConfigured())
-		{
-			return "";
-		}
-		String listed = String.format(Locale.ROOT, "%.1f", displayedDifficulty(d));
-		StringBuilder basis = new StringBuilder();
-		if (d.bossDifficulty > 0)
-		{
-			basis.append(d.monster).append(" (boss ").append(d.bossDifficulty).append(')');
-			if (d.bump != 0 && !d.difficultyReason.isEmpty())
-			{
-				basis.append(String.format(Locale.ROOT, " + %s (+%.1f)", d.difficultyReason, d.bump));
-			}
-		}
-		return FeedbackLink.difficultyUrl(d.id, d.name, listed, basis.toString());
+		return FeedbackLink.isConfigured() ? FeedbackLink.taskUrl(d.id) : "";
 	}
 
 	private JButton linkButton(String text, String url)
