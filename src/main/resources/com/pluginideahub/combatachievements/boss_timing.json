@@ -402,9 +402,9 @@
   },
   "The Mimic": {
    "ttkSeconds": 180,
-   "respawnSeconds": 0,
+   "respawnSeconds": 3420,
    "killsPerHour": 1,
-   "note": "One-off-style fight from Casket; ~3-4 min per attempt and gated by clue/casket access, not repeatable on demand. KPH effectively ~1."
+   "note": "Reached only by rolling a mimic from an elite (1/35) or master (1/15) reward casket after enabling the encounter at Watson's, so roughly 18 elite or 8 master trails per fight. The fight itself is ~3 min; the respawn carries the access cost, which is what makes the curated 1 kill/hr true. Not repeatable on demand."
   },
   "The Nightmare": {
    "ttkSeconds": 360,

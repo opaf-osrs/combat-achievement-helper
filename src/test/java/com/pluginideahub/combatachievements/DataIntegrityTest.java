@@ -15,6 +15,8 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import com.pluginideahub.combatachievements.core.effort.BossTiming;
+import com.pluginideahub.combatachievements.core.effort.BossTimingLibrary;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -129,5 +131,40 @@ public class DataIntegrityTest
 			throw new AssertionError("failed reading " + resource + ": " + ex, ex);
 		}
 		return keys;
+	}
+
+	/**
+	 * A monster's curated kills/hour must agree with what the engine derives from its kill time and
+	 * respawn, because the engine only reads the latter — killsPerHour is documentation. The Mimic sat at
+	 * a curated 1/hr while the engine computed 20/hr from a zero respawn, which made a boss you reach once
+	 * per ~18 elite clue scrolls look like the best points-per-hour in the game.
+	 */
+	@Test
+	public void curatedKillsPerHourAgreesWithWhatTheEngineDerives()
+	{
+		BossTimingLibrary timings = BossTimingLibrary.loadBundled();
+		List<String> off = new ArrayList<>();
+		for (CombatAchievement task : CombatAchievementLibrary.loadBundled().all())
+		{
+			BossTiming t = timings.timingFor(task.monster());
+			if (!t.isKnown() || t.killsPerHour() <= 0 || t.secondsPerKill() <= 0)
+			{
+				continue;
+			}
+			double derived = 3600.0 / t.secondsPerKill();
+			double ratio = derived / t.killsPerHour();
+			// Generous: the curated figure is a whole number, so a boss at "1/hr" that really runs at 1.9
+			// is rounding, not a mistake. Anything past 2x is the two fields telling different stories.
+			if (ratio > 2.0 || ratio < 0.5)
+			{
+				String line = task.monster() + " curated " + t.killsPerHour() + "/hr vs derived "
+					+ Math.round(derived) + "/hr";
+				if (!off.contains(line))
+				{
+					off.add(line);
+				}
+			}
+		}
+		assertTrue("kill-rate fields disagree: " + off, off.isEmpty());
 	}
 }
