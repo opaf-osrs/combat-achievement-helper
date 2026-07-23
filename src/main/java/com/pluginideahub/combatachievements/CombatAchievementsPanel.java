@@ -1595,9 +1595,9 @@ public class CombatAchievementsPanel extends PluginPanel
 	}
 
 	/**
-	 * Training times run from minutes to weeks, so read them in the bigger unit each time one runs out.
-	 * Past two days the figure is elapsed time on a daily-gated skill (Farming), where "290 hr" would
-	 * suggest sitting there for it rather than waiting out the patch timers.
+	 * Minutes below the hour, hours above it — and hours all the way up, never days. A long estimate is
+	 * still read as "how much game time is this", so switching units at the top just makes two rows in the
+	 * same list incomparable at a glance.
 	 */
 	static String formatMinutes(int minutes)
 	{
@@ -1606,12 +1606,6 @@ public class CombatAchievementsPanel extends PluginPanel
 			return Math.max(1, minutes) + " min";
 		}
 		double hours = minutes / 60.0;
-		if (hours >= 48)
-		{
-			double days = hours / 24.0;
-			return (days < 10 ? String.format(Locale.ROOT, "%.1f", days) : String.valueOf(Math.round(days)))
-				+ " days";
-		}
 		return (hours < 10 ? String.format(Locale.ROOT, "%.1f", hours) : String.valueOf(Math.round(hours)))
 			+ " hr";
 	}
