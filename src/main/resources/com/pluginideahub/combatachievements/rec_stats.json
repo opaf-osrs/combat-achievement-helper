@@ -5176,7 +5176,15 @@
      "skills": [
       "Magic"
      ],
-     "level": 70,
+     "level": 80,
+     "mode": "all"
+    },
+    {
+     "skills": [
+      "Attack",
+      "Strength"
+     ],
+     "level": 75,
      "mode": "all"
     },
     {
@@ -5188,16 +5196,23 @@
     },
     {
      "skills": [
-      "Prayer"
+      "Defence"
      ],
-     "level": 43,
+     "level": 70,
      "mode": "all"
     },
     {
      "skills": [
-      "Defence"
+      "Prayer"
      ],
-     "level": 70,
+     "level": 60,
+     "mode": "all"
+    },
+    {
+     "skills": [
+      "Construction"
+     ],
+     "level": 77,
      "mode": "all"
     }
    ]
