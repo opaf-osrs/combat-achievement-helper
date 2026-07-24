@@ -125,14 +125,15 @@ public final class Palette
 
 	/**
 	 * Cool and airy: one blue family (OKLCH hue 240–245) with analogous cyan/teal carrying value, and a
-	 * single complementary rose for the negatives. Lightness stays high and chroma stays low throughout,
+	 * pale lilac where a green would normally sit, and a complementary rose for the negatives. Lightness
+	 * stays high and chroma stays low throughout,
 	 * so the colours read as tinted white rather than as colour.
 	 */
 	public static final Palette LITE = builder()
 		.name("#D0D9E1").points("#84DCE0").headerAccent("#A4D8FE").desc("#95A0AA")
-		.positive("#7ED6D5").negative("#E1938C").locked("#798189").neutralMeta("#89949D")
+		.positive("#D1B7F1").negative("#E1938C").locked("#798189").neutralMeta("#89949D")
 		.accent("#68B2EF").modeSelected("#3E80B4").modeSelectedText("#FFFFFF")
-		.diffEasy("#8CD6BA").diffMid("#E0C88E").diffHard("#E3928B")
+		.diffEasy("#D1B7F1").diffMid("#E0C88E").diffHard("#E3928B")
 		.tierEasy("#92D5B7").tierMedium("#9BD2FA").tierHard("#E0C88E")
 		.tierElite("#C6B1F0").tierMaster("#ECA19A").tierGrandmaster("#E1D195").build();
 
