@@ -112,7 +112,8 @@ public class CombatAchievementsPlugin extends Plugin
 
 	private boolean dataError;
 	private String dataErrorMessage = "";
-	private long lastAccountHash = -1L;
+	// Volatile: the async hiscore callback reads it to confirm the account has not changed under it.
+	private volatile long lastAccountHash = -1L;
 	// Coalesces the flood of login/varbit refreshes into at most one rebuild per game tick (the
 	// per-varbit full refresh was the login-lag culprit). Volatile: set from the async hiscore callback.
 	private volatile boolean refreshPending;
@@ -277,11 +278,15 @@ public class CombatAchievementsPlugin extends Plugin
 			return;
 		}
 		final HiscoreEndpoint endpoint = HiscoreEndpoint.fromWorldTypes(client.getWorldType());
+		// Pin the account the lookup was made FOR: the callback lands whenever the network answers,
+		// and if the player has hopped accounts by then, seeding would merge this account's KC into
+		// the other's tracker and persist it under the wrong key — permanently, since loads merge-max.
+		final long hashAtLookup = lastAccountHash;
 		try
 		{
 			hiscoreClient.lookupAsync(name, endpoint).whenComplete((result, ex) ->
 			{
-				if (result == null || ex != null)
+				if (result == null || ex != null || lastAccountHash != hashAtLookup)
 				{
 					return;
 				}
@@ -519,10 +524,17 @@ public class CombatAchievementsPlugin extends Plugin
 	{
 		if ("pluginideahub-combatachievements".equals(event.getGroup()))
 		{
-			// Kill-count persistence writes to this same config group (killcounts_* keys); only re-apply the
-			// panel settings on an actual settings change, not on every KC save. KC changes still refresh.
+			// Per-account persistence (killcounts_/barred_/pinned_ keys) writes to this same config
+			// group, and each of those paths already refreshes itself — so our own saves must not
+			// re-apply the panel settings or queue a second refresh. Only real settings changes do.
 			String key = event.getKey();
-			if (panel != null && (key == null || !key.startsWith("killcounts_")))
+			boolean ownPersistence = key != null && (key.startsWith("killcounts_")
+				|| key.startsWith("barred_") || key.startsWith("pinned_"));
+			if (ownPersistence)
+			{
+				return;
+			}
+			if (panel != null)
 			{
 				panel.applyTheme(config.panelTheme().palette());
 				panel.setHowToDefault(config.showHowTo());

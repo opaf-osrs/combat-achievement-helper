@@ -2198,7 +2198,7 @@ public class CombatAchievementsPanel extends PluginPanel
 			crumb.append(" · ").append(escape(d.type));
 		}
 
-		StringBuilder sb = new StringBuilder("<html><body style='width:182px'>");
+		StringBuilder sb = new StringBuilder();
 		sb.append("<span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.NAME))
 			.append("'><b style='font-size:11px'>").append(escape(d.name)).append("</b></span>");
 		sb.append("<br><span style='color:" + metaHex() + "'>").append(crumb).append("</span>");
@@ -2212,8 +2212,7 @@ public class CombatAchievementsPanel extends PluginPanel
 			sb.append("<br><span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.NEGATIVE))
 				.append("'>").append(escape(d.lockReason)).append("</span>");
 		}
-		sb.append("</body></html>");
-		content.add(fullWidth(new JLabel(sb.toString())));
+		content.add(fullWidth(wrappedHtmlLabel(sb.toString(), CARD_TEXT_WIDTH)));
 		content.add(spacer());
 
 		// Jump to the boss this CA is at, to see everything else you could knock out on the same trip.
@@ -2248,7 +2247,7 @@ public class CombatAchievementsPanel extends PluginPanel
 
 		content.add(sectionHeader("Difficulty"));
 		double rating = displayedDifficulty(d);
-		StringBuilder diff = new StringBuilder("<html><body style='width:182px'>");
+		StringBuilder diff = new StringBuilder();
 		diff.append("<span style='color:").append(CombatAchievementsTheme.hex(difficultyColor(d.difficulty)))
 			.append("'>").append(String.format(Locale.ROOT, "%.1f", rating)).append(" / 10</span>");
 		if (d.bossDifficulty > 0)
@@ -2262,8 +2261,7 @@ public class CombatAchievementsPanel extends PluginPanel
 			}
 			diff.append("</span>");
 		}
-		diff.append("</body></html>");
-		content.add(fullWidth(new JLabel(diff.toString())));
+		content.add(fullWidth(wrappedHtmlLabel(diff.toString(), CARD_TEXT_WIDTH)));
 		content.add(spacer());
 
 
@@ -2324,7 +2322,7 @@ public class CombatAchievementsPanel extends PluginPanel
 	{
 		Color colour = r.met ? CombatAchievementsTheme.POSITIVE : CombatAchievementsTheme.NEGATIVE;
 		String mark = r.met ? "&#10003;" : "&#10007;"; // check / cross
-		StringBuilder sb = new StringBuilder("<html><body style='width:182px'><span style='color:")
+		StringBuilder sb = new StringBuilder("<span style='color:")
 			.append(CombatAchievementsTheme.hex(colour)).append("'>").append(mark).append(" ")
 			.append(escape(r.label)).append("</span>");
 		if (!r.note.isEmpty())
@@ -2332,8 +2330,7 @@ public class CombatAchievementsPanel extends PluginPanel
 			sb.append(" <span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.NEGATIVE))
 				.append("'>— ").append(escape(r.note)).append("</span>");
 		}
-		sb.append("</body></html>");
-		return fullWidth(new JLabel(sb.toString()));
+		return fullWidth(wrappedHtmlLabel(sb.toString(), CARD_TEXT_WIDTH));
 	}
 
 	/** True when the boss directory has a page for this monster (so a "View boss" jump can't dead-end). */
@@ -2372,7 +2369,7 @@ public class CombatAchievementsPanel extends PluginPanel
 			return;
 		}
 
-		StringBuilder head = new StringBuilder("<html><body style='width:182px'><span style='color:")
+		StringBuilder head = new StringBuilder("<span style='color:")
 			.append(CombatAchievementsTheme.hex(CombatAchievementsTheme.NAME))
 			.append("'><b style='font-size:11px'>").append(escape(boss.monster)).append("</b></span>");
 		if (boss.locked)
@@ -2393,8 +2390,7 @@ public class CombatAchievementsPanel extends PluginPanel
 				.append(boss.completedCas.size()).append(" of ").append(boss.totalCas())
 				.append(" done</span>");
 		}
-		head.append("</body></html>");
-		content.add(fullWidth(new JLabel(head.toString())));
+		content.add(fullWidth(wrappedHtmlLabel(head.toString(), CARD_TEXT_WIDTH)));
 		content.add(spacer());
 
 		if (!boss.recommendedStats.isEmpty())
@@ -2521,7 +2517,7 @@ public class CombatAchievementsPanel extends PluginPanel
 			BorderFactory.createMatteBorder(0, 3, 0, 0, accent),
 			BorderFactory.createEmptyBorder(5, 7, 5, 7)));
 
-		StringBuilder sb = new StringBuilder("<html><body style='width:" + textWidth + "px'>");
+		StringBuilder sb = new StringBuilder();
 		sb.append("<span style='color:").append(CombatAchievementsTheme.hex(accent))
 			.append("'><b>").append(escape(d.name)).append("</b></span>");
 		if (!d.doableNow)
@@ -2541,15 +2537,13 @@ public class CombatAchievementsPanel extends PluginPanel
 				.append(CombatAchievementsTheme.hex(difficultyColor(d.difficulty)))
 				.append("'>difficulty ").append(d.difficulty).append("</span>");
 		}
-		sb.append("</body></html>");
-		JLabel label = new JLabel(sb.toString());
+		JLabel label = wrappedHtmlLabel(sb.toString(), textWidth);
 		label.setBorder(BorderFactory.createEmptyBorder(0, 0, 3, 0));
-		// As on the route cards: the HTML body width only drives wrapping, the label still reports a wider
-		// preferred size, and that pushes the card past the panel so the right-hand control is clipped away.
-		Dimension pref = label.getPreferredSize();
-		Dimension capped = new Dimension(Math.min(pref.width, textWidth), pref.height);
-		label.setPreferredSize(capped);
-		label.setMaximumSize(capped);
+		// The border sits inside the pinned size, so grow the pin or it eats the text's height.
+		Dimension pinned = label.getPreferredSize();
+		Dimension withBorder = new Dimension(pinned.width, pinned.height + 3);
+		label.setPreferredSize(withBorder);
+		label.setMaximumSize(withBorder);
 		card.add(label, BorderLayout.CENTER);
 
 		card.add(linkRow(d.wikiUrl, d.guideUrl, d.curatedVideo), BorderLayout.SOUTH);
@@ -2696,8 +2690,13 @@ public class CombatAchievementsPanel extends PluginPanel
 
 	private JLabel messageLabel(String text)
 	{
-		JLabel label = new JLabel("<html><body style='width:182px'>" + escape(text) + "</body></html>");
+		JLabel label = wrappedHtmlLabel(escape(text), CARD_TEXT_WIDTH);
 		label.setBorder(BorderFactory.createEmptyBorder(8, 0, 8, 0));
+		// The border sits inside the pinned size, so grow the pin or it eats the text's height.
+		Dimension pinned = label.getPreferredSize();
+		Dimension withBorder = new Dimension(pinned.width, pinned.height + 16);
+		label.setPreferredSize(withBorder);
+		label.setMaximumSize(withBorder);
 		return fullWidth(label);
 	}
 
