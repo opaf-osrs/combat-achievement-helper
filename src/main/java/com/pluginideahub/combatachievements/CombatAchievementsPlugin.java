@@ -86,8 +86,11 @@ public class CombatAchievementsPlugin extends Plugin
 	@Inject
 	private net.runelite.client.eventbus.EventBus eventBus;
 
+	// The client's Gson, injected rather than constructed: the plugin hub rejects fresh instances.
+	@Inject
+	private Gson gson;
+
 	private static final String KC_CONFIG_GROUP = "pluginideahub-combatachievements";
-	private static final Gson GSON = new Gson();
 
 	private CombatAchievementsPanel panel;
 	/** Bumped by the Route refresh button so each press re-solves toward a different set (0 = the optimum). */
@@ -328,7 +331,7 @@ public class CombatAchievementsPlugin extends Plugin
 		try
 		{
 			configManager.setConfiguration(KC_CONFIG_GROUP, kcKey(lastAccountHash),
-				GSON.toJson(killCountTracker.asMap()));
+				gson.toJson(killCountTracker.asMap()));
 		}
 		catch (RuntimeException ex)
 		{
@@ -344,7 +347,7 @@ public class CombatAchievementsPlugin extends Plugin
 			String json = configManager.getConfiguration(KC_CONFIG_GROUP, kcKey(accountHash));
 			if (json != null && !json.isEmpty())
 			{
-				Map<String, Integer> map = GSON.fromJson(json,
+				Map<String, Integer> map = gson.fromJson(json,
 					new TypeToken<HashMap<String, Integer>>() { }.getType());
 				killCountTracker.load(map);
 			}
@@ -425,7 +428,7 @@ public class CombatAchievementsPlugin extends Plugin
 		try
 		{
 			configManager.setConfiguration(KC_CONFIG_GROUP, pinnedKey(lastAccountHash),
-				GSON.toJson(pinnedTasks));
+				gson.toJson(pinnedTasks));
 		}
 		catch (RuntimeException ex)
 		{
@@ -441,7 +444,7 @@ public class CombatAchievementsPlugin extends Plugin
 			String json = configManager.getConfiguration(KC_CONFIG_GROUP, pinnedKey(accountHash));
 			if (json != null && !json.isEmpty())
 			{
-				Set<Integer> saved = GSON.fromJson(json, new TypeToken<HashSet<Integer>>() { }.getType());
+				Set<Integer> saved = gson.fromJson(json, new TypeToken<HashSet<Integer>>() { }.getType());
 				if (saved != null)
 				{
 					pinnedTasks.addAll(saved);
@@ -493,7 +496,7 @@ public class CombatAchievementsPlugin extends Plugin
 		try
 		{
 			configManager.setConfiguration(KC_CONFIG_GROUP, barredKey(lastAccountHash),
-				GSON.toJson(barredTasks));
+				gson.toJson(barredTasks));
 		}
 		catch (RuntimeException ex)
 		{
@@ -509,7 +512,7 @@ public class CombatAchievementsPlugin extends Plugin
 			String json = configManager.getConfiguration(KC_CONFIG_GROUP, barredKey(accountHash));
 			if (json != null && !json.isEmpty())
 			{
-				Set<Integer> saved = GSON.fromJson(json,
+				Set<Integer> saved = gson.fromJson(json,
 					new TypeToken<HashSet<Integer>>() { }.getType());
 				if (saved != null)
 				{
