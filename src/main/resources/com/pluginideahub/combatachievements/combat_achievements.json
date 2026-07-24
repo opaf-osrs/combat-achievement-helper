@@ -1,7 +1,7 @@
 {
  "version": "2026-06-28",
  "source": "OSRS Wiki Bucket API (bucket: combat_achievement); points derived from tier; CC BY-NC-SA.",
- "taskCount": 637,
+ "taskCount": 646,
  "tierPoints": {
   "Easy": 1,
   "Medium": 2,
@@ -7017,6 +7017,105 @@
    "description": "Kill Brutus without being attacked.",
    "leagueRegion": "Misthalin",
    "wikiUrl": "https://oldschool.runescape.wiki/w/Brutus"
+  },
+  {
+   "id": 637,
+   "name": "Maggot Squasher",
+   "tier": "Hard",
+   "monster": "Maggot King",
+   "type": "Kill Count",
+   "points": 3,
+   "description": "Kill the Maggot King.",
+   "leagueRegion": "Morytania",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Maggot_Squasher"
+  },
+  {
+   "id": 638,
+   "name": "Maggot Exterminator",
+   "tier": "Elite",
+   "monster": "Maggot King",
+   "type": "Kill Count",
+   "points": 4,
+   "description": "Kill the Maggot King 25 times.",
+   "leagueRegion": "Morytania",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Maggot_Exterminator"
+  },
+  {
+   "id": 639,
+   "name": "Camping the King",
+   "tier": "Master",
+   "monster": "Maggot King",
+   "type": "Stamina",
+   "points": 5,
+   "description": "Kill the Maggot King 12 times without leaving the arena.",
+   "leagueRegion": "Morytania",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Camping_the_King"
+  },
+  {
+   "id": 640,
+   "name": "Maggot King Speed Chaser",
+   "tier": "Master",
+   "monster": "Maggot King",
+   "type": "Speed",
+   "points": 5,
+   "description": "Kill the Maggot King 5 times in 9 minutes.",
+   "leagueRegion": "Morytania",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Maggot_King_Speed_Chaser"
+  },
+  {
+   "id": 641,
+   "name": "Trying to fit in",
+   "tier": "Elite",
+   "monster": "Maggot King",
+   "type": "Restriction",
+   "points": 4,
+   "description": "Kill the Maggot King using only weapons that can be found in Vampyrium.",
+   "leagueRegion": "Morytania",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Trying_to_fit_in"
+  },
+  {
+   "id": 642,
+   "name": "King-sized clobbering",
+   "tier": "Master",
+   "monster": "Maggot King",
+   "type": "Mechanical",
+   "points": 5,
+   "description": "Kill the Maggot King without missing a single melee punish.",
+   "leagueRegion": "Morytania",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/King-sized_clobbering"
+  },
+  {
+   "id": 643,
+   "name": "Digging in",
+   "tier": "Master",
+   "monster": "Maggot King",
+   "type": "Restriction",
+   "points": 5,
+   "description": "Kill the Maggot King without moving more than 40 tiles.",
+   "leagueRegion": "Morytania",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Digging_in"
+  },
+  {
+   "id": 644,
+   "name": "Cordoned Off",
+   "tier": "Master",
+   "monster": "Maggot King",
+   "type": "Restriction",
+   "points": 5,
+   "description": "Kill the Maggot King without moving beyond the back row of tiles.",
+   "leagueRegion": "Morytania",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Cordoned_Off"
+  },
+  {
+   "id": 645,
+   "name": "Perfect Maggot King",
+   "tier": "Master",
+   "monster": "Maggot King",
+   "type": "Perfection",
+   "points": 5,
+   "description": "Kill the Maggot King without taking any avoidable damage or him ever being healed.",
+   "leagueRegion": "Morytania",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Perfect_Maggot_King"
   }
  ]
 }

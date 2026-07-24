@@ -19088,6 +19088,334 @@
      "mode": "all"
     }
    ]
+  },
+  "637": {
+   "soft": [
+    {
+     "skills": [
+      "Ranged",
+      "Magic"
+     ],
+     "level": 75,
+     "mode": "any"
+    },
+    {
+     "skills": [
+      "Attack"
+     ],
+     "level": 80,
+     "mode": "all"
+    },
+    {
+     "skills": [
+      "Strength"
+     ],
+     "level": 85,
+     "mode": "all"
+    },
+    {
+     "skills": [
+      "Defence"
+     ],
+     "level": 70,
+     "mode": "all"
+    },
+    {
+     "skills": [
+      "Prayer"
+     ],
+     "level": 74,
+     "mode": "all"
+    },
+    {
+     "skills": [
+      "Agility"
+     ],
+     "level": 64,
+     "mode": "all"
+    },
+    {
+     "skills": [
+      "Construction"
+     ],
+     "level": 70,
+     "mode": "all"
+    }
+   ]
+  },
+  "638": {
+   "soft": [
+    {
+     "skills": [
+      "Ranged",
+      "Magic"
+     ],
+     "level": 75,
+     "mode": "any"
+    },
+    {
+     "skills": [
+      "Attack"
+     ],
+     "level": 80,
+     "mode": "all"
+    },
+    {
+     "skills": [
+      "Strength"
+     ],
+     "level": 85,
+     "mode": "all"
+    },
+    {
+     "skills": [
+      "Defence"
+     ],
+     "level": 70,
+     "mode": "all"
+    },
+    {
+     "skills": [
+      "Prayer"
+     ],
+     "level": 74,
+     "mode": "all"
+    }
+   ]
+  },
+  "639": {
+   "soft": [
+    {
+     "skills": [
+      "Ranged",
+      "Magic"
+     ],
+     "level": 90,
+     "mode": "any"
+    },
+    {
+     "skills": [
+      "Attack",
+      "Strength"
+     ],
+     "level": 90,
+     "mode": "all"
+    },
+    {
+     "skills": [
+      "Prayer"
+     ],
+     "level": 77,
+     "mode": "all"
+    },
+    {
+     "skills": [
+      "Defence"
+     ],
+     "level": 80,
+     "mode": "all"
+    }
+   ]
+  },
+  "640": {
+   "soft": [
+    {
+     "skills": [
+      "Magic"
+     ],
+     "level": 95,
+     "mode": "all"
+    },
+    {
+     "skills": [
+      "Attack",
+      "Strength"
+     ],
+     "level": 90,
+     "mode": "all"
+    },
+    {
+     "skills": [
+      "Prayer"
+     ],
+     "level": 77,
+     "mode": "all"
+    },
+    {
+     "skills": [
+      "Defence"
+     ],
+     "level": 80,
+     "mode": "all"
+    }
+   ]
+  },
+  "641": {
+   "soft": [
+    {
+     "skills": [
+      "Magic"
+     ],
+     "level": 75,
+     "mode": "all"
+    },
+    {
+     "skills": [
+      "Attack"
+     ],
+     "level": 80,
+     "mode": "all"
+    },
+    {
+     "skills": [
+      "Strength"
+     ],
+     "level": 85,
+     "mode": "all"
+    },
+    {
+     "skills": [
+      "Defence"
+     ],
+     "level": 70,
+     "mode": "all"
+    },
+    {
+     "skills": [
+      "Prayer"
+     ],
+     "level": 74,
+     "mode": "all"
+    }
+   ]
+  },
+  "642": {
+   "soft": [
+    {
+     "skills": [
+      "Attack",
+      "Strength"
+     ],
+     "level": 90,
+     "mode": "all"
+    },
+    {
+     "skills": [
+      "Ranged",
+      "Magic"
+     ],
+     "level": 75,
+     "mode": "any"
+    },
+    {
+     "skills": [
+      "Defence"
+     ],
+     "level": 70,
+     "mode": "all"
+    },
+    {
+     "skills": [
+      "Prayer"
+     ],
+     "level": 74,
+     "mode": "all"
+    }
+   ]
+  },
+  "643": {
+   "soft": [
+    {
+     "skills": [
+      "Ranged",
+      "Magic"
+     ],
+     "level": 85,
+     "mode": "any"
+    },
+    {
+     "skills": [
+      "Attack",
+      "Strength"
+     ],
+     "level": 80,
+     "mode": "all"
+    },
+    {
+     "skills": [
+      "Defence"
+     ],
+     "level": 70,
+     "mode": "all"
+    },
+    {
+     "skills": [
+      "Prayer"
+     ],
+     "level": 74,
+     "mode": "all"
+    }
+   ]
+  },
+  "644": {
+   "soft": [
+    {
+     "skills": [
+      "Ranged",
+      "Magic"
+     ],
+     "level": 85,
+     "mode": "any"
+    },
+    {
+     "skills": [
+      "Defence"
+     ],
+     "level": 70,
+     "mode": "all"
+    },
+    {
+     "skills": [
+      "Prayer"
+     ],
+     "level": 74,
+     "mode": "all"
+    }
+   ]
+  },
+  "645": {
+   "soft": [
+    {
+     "skills": [
+      "Ranged",
+      "Magic"
+     ],
+     "level": 90,
+     "mode": "any"
+    },
+    {
+     "skills": [
+      "Attack",
+      "Strength"
+     ],
+     "level": 90,
+     "mode": "all"
+    },
+    {
+     "skills": [
+      "Prayer"
+     ],
+     "level": 77,
+     "mode": "all"
+    },
+    {
+     "skills": [
+      "Defence"
+     ],
+     "level": 80,
+     "mode": "all"
+    }
+   ]
   }
  }
 }

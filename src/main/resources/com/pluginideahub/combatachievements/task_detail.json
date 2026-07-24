@@ -223,7 +223,7 @@
    "items": "Mossy key"
   },
   "38": {
-   "stats": "Any combat; a woodcutting axe or magic secateurs to one-shot growthlings",
+   "stats": "43+ Prayer; any combat; a woodcutting axe or magic secateurs to one-shot",
    "setup": "Equip/inventory a woodcutting axe (any tier) or magic secateurs which one-shot growthlings; melee or mage Bryophyta otherwise.",
    "strategy": "Wait until all 3 growthlings have spawned, then one-shot them in quick succession with an axe/secateurs so the last dies within 3 seconds of the first; do not kill the first until the others are up.",
    "items": "Mossy key; Bronze axe; Iron axe; Steel axe; Black axe; Mithril axe; Adamant axe; Rune axe; Dragon axe; Crystal axe; Magic secateurs"
@@ -1009,7 +1009,7 @@
    "strategy": "Pray Protect from Missiles to block its ranged hits and keep moving off the highlighted tiles to dodge the jump attack; full Shayzien tier 5 negates the acid attack. Burst it down fast so none of its attacks land - only the shaman's own damage breaks the task, spawn damage is allowed. Easiest solo in the Molch temple where you can isolate one shaman."
   },
   "176": {
-   "stats": "70+ Magic, 70+ Ranged, 43+ Prayer, 70+ Defence (higher is much easier)",
+   "stats": "80+ Magic, 75+ Attack/Strength, 70+ Ranged, 70+ Defence, 60+ Prayer",
    "setup": "Magic is the Mimic's weakness: use ice spells (Ice Barrage/Entangle) to freeze it, or a Toxic blowpipe; bring Protect from Melee and stat-boost potions",
    "strategy": "Just need one kill. Use Protect from Melee throughout, freeze the Mimic with ice spells to avoid its melee, step out of the way of the six thrown candies, never stand under the Mimic (stomp damage scales up to 6/tick), and ignore the Third Age minions.",
    "items": "Mimic casket"
@@ -2299,19 +2299,19 @@
    "items": "Scythe of vitur (high DPS crush); Saradomin brew; Super restore; Sanfew serum"
   },
   "406": {
-   "stats": "99 Strength with high strength bonus (approx 118 effective Strength / 160+ str bonus), Piety active",
+   "stats": "99 Strength with high strength bonus, 90+ Attack/Defence/Hitpoints, 90+ Magic, 70+ Prayer",
    "setup": "Max crush: Scythe/Inquisitor's mace, full Inquisitor's, Ultor ring, Ferocious gloves, Amulet of rancour, Piety",
    "strategy": "Crush always max-hits husks and weakened parasites; you need enough Strength + bonus (around 118 effective Strength) so a max hit one-shots them. Weaken regular parasites first, then one-tap. Avoid non-crush styles for minions.",
    "items": "Crush weapon (Inquisitor's mace or Scythe of vitur); Piety; Ultor ring / strength gear"
   },
   "407": {
-   "stats": "90+ melee combat, 70+ Prayer",
+   "stats": "90+ Attack/Strength/Defence/Hitpoints, 90+ Magic, 70+ Prayer",
    "setup": "Standard crush BiS/Bandos with Piety; pay attention to prayer-flicking in phase 3",
    "strategy": "In phase 3 she deactivates a protection prayer that is already on when her attack animation starts. Toggle your protection prayer OFF before that attack and flick it back ON after the animation begins, so it is never the one disabled.",
    "items": "Crush weapon; Saradomin brew; Super restore"
   },
   "408": {
-   "stats": "90+ melee combat, 70+ Prayer; high DPS to clear sleepwalkers",
+   "stats": "90+ Attack/Strength/Defence/Hitpoints, 90+ Magic, 70+ Prayer",
    "setup": "High-DPS crush (Scythe/Inquisitor's mace) plus a quick switch (e.g. ranged) to one-shot sleepwalkers as they spawn",
    "strategy": "During desperation she repeatedly summons sleepwalkers one at a time; kill each one before it reaches her (a reaching sleepwalker deals 15 damage and fails the task). Burst her HP down fast and intercept every walker.",
    "items": "Crush weapon (high DPS); Saradomin brew; Super restore"
@@ -2341,19 +2341,19 @@
    "items": "Frozen key; Zaryte crossbow; Ruby dragon bolts (e); Masori armour; Saradomin brews; Super restores"
   },
   "413": {
-   "stats": "90+ Ranged, 80+ Defence, 90+ HP, 74+ Prayer",
+   "stats": "90+ Ranged, 80+ Defence, 90+ HP, 74+ Prayer, 76+ Magic (resurrection)",
    "setup": "Ranged DPS to burn the blood phase quickly; high-DPS team so the siphon window is short.",
    "strategy": "Mechanical: during Blood Siphon, Nex kneels and all damage she takes heals her, and the red-marked sacrifice player must run 7+ tiles away. Stop attacking Nex while she kneels and have the sacrificed player flee so she gains no health; kill the blood reavers instead.",
    "items": "Frozen key; Zaryte crossbow; Ruby dragon bolts (e); Masori armour; Saradomin brews; Super restores"
   },
   "414": {
-   "stats": "90+ Ranged, 80+ Defence, 90+ HP, 74+ Prayer",
+   "stats": "90+ Ranged, 80+ Defence, 90+ HP, 74+ Prayer, 76+ Magic (resurrection)",
    "setup": "Bring a stab/crush weapon (Osmumten's fang, Elder maul) or a salamander to break ice prisons reliably; flick Protect from Missiles for Containment.",
    "strategy": "Mechanical: break the 3x3 ice prison with a stab/crush hit (a salamander never fails to break it) before it shatters for ~75, and step away from the 5x5 Containment icicles around Nex. Protect from Missiles halves Containment but you must take zero damage, so avoid both entirely.",
    "items": "Frozen key; Osmumten's fang; Elder maul; Swamp lizard; Saradomin brews; Super restores"
   },
   "415": {
-   "stats": "90+ Ranged, 80+ Defence, 90+ HP, 74+ Prayer",
+   "stats": "90+ Ranged, 80+ Defence, 90+ HP, 74+ Prayer, 76+ Magic (resurrection)",
    "setup": "Standard ranged setup; positioning matters more than gear for this task.",
    "strategy": "Mechanical: in the Smoke phase Nex darts down one of the four aisles hitting everyone in her path for up to 50. Watch the directional cue and step out of the aisle she charges down so no one is in the line.",
    "items": "Frozen key; Zaryte crossbow; Masori armour; Saradomin brews; Super restores"
@@ -2383,7 +2383,7 @@
    "items": "Frozen key; Zaryte crossbow; Masori armour; Osmumten's fang; Elder maul; Swamp lizard; Saradomin brews; Super restores"
   },
   "420": {
-   "stats": "90+ Ranged, 80+ Defence, 90+ HP, 74+ Prayer",
+   "stats": "90+ Ranged, 80+ Defence, 90+ HP, 74+ Prayer, 76+ Magic (resurrection)",
    "setup": "Standard ranged setup; movement/positioning is the key, not gear.",
    "strategy": "Mechanical: in the Shadow phase deadly shadows appear under every player and erupt after 3 ticks for up to 50. Move off your tile within those 3 ticks so no one is hit.",
    "items": "Frozen key; Zaryte crossbow; Masori armour; Saradomin brews; Super restores"
@@ -2475,7 +2475,7 @@
    "strategy": "Apmeken: in the venom/baboon rooms avoid contact damage and the volatile (exploding) baboons. Ba-Ba: stand correctly to dodge boulders, step away from rolling rubble and the knockback slams at 66%/33% (never fall in the pit), and kill the boulder/rubble safely."
   },
   "438": {
-   "stats": "Combat level mainly for raid access; agility/movement focus",
+   "stats": "75+ Ranged or Magic, 70+ Defence, 60+ Agility for the room hazards",
    "setup": "Light gear with Stamina potion for fast running",
    "strategy": "Fill your water container, take the most direct route, watch for spillage tiles, and block/avoid crocodiles so none reach the tree, all within the 1-minute timer."
   },
@@ -2490,7 +2490,7 @@
    "strategy": "Crondis: navigate the spike traps/poison without taking hits while filling the waterskins and growing the palm. Zebak: pray correctly, push the jug to block the tidal wave/roar, dodge acid pools and blood clouds, and avoid the wave damage entirely."
   },
   "441": {
-   "stats": "Combat level mainly for raid access; puzzle-solving focus",
+   "stats": "75+ Ranged or Magic, 70+ Defence",
    "setup": "Standard raid gear; Stamina potion for speed",
    "strategy": "Solve the matching/light puzzles quickly and accurately, stepping only on safe tiles, to finish within 1 minute without taking any puzzle damage."
   },
@@ -3532,12 +3532,12 @@
    "items": "Tortugan shield"
   },
   "632": {
-   "stats": "Any combat level; 40+ in any combat style and 43+ Prayer helpful",
+   "stats": "Any combat level; 20+ in any combat style and 43+ Prayer helpful",
    "setup": "Any weapon you can wield; Protect from Melee prayer if available. Earth spells (e.g. Earth Bolt/Wave) hit 25% harder if going magic.",
    "strategy": "Plain kill count. Fight Brutus in the instanced arena after starting/finishing The Ides of Milk; pray Protect from Melee or dodge the two telegraphed specials (up to 19 damage) and chip down his 58 HP."
   },
   "633": {
-   "stats": "45+ in any combat style, 43+ Prayer recommended",
+   "stats": "20+ in any combat style, 43+ Prayer helpful",
    "setup": "Any decent F2P weapon (e.g. rune scimitar) or earth spells (25% weakness); Protect from Melee prayer.",
    "strategy": "Same fight repeated 10 times. Use Protect from Melee to negate standard hits and step away from telegraphed specials each kill to stay efficient."
   },
@@ -3553,9 +3553,61 @@
    "strategy": "You cannot equip anything or eat/drink, so survival relies entirely on dodging. Move out of the two telegraphed specials (which can hit ~19) and keep distance-managing while you punch him down; bring high HP and good melee levels so the unarmed kill is fast."
   },
   "636": {
-   "stats": "70+ in your combat style for a quick kill; 43+ Prayer for Protect from Melee backup",
+   "stats": "40+ in your combat style for a quick kill; 43+ Prayer for Protect from Melee",
    "setup": "Ranged or magic for safe damage from distance, or melee with careful movement. Protect from Melee can negate standard hits; earth magic adds 25% damage.",
    "strategy": "Brutus cannot flinch but his attacks are telegraphed. Dodge both special attacks by moving the few ticks they give you, and avoid all standard melee hits via safespotting/distance or Protect from Melee, so no attack ever lands while you kill his 58 HP."
+  },
+  "637": {
+   "stats": "85+ Ranged or 75+ Magic, 80+ Attack, 85+ Strength, 70+ Defence, 74+ Prayer recommended for Rigour, 64+ Agility helpful for shortcuts, 70 Construction helpful for Sangvesti bank chest",
+   "setup": "Heavy ranged (Zaryte/Armadyl/Dragon crossbow with ruby bolts) or fire spells (Harmonised nightmare staff/Twinflame staff + tome/fire runes), plus crush/melee punish switch (Scythe/Inquisitor/Elder maul/Godsword/Crimson kisten), bow/standard ranged option for ur-maggot larvae, anti-venom+/serpentine helm and/or inoculation bracelet for bile immunity.",
+   "strategy": "Complete one normal kill. Use ranged or fire magic while the boss is distant, swap prayers for ranged/magic attacks, turn protection prayer off for venator screech, kill larvae with standard ranged before they land, dodge carrion shadows and melee slams, then finish with controlled melee punish cycles or continued ranged/magic DPS."
+  },
+  "638": {
+   "stats": "85+ Ranged or 75+ Magic, 80+ Attack, 85+ Strength, 70+ Defence, 74+ Prayer recommended for Rigour",
+   "setup": "Heavy ranged or fire magic setup with melee punish switch; standard bow/venator bow for larvae; anti-bile/poison mitigation.",
+   "strategy": "A plain kill-count grind. Prioritize consistent kills over speed: maintain poison/sticky bile immunities where possible, shoot larvae before they land, and keep supplies high until the melee/enrage phase is comfortable."
+  },
+  "639": {
+   "stats": "95+ Ranged or 90+ Magic, 90+ Attack/Strength, 77+ Prayer, 80+ Defence",
+   "setup": "High-sustain inventory with brews/restores/prayer, anti-poison/sticky bile mitigation, efficient DPS setup, and room to use Maggot King supply drops.",
+   "strategy": "Bring a sustain-focused inventory and use the boss supply drops (stymphike tartares/dull ancient medals) to extend the trip. Take safer kills over speed, avoid bile/carrion chip damage, and preserve prayer/food for later kills.",
+   "items": "High-sustain inventory with brews/restores/prayer; anti-poison/sticky bile mitigation; efficient DPS setup"
+  },
+  "640": {
+   "stats": "95+ Magic, 90+ Attack/Strength, 77+ Prayer, 80+ Defence",
+   "setup": "High-DPS fire magic plus a strong melee-punish setup; Dharok's equipment can provide the highest punish DPS. Bring enough supplies for five fast kills.",
+   "strategy": "Use fire magic and efficient melee punishes so the first five kills average under 1:48. Only time spent in combat counts, so wait before interacting with each corpse for special-attack energy and surge-potion cooldowns when useful.",
+   "items": "High-DPS fire magic; melee punish switch; enough supplies for 5 fast kills"
+  },
+  "641": {
+   "stats": "75+ Magic, 80+ Attack, 85+ Strength, 70+ Defence, 74+ Prayer",
+   "setup": "Allowed: Sunspear, Crimson kisten, blisterwood stake; mithril spear/2h; adamant spear/battleaxe/longsword/halberd/2h; rune spear/battleaxe/longsword/halberd/2h; dragon battleaxe/longsword/halberd. Manually cast fire spells; tome of fire is permitted.",
+   "strategy": "Manually cast fire spells at range, use a Crimson kisten for the melee phases, and use blisterwood stakes or fire spells on larvae. Do not use dragon spear, mist battlestaff, dust battlestaff, or dragon darts even though their components may be obtainable in Vampyrium.",
+   "items": "At least one eligible Vampyrium weapon; tome of fire optional"
+  },
+  "642": {
+   "stats": "90+ Attack/Strength, 85+ Ranged or 75+ Magic, 70+ Defence, 74+ Prayer",
+   "setup": "Strong crush/melee punish weapon such as Elder maul, godsword, Scythe/Inquisitor, or similar, plus ranged/fire magic for distance phases.",
+   "strategy": "During melee slam phases, click the boss on the same tick it extends its head to trigger the high-accuracy, 50% damage-boosted melee punish. Use a consistent 4- or 5-tick cycle and avoid attacking early/late.",
+   "items": "Strong crush/melee weapon for punish timing (Elder maul, Godsword, Scythe/Inquisitor, or similar)"
+  },
+  "643": {
+   "stats": "90+ Ranged or 85+ Magic, 80+ Attack/Strength, 70+ Defence, 74+ Prayer",
+   "setup": "Long-range ranged/fire magic setup, melee punish switch if movement allows, bile immunity items helpful.",
+   "strategy": "Minimize every step: keep a stable central/back-row position, only move for unavoidable carrion/bile/slam patterns, and use long-range attacks to avoid extra pathing. During melee slams, use punish attacks rather than ordinary melee attacks to save movement.",
+   "items": "Long-range ranged/magic setup; bile immunity items helpful"
+  },
+  "644": {
+   "stats": "90+ Ranged or 85+ Magic, 70+ Defence, 74+ Prayer",
+   "setup": "Long-range ranged or fire magic setup; heavy ranged or a melee-punish weapon for melee phases; standard bow or venator bow for larvae; bile immunity items helpful.",
+   "strategy": "Fight from the back row and pre-place hazards safely. During melee slams, use only melee punish attacks from the back row, or switch to heavy ranged; ordinary melee attacks can drag you forward and fail the task.",
+   "items": "Long-range ranged/magic setup; melee-punish or heavy-ranged option; larvae weapon"
+  },
+  "645": {
+   "stats": "95+ Ranged or 90+ Magic, 90+ Attack/Strength, 77+ Prayer, 80+ Defence",
+   "setup": "Consistent ranged/fire magic setup with melee punish switch; serpentine helm plus poison immunity can permit stepping on poison pools, but airborne projectiles must still be dodged; standard bow/venator bow for larvae.",
+   "strategy": "Play conservatively: use correct prayers, turn protection prayer off before venator screech, dodge airborne projectiles, carrion and slams, and kill larvae before they can heal the boss. Poison immunity can make poison pools safe, but it does not make their falling projectiles safe.",
+   "items": "Serpentine helm and poison immunity helpful; standard bow/venator bow for larvae"
   }
  }
 }

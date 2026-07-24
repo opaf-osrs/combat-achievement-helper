@@ -3186,6 +3186,58 @@
    "difficulty": 4,
    "reason": "research",
    "attempts": 2.0
+  },
+  "637": {
+   "difficulty": 8,
+   "boss": 8,
+   "reason": "kill count"
+  },
+  "638": {
+   "difficulty": 8,
+   "boss": 8,
+   "reason": "kill count"
+  },
+  "639": {
+   "difficulty": 9,
+   "boss": 8,
+   "bump": 0.5,
+   "reason": "stamina floor"
+  },
+  "640": {
+   "difficulty": 9,
+   "boss": 8,
+   "bump": 1.0,
+   "reason": "speed"
+  },
+  "641": {
+   "difficulty": 8,
+   "boss": 8,
+   "bump": 0.4,
+   "reason": "restriction floor"
+  },
+  "642": {
+   "difficulty": 9,
+   "boss": 8,
+   "bump": 0.8,
+   "reason": "mechanic"
+  },
+  "643": {
+   "difficulty": 8,
+   "boss": 8,
+   "bump": 0.4,
+   "reason": "restriction floor"
+  },
+  "644": {
+   "difficulty": 8,
+   "boss": 8,
+   "bump": 0.4,
+   "reason": "restriction floor"
+  },
+  "645": {
+   "difficulty": 9,
+   "boss": 8,
+   "bump": 1.0,
+   "reason": "perfection floor"
   }
  }
 }

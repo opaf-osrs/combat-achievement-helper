@@ -2,7 +2,7 @@
  "version": "2026-07-05",
  "source": "data/curation/boss_timing.csv (OSRS Wiki + estimation). ROUGH timings.",
  "note": "Per-boss rough time-to-kill (seconds), respawn/downtime, effective kills-per-hour, and attempts-per-kill (novice fail rate). For raids/minigames ttkSeconds is one full run. Used with each CA's kill count to estimate real grind time. Estimates, not guarantees.",
- "monsterCount": 88,
+ "monsterCount": 89,
  "missing": [],
  "monsters": {
   "Aberrant Spectre": {
@@ -540,6 +540,12 @@
    "respawnSeconds": 30,
    "killsPerHour": 30,
    "note": "Mage/range switching, multi-phase rotations. ~70-110s/kill + bank/run-back ~30s. Competent ~30/hr."
+  },
+  "Maggot King": {
+   "ttkSeconds": 150,
+   "respawnSeconds": 15,
+   "killsPerHour": 20,
+   "note": "First-pass estimate pending real kill data; speed task implies ~105s top-end kills."
   }
  }
 }

@@ -2,7 +2,7 @@
  "version": "2026-06-29",
  "source": "OSRS Wiki quest pages (per-quest research agents), CA-relevant quest universe",
  "note": "Quest-effort graph for the quests that gate Combat Achievements (gating quests + full prerequisite chains). estMinutes/effortScore are heuristics derived from the wiki Length/Difficulty so the plugin can compare doing a quest chain vs grinding a CA. directPrerequisiteQuests forms the dependency graph.",
- "questCount": 112,
+ "questCount": 113,
  "quests": {
   "A Kingdom Divided": {
    "name": "A Kingdom Divided",
@@ -2106,6 +2106,42 @@
    "directPrerequisiteQuests": [],
    "series": "Great Kourend",
    "wikiUrl": "https://oldschool.runescape.wiki/w/X_Marks_the_Spot"
+  },
+  "The Blood Moon Rises": {
+   "name": "The Blood Moon Rises",
+   "difficulty": "Grandmaster",
+   "length": "Very Long",
+   "estMinutes": 180,
+   "effortScore": 18,
+   "questPoints": 4,
+   "members": true,
+   "combatRequirement": "Combat 110 recommended",
+   "skillRequirements": {
+    "Slayer": 74,
+    "Woodcutting": 74,
+    "Smithing": 72,
+    "Cooking": 72,
+    "Fletching": 70,
+    "Mining": 66,
+    "Hunter": 65,
+    "Crafting": 64,
+    "Herblore": 64,
+    "Magic": 57
+   },
+   "directPrerequisiteQuests": [
+    "A Night at the Theatre",
+    "Sins of the Father",
+    "Vampyre Slayer",
+    "A Taste of Hope",
+    "Darkness of Hallowvale",
+    "In Aid of the Myreque",
+    "In Search of the Myreque",
+    "Nature Spirit",
+    "Priest in Peril",
+    "The Restless Ghost"
+   ],
+   "series": null,
+   "wikiUrl": null
   }
  }
 }
