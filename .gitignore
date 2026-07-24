@@ -7,7 +7,9 @@ out/
 
 # Curation sources — the CSVs, spreadsheets and scripts the bundled datasets are compiled from.
 # The plugin ships the compiled JSON in src/main/resources; these stay local.
-data/
+# Anchored to the repo root: a bare "data/" also swallowed src/**/core/data/, which silently kept
+# a source file out of git and shipped a repo that did not compile.
+/data/
 
 # Internal design notes and research
 docs/
