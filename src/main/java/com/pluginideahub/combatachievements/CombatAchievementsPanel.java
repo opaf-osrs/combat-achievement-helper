@@ -107,7 +107,7 @@ public class CombatAchievementsPanel extends PluginPanel
 	private static final int DETAIL_TEXT_WIDTH = 170;
 	/** Route card text width, and the slice the per-CA "-" (bar) control takes on the right. */
 	private static final int ROUTE_TEXT_WIDTH = 182;
-	private static final int BAR_BUTTON_WIDTH = 16;
+	private static final int BAR_BUTTON_WIDTH = 20;
 	/**
 	 * Hard cap on a route card's width. The content column sizes itself to its widest child, and a
 	 * long unlock card can push that past the ~225px panel; a full-width route card would then put
@@ -684,6 +684,16 @@ public class CombatAchievementsPanel extends PluginPanel
 		BufferedImage mark = ImageUtil.loadImageResource(CombatAchievementsPlugin.class, "discord.png");
 		discordButton.setIcon(new ImageIcon(tint(mark, CombatAchievementsTheme.NEUTRAL_META)));
 		discordButton.setRolloverIcon(new ImageIcon(tint(mark, CombatAchievementsTheme.HEADER_GOLD)));
+	}
+
+	/** Mixes two colours, {@code t} of the way from {@code a} to {@code b}. */
+	private static Color blend(Color a, Color b, double t)
+	{
+		double k = Math.max(0.0, Math.min(1.0, t));
+		return new Color(
+			(int) Math.round(a.getRed() + (b.getRed() - a.getRed()) * k),
+			(int) Math.round(a.getGreen() + (b.getGreen() - a.getGreen()) * k),
+			(int) Math.round(a.getBlue() + (b.getBlue() - a.getBlue()) * k));
 	}
 
 	/** Recolours a white-with-alpha silhouette, keeping its alpha so the edges stay smooth. */
@@ -1805,15 +1815,19 @@ public class CombatAchievementsPanel extends PluginPanel
 		if (onUnbarTask != null)
 		{
 			JButton restore = new JButton("+");
-			restore.setFont(FontManager.getRunescapeSmallFont());
+			// Matches the route card's "-" in weight and size: they are a pair, and a small "+" against a
+			// bold "-" reads as two unrelated controls.
+			restore.setFont(FontManager.getRunescapeBoldFont());
 			restore.setToolTipText("Put " + c.name + " back in the route");
 			restore.setFocusPainted(false);
 			restore.setBorderPainted(false);
 			restore.setContentAreaFilled(false);
 			restore.setOpaque(false);
 			restore.setForeground(CombatAchievementsTheme.POSITIVE);
+			addForegroundHover(restore, CombatAchievementsTheme.POSITIVE,
+				CombatAchievementsTheme.NAME);
 			restore.setBorder(BorderFactory.createEmptyBorder(0, 4, 0, 0));
-			restore.setPreferredSize(new Dimension(BAR_BUTTON_WIDTH, 16));
+			restore.setPreferredSize(new Dimension(BAR_BUTTON_WIDTH, 18));
 			restore.setCursor(java.awt.Cursor.getPredefinedCursor(java.awt.Cursor.HAND_CURSOR));
 			restore.addActionListener(e -> {
 				if (onUnbarTask != null)
@@ -1841,14 +1855,19 @@ public class CombatAchievementsPanel extends PluginPanel
 	{
 		// Plain ASCII "-": the RuneScape font does not carry U+2212, which rendered as nothing.
 		JButton bar = new JButton("-");
-		bar.setFont(FontManager.getRunescapeSmallFont());
+		// Bigger than the card text and tinted toward the theme's negative, so it reads as a remove
+		// control at a glance. Muted rather than full red at rest - it is an option, not a warning - and
+		// it comes up to the full negative on hover.
+		bar.setFont(FontManager.getRunescapeBoldFont());
 		bar.setToolTipText("Don't show " + c.name + " in the route");
 		bar.setFocusPainted(false);
 		bar.setBorderPainted(false);
 		bar.setContentAreaFilled(false);
 		bar.setOpaque(false);
-		bar.setForeground(CombatAchievementsTheme.LOCKED);
-		bar.setPreferredSize(new Dimension(BAR_BUTTON_WIDTH, 16));
+		Color barIdle = blend(CombatAchievementsTheme.NEUTRAL_META, CombatAchievementsTheme.NEGATIVE, 0.72);
+		bar.setForeground(barIdle);
+		addForegroundHover(bar, barIdle, CombatAchievementsTheme.NEGATIVE);
+		bar.setPreferredSize(new Dimension(BAR_BUTTON_WIDTH, 18));
 		bar.setMargin(new Insets(0, 4, 0, 0));
 		bar.setBorder(BorderFactory.createEmptyBorder(0, 4, 0, 0));
 		bar.setCursor(java.awt.Cursor.getPredefinedCursor(java.awt.Cursor.HAND_CURSOR));
