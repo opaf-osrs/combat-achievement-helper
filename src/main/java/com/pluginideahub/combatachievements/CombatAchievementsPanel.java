@@ -1861,33 +1861,42 @@ public class CombatAchievementsPanel extends PluginPanel
 	}
 
 	/** A clickable CA row from a CaDetail — orange (doable) or red (locked) — opening the CA detail. */
+	/** A CA card for the boss detail — same layout as the CAs-list {@link #taskCard} for a consistent look. */
 	private JPanel caCard(SidePanelViewModel.CaDetail d)
 	{
 		JPanel card = new JPanel(new BorderLayout());
 		card.setBackground(ColorScheme.DARK_GRAY_COLOR);
-		Color accent = d.doableNow ? CombatAchievementsTheme.NAME : CombatAchievementsTheme.NEGATIVE;
+		Color accent = d.doableNow ? CombatAchievementsTheme.NAME : CombatAchievementsTheme.LOCKED;
 		card.setBorder(BorderFactory.createCompoundBorder(
 			BorderFactory.createMatteBorder(0, 3, 0, 0, accent),
 			BorderFactory.createEmptyBorder(5, 7, 5, 7)));
-		StringBuilder sb = new StringBuilder("<html><body style='width:182px'>");
+
+		StringBuilder sb = new StringBuilder("<html><body style='width:166px'>");
 		sb.append("<span style='color:").append(CombatAchievementsTheme.hex(accent))
 			.append("'><b>").append(escape(d.name)).append("</b></span>");
+		if (!d.doableNow)
+		{
+			String lock = d.lockReason == null || d.lockReason.isEmpty() ? "locked" : d.lockReason;
+			sb.append(" <span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.LOCKED))
+				.append("'>(").append(escape(lock)).append(")</span>");
+		}
+		sb.append("<br><span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.DESC))
+			.append("'>").append(escape(d.description)).append("</span>");
 		sb.append("<br><span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.POINTS))
-			.append("'>").append(d.points).append(" pts</span> <span style='color:" + metaHex() + "'>· ")
-			.append(escape(d.tierName)).append("</span>");
+			.append("'>").append(d.points).append(" pts</span>")
+			.append(" <span style='color:" + metaHex() + "'>· ").append(escape(d.tierName)).append("</span>");
 		if (d.difficulty > 0)
 		{
 			sb.append(" <span style='color:" + metaHex() + "'>· </span><span style='color:")
 				.append(CombatAchievementsTheme.hex(difficultyColor(d.difficulty)))
 				.append("'>diff ").append(d.difficulty).append("</span>");
 		}
-		if (!d.doableNow && !d.lockReason.isEmpty())
-		{
-			sb.append("<br><span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.NEGATIVE))
-				.append("'>").append(escape(d.lockReason)).append("</span>");
-		}
 		sb.append("</body></html>");
-		card.add(new JLabel(sb.toString()), BorderLayout.CENTER);
+		JLabel label = new JLabel(sb.toString());
+		label.setBorder(BorderFactory.createEmptyBorder(0, 0, 3, 0));
+		card.add(label, BorderLayout.CENTER);
+
+		card.add(linkRow(d.wikiUrl, d.guideUrl, d.curatedVideo), BorderLayout.SOUTH);
 		addHover(card, ColorScheme.DARK_GRAY_COLOR, ColorScheme.DARK_GRAY_HOVER_COLOR);
 		onClick(card, () -> {
 			selectedCa = d;
