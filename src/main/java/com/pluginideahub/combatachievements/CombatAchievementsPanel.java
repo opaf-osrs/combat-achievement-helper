@@ -184,6 +184,13 @@ public class CombatAchievementsPanel extends PluginPanel
 	private final JTextField searchField = new JTextField();
 	private final JComboBox<Sort> sortBox = new JComboBox<>(Sort.values());
 	private final JButton shuffleButton = new JButton("⟳");
+	/** Clears every pinned/barred CA, putting the Route back to the solver's own answer. */
+	// Plain word, not another circular arrow: beside the shuffle glyph two near-identical arrows were
+	// indistinguishable at a glance, and these do very different things.
+	private final JButton resetCustomButton = new JButton("Reset");
+	/** True when anything is pinned or barred; the reset control only exists when there is something to reset. */
+	private boolean routeCustomised;
+	private transient Runnable onResetCustom;
 	private final JLabel orderLabel = new JLabel("Order ");
 	private final JPanel modeBar = new JPanel(new GridBagLayout());
 	private final JPanel controlBar = new JPanel(new BorderLayout(0, 6));
@@ -970,6 +977,18 @@ public class CombatAchievementsPanel extends PluginPanel
 		this.onRemoveFromRoute = removeFromRoute;
 	}
 
+	/** Wires the Route's "reset my customisation" control. */
+	public void setResetCustomHandler(Runnable reset)
+	{
+		this.onResetCustom = reset;
+	}
+
+	/** Tells the panel whether anything is pinned or barred, so the reset control can hide itself. */
+	public void setRouteCustomised(boolean customised)
+	{
+		this.routeCustomised = customised;
+	}
+
 	/** Wires bar / un-bar / restore-all to the plugin, which owns and persists the barred set. */
 	public void setBarHandlers(Consumer<Integer> barTask, Consumer<Integer> unbarTask,
 		Runnable clearBarred)
@@ -1049,6 +1068,8 @@ public class CombatAchievementsPanel extends PluginPanel
 		sortBox.setVisible(searchable);
 		orderRow.setVisible(searchable || routeMode); // Order controls (CAs/Bosses) and/or the refresh button
 		shuffleButton.setVisible(caMode || routeMode); // CAs reshuffle + Route re-solve; not Bosses
+		// Route only, and only once something is actually pinned or barred - no dead control otherwise.
+		resetCustomButton.setVisible(routeMode && routeCustomised);
 		shuffleButton.setToolTipText(routeMode ? "Suggest a different route" : "Shuffle — show a different set of CAs");
 		controlBar.setVisible(searchable || routeMode);
 		content.removeAll();
@@ -1131,7 +1152,19 @@ public class CombatAchievementsPanel extends PluginPanel
 				rebuild();
 			}
 		});
-		orderRow.add(shuffleButton, BorderLayout.EAST);
+		styleAsRefresh(resetCustomButton, "Reset your pinned and skipped CAs");
+		resetCustomButton.setFont(FontManager.getRunescapeSmallFont());
+		resetCustomButton.addActionListener(e -> {
+			if (onResetCustom != null)
+			{
+				onResetCustom.run();
+			}
+		});
+		JPanel routeButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+		routeButtons.setOpaque(false);
+		routeButtons.add(resetCustomButton);
+		routeButtons.add(shuffleButton);
+		orderRow.add(routeButtons, BorderLayout.EAST);
 
 		controlBar.add(searchField, BorderLayout.NORTH);
 		controlBar.add(orderRow, BorderLayout.CENTER);

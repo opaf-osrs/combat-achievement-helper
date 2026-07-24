@@ -152,6 +152,7 @@ public class CombatAchievementsPlugin extends Plugin
 		panel.setDeveloperMode(config.developerMode());
 		panel.setBarHandlers(this::barTask, this::unbarTask, this::clearBarredTasks);
 		panel.setRouteHandlers(this::addToRoute, this::removeFromRoute);
+		panel.setResetCustomHandler(this::resetRouteCustomisation);
 		navigationButton = NavigationButton.builder()
 			.tooltip("Combat Achievement Helper")
 			.icon(ImageUtil.loadImageResource(CombatAchievementsPlugin.class, "icon.png"))
@@ -379,6 +380,20 @@ public class CombatAchievementsPlugin extends Plugin
 		refresh();
 	}
 
+	/** Clears every pin and bar, handing the Route back to the solver. */
+	private void resetRouteCustomisation()
+	{
+		if (pinnedTasks.isEmpty() && barredTasks.isEmpty())
+		{
+			return;
+		}
+		pinnedTasks.clear();
+		barredTasks.clear();
+		savePinnedTasks();
+		saveBarredTasks();
+		refresh();
+	}
+
 	private void savePinnedTasks()
 	{
 		if (lastAccountHash == -1L)
@@ -595,6 +610,7 @@ public class CombatAchievementsPlugin extends Plugin
 			.scaling(scalingLibrary)
 			.effortEngine(bossTimingLibrary, questEffortLibrary, skillXpLibrary, experience, profile, 6);
 		SidePanelViewModel viewModel = builder.build(snapshot, signals, null);
+		panel.setRouteCustomised(!pinnedTasks.isEmpty() || !barredTasks.isEmpty());
 		panel.render(viewModel);
 	}
 

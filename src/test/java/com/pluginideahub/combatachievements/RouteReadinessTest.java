@@ -125,6 +125,25 @@ public class RouteReadinessTest
 	}
 
 	@Test
+	public void pinningDoesNotChangeThePointsStillToGo()
+	{
+		PlayerProfile maxed = account(99);
+		SidePanelViewModel.PathView before = routePinning(maxed, 1000, Collections.emptySet());
+		java.util.Set<Integer> chosen = new HashSet<>();
+		before.steps.forEach(r -> chosen.add(r.id));
+		int unchosen = lib.all().stream()
+			.filter(t -> t.hasMonster() && !chosen.contains(t.id()))
+			.map(t -> t.id())
+			.findFirst().orElseThrow(() -> new AssertionError("expected an unrouted CA"));
+
+		SidePanelViewModel.PathView after = routePinning(maxed, 1000, Collections.singleton(unchosen));
+
+		// The gap is a fact about the account. Pinning changes what the solver has left to cover, but
+		// watching "N pts to go" fall as you pin would read as if pinning had earned you points.
+		assertEquals("points still to go is unchanged by pinning", before.pointsGap, after.pointsGap);
+	}
+
+	@Test
 	public void pinningATaskForcesItIntoTheRouteAndShrinksTheRest()
 	{
 		PlayerProfile maxed = account(99);

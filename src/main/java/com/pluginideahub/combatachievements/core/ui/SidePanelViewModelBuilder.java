@@ -289,6 +289,12 @@ public final class SidePanelViewModelBuilder
 	 * already at (Chaos Fanatic, difficulty 2–4), because Nex is time-efficient per point. The linear
 	 * {@code difficulty/3} factor matches how the CAs list ranks, so the two surfaces now agree.
 	 */
+	/** Same boss key the route solver groups on: the monster, or the task itself when it has none. */
+	private static String routeBossKey(CombatAchievement a)
+	{
+		return a.hasMonster() ? a.monster() : (" solo:" + a.id());
+	}
+
 	private double routeCost(RankedTask rt)
 	{
 		CombatAchievement task = rt.achievement();
@@ -459,15 +465,21 @@ public final class SidePanelViewModelBuilder
 		PathPlan plan;
 		boolean trainFirst = false;
 		List<RankedTask> pinnedSteps = Collections.emptyList();
+		// The gap the PLAYER still has to the tier. Pinning shrinks what the solver has left to cover, but
+		// it must never change the "N pts to go" the panel shows: that is a fact about the account, not
+		// about which tasks are pinned, and watching it drop as you pin reads as if pinning earned points.
+		int trueGap = 0;
 		if (target == AchievementTier.GRANDMASTER)
 		{
 			// GM additionally requires completing every task, so the path is all incomplete tasks.
 			plan = solver.solveCompleteAll(target, rankedIncomplete, this::routeCost);
+			trueGap = plan.pointsGap();
 		}
 		else
 		{
 			int threshold = TierMath.thresholdFor(target, all);
 			int pointsGap = Math.max(0, threshold - gamePoints);
+			trueGap = pointsGap;
 			List<RankedTask> doableNow = new ArrayList<>();
 			List<RankedTask> ready = new ArrayList<>();
 			// Pinned tasks are taken whatever the solver would have chosen. They are honoured even when the
@@ -516,19 +528,42 @@ public final class SidePanelViewModelBuilder
 			pinnedSteps = forced;
 		}
 
-		List<SidePanelViewModel.PathRow> steps = new ArrayList<>();
-		int running = 0;
-		for (RankedTask rt : pinnedSteps)
-		{
-			CombatAchievement a = rt.achievement();
-			running += a.points();
-			steps.add(new SidePanelViewModel.PathRow(a.id(), a.name(), a.tier().displayName(),
-				a.points(), running, a.wikiUrl(),
-				videoLib.bestGuideUrl(a.id(), a.name()), buildCaDetail(a, true, "")));
-		}
+		// Pinned tasks sit wherever they naturally belong, not bolted to the front. They are merged with
+		// the solved set and the whole lot is ordered the way the solver orders its own output — grouped by
+		// boss, cheapest boss first — so a pinned CA lands beside its boss-mates instead of dragging its
+		// boss to the top of the route.
+		List<CombatAchievement> ordered = new ArrayList<>();
+		Map<String, Double> bossTotal = new LinkedHashMap<>();
+		Map<Integer, Double> costById = new HashMap<>();
+		List<RankedTask> merged = new ArrayList<>(pinnedSteps);
 		for (PathStep step : plan.steps())
 		{
-			CombatAchievement a = step.achievement();
+			for (RankedTask rt : rankedIncomplete)
+			{
+				if (rt.achievement().id() == step.achievement().id())
+				{
+					merged.add(rt);
+					break;
+				}
+			}
+		}
+		for (RankedTask rt : merged)
+		{
+			double c = routeCost(rt);
+			costById.put(rt.achievement().id(), c);
+			bossTotal.merge(routeBossKey(rt.achievement()), c, Double::sum);
+		}
+		merged.sort(Comparator
+			.comparingDouble((RankedTask rt) -> bossTotal.getOrDefault(routeBossKey(rt.achievement()), 0.0))
+			.thenComparing(rt -> routeBossKey(rt.achievement()))
+			.thenComparingDouble(rt -> costById.getOrDefault(rt.achievement().id(), 0.0))
+			.thenComparingInt(rt -> rt.achievement().id()));
+		merged.forEach(rt -> ordered.add(rt.achievement()));
+
+		List<SidePanelViewModel.PathRow> steps = new ArrayList<>();
+		int running = 0;
+		for (CombatAchievement a : ordered)
+		{
 			running += a.points();
 			steps.add(new SidePanelViewModel.PathRow(a.id(), a.name(), a.tier().displayName(),
 				a.points(), running, a.wikiUrl(),
@@ -548,7 +583,7 @@ public final class SidePanelViewModelBuilder
 			}
 		}
 
-		return new SidePanelViewModel.PathView(target.displayName(), plan.pointsGap(),
+		return new SidePanelViewModel.PathView(target.displayName(), trueGap,
 			plan.reachable(), plan.alreadyUnlocked(), steps, rewardLib.forTier(target).headline(),
 			lockedCas, trainFirst, barredCas);
 	}

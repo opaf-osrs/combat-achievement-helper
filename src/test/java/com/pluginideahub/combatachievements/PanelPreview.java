@@ -128,9 +128,11 @@ public final class PanelPreview
 			write(panel, PanelMode.RECOMMENDED, new File(outDir, "02-recommended.png"));
 			write(panel, PanelMode.BOSSES, new File(outDir, "07-bosses.png"));
 			write(panel, PanelMode.ROUTE, new File(outDir, "03-route.png"));
+			panel.setRouteCustomised(true); // so the reset control shows in this preview
 			panel.render(barredModel);
 			panel.setBarredCollapsed(false);
 			write(panel, PanelMode.ROUTE, new File(outDir, "18-route-barred.png"));
+			panel.setRouteCustomised(false);
 			panel.render(viewModel);
 			panel.openFirstCaDetail();
 			snapshot(panel, new File(outDir, "08-ca-detail.png")); // how-to collapsed (lean default)
