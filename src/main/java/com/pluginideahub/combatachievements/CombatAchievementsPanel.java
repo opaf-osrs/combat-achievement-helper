@@ -134,6 +134,11 @@ public class CombatAchievementsPanel extends PluginPanel
 	private boolean barredCollapsed = true;
 	/** Whether a boss page's "Completed" section is collapsed. */
 	private boolean completedCollapsed = true;
+	// The boss page's three outstanding groups. All start open, so the page reads as it always has;
+	// collapsing is there for when one of them is long and in the way.
+	private boolean doableCollapsed;
+	private boolean trainFirstCollapsed;
+	private boolean lockedCollapsed;
 	/** Per-visit overhead (min) amortised into the Bosses "Recommended" sort — the clustering dial: the
 	 *  higher it is, the more the sort favours bosses with several doable CAs (less boss-swapping). */
 	private int tripOverheadMinutes = DEFAULT_TRIP_OVERHEAD;
@@ -2204,32 +2209,44 @@ public class CombatAchievementsPanel extends PluginPanel
 		}
 		if (!reachable.isEmpty())
 		{
-			content.add(sectionHeader("Doable now"));
-			content.add(spacer());
-			for (SidePanelViewModel.CaDetail d : reachable)
+			content.add(collapseHeader("Doable now (" + reachable.size() + ")", doableCollapsed,
+				() -> { doableCollapsed = !doableCollapsed; rebuild(); }));
+			if (!doableCollapsed)
 			{
-				content.add(caCard(d));
 				content.add(spacer());
+				for (SidePanelViewModel.CaDetail d : reachable)
+				{
+					content.add(caCard(d));
+					content.add(spacer());
+				}
 			}
 		}
 		if (!notYet.isEmpty())
 		{
-			content.add(sectionHeader("Train first (" + notYet.size() + ")"));
-			content.add(spacer());
-			for (SidePanelViewModel.CaDetail d : notYet)
+			content.add(collapseHeader("Train first (" + notYet.size() + ")", trainFirstCollapsed,
+				() -> { trainFirstCollapsed = !trainFirstCollapsed; rebuild(); }));
+			if (!trainFirstCollapsed)
 			{
-				content.add(caCard(d));
 				content.add(spacer());
+				for (SidePanelViewModel.CaDetail d : notYet)
+				{
+					content.add(caCard(d));
+					content.add(spacer());
+				}
 			}
 		}
 		if (!boss.lockedCas.isEmpty())
 		{
-			content.add(sectionHeader("Locked (+" + boss.lockedCas.size() + ")"));
-			content.add(spacer());
-			for (SidePanelViewModel.CaDetail d : boss.lockedCas)
+			content.add(collapseHeader("Locked (" + boss.lockedCas.size() + ")", lockedCollapsed,
+				() -> { lockedCollapsed = !lockedCollapsed; rebuild(); }));
+			if (!lockedCollapsed)
 			{
-				content.add(caCard(d));
 				content.add(spacer());
+				for (SidePanelViewModel.CaDetail d : boss.lockedCas)
+				{
+					content.add(caCard(d));
+					content.add(spacer());
+				}
 			}
 		}
 
