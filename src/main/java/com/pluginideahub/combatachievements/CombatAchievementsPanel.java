@@ -91,7 +91,7 @@ public class CombatAchievementsPanel extends PluginPanel
 	/** Opened by the footer link. Plain browser navigation — nothing is sent from the client. */
 	private static final String PATREON_URL = "https://www.patreon.com/c/CAHelper";
 	/** Discord invite for the footer icon. Empty = the icon is hidden, so a blank never ships a dead link. */
-	private static final String DISCORD_URL = "";
+	private static final String DISCORD_URL = "https://discord.gg/N7HUvV92a";
 	/** Cap on cards rendered at once in the (now full) CAs list; refine the search to see more. */
 	private static final int RENDER_CAP = 60;
 	/** Max rank positions a CA can move when the CAs list is shuffled — big enough to surface a different
