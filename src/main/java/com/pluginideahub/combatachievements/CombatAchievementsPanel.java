@@ -8,6 +8,7 @@ import com.pluginideahub.combatachievements.core.ui.SidePanelViewModel;
 import com.pluginideahub.combatachievements.ui.CardKit;
 import com.pluginideahub.combatachievements.ui.CombatAchievementsTheme;
 import com.pluginideahub.combatachievements.ui.Palette;
+import com.pluginideahub.combatachievements.ui.PanelRoute;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -131,7 +132,8 @@ public class CombatAchievementsPanel extends PluginPanel
 	private transient Runnable onClearBarred;
 
 	private transient SidePanelViewModel model = SidePanelViewModel.loggedOut();
-	private PanelMode currentMode = PanelMode.RECOMMENDED;
+	/** Where the panel is: the active mode plus any drill-in selections layered over it. */
+	private transient PanelRoute route = PanelRoute.of(PanelMode.RECOMMENDED);
 	private Sort sort = Sort.RECOMMENDED;
 	/** Shuffle seed for the CAs list; 0 = natural (model) order, each reshuffle bumps it. */
 	private long shuffleSeed;
@@ -156,12 +158,6 @@ public class CombatAchievementsPanel extends PluginPanel
 	private boolean howToExpanded;
 	/** Whether the CA-detail "Requirements" section is expanded (default yes, hideable). */
 	private boolean reqsExpanded = true;
-	/** When non-null, the CA-detail drill-in is shown (over whatever mode is active). */
-	private transient SidePanelViewModel.CaDetail selectedCa;
-	/** When non-null (Bosses mode), the boss-detail drill-in is shown. */
-	private String selectedBoss;
-	/** When non-null (Route mode), the quest-unlock drill-in is shown; a selected CA overlays it. */
-	private transient SidePanelViewModel.UnlockView selectedUnlock;
 	/** Boss groups the user has opened on the quest page; all start closed, reset per quest. */
 	private final Set<String> expandedUnlockBosses = new HashSet<>();
 	/** Whether the quest page's "Quests first" chain is unfolded; starts closed, reset per quest. */
@@ -773,7 +769,7 @@ public class CombatAchievementsPanel extends PluginPanel
 		for (int i = 0; i < modes.length; i++)
 		{
 			PanelMode mode = modes[i];
-			boolean sel = mode == currentMode;
+			boolean sel = mode == route.mode();
 			JButton button = new JButton(mode.label());
 			button.setFont(FontManager.getRunescapeSmallFont());
 			button.setFocusPainted(false);
@@ -783,14 +779,7 @@ public class CombatAchievementsPanel extends PluginPanel
 			button.setForeground(sel ? CombatAchievementsTheme.MODE_SELECTED_TEXT : ColorScheme.LIGHT_GRAY_COLOR);
 			button.setBorder(BorderFactory.createEmptyBorder(6, 2, 6, 2));
 			button.setMargin(new Insets(0, 0, 0, 0));
-			button.addActionListener(e -> {
-				currentMode = mode;
-				selectedCa = null;
-				selectedBoss = null;
-				selectedUnlock = null;
-				buildModeBar();
-				rebuild();
-			});
+			button.addActionListener(e -> switchMode(mode));
 			if (!sel)
 			{
 				CardKit.addHover(button, ColorScheme.DARK_GRAY_COLOR, ColorScheme.DARK_GRAY_HOVER_COLOR);
@@ -835,15 +824,18 @@ public class CombatAchievementsPanel extends PluginPanel
 		CardKit.addHover(b, ColorScheme.DARK_GRAY_COLOR, ColorScheme.DARK_GRAY_HOVER_COLOR);
 	}
 
+	/** Selects a mode fresh — every drill-in closed — and re-renders the bar and the content. */
+	private void switchMode(PanelMode mode)
+	{
+		route = PanelRoute.of(mode);
+		buildModeBar();
+		rebuild();
+	}
+
 	/** Switches the active mode and re-renders (used by the headless preview harness and tests). */
 	public void showMode(PanelMode mode)
 	{
-		this.currentMode = mode;
-		this.selectedCa = null;
-		this.selectedBoss = null;
-		this.selectedUnlock = null;
-		buildModeBar();
-		rebuild();
+		switchMode(mode);
 	}
 
 	/** Preview/test hook: opens the CA-detail view for the first doable CA. */
@@ -853,7 +845,7 @@ public class CombatAchievementsPanel extends PluginPanel
 		{
 			if (r.doableNow && r.detail != null)
 			{
-				selectedCa = r.detail;
+				route = route.withCa(r.detail);
 				rebuild();
 				return;
 			}
@@ -868,9 +860,7 @@ public class CombatAchievementsPanel extends PluginPanel
 		{
 			if (!b.completedCas.isEmpty())
 			{
-				currentMode = PanelMode.BOSSES;
-				selectedCa = null;
-				selectedBoss = b.monster;
+				route = route.toBoss(b.monster);
 				buildModeBar();
 				rebuild();
 				return;
@@ -882,9 +872,7 @@ public class CombatAchievementsPanel extends PluginPanel
 	{
 		if (model.sessions() != null && !model.sessions().isEmpty())
 		{
-			currentMode = PanelMode.BOSSES;
-			selectedCa = null;
-			selectedBoss = model.sessions().get(0).monster;
+			route = route.toBoss(model.sessions().get(0).monster);
 			buildModeBar();
 			rebuild();
 		}
@@ -904,10 +892,7 @@ public class CombatAchievementsPanel extends PluginPanel
 	{
 		if (model.unlocks() != null && !model.unlocks().isEmpty())
 		{
-			currentMode = PanelMode.ROUTE;
-			selectedCa = null;
-			selectedBoss = null;
-			selectedUnlock = model.unlocks().get(0);
+			route = PanelRoute.of(PanelMode.ROUTE).withUnlock(model.unlocks().get(0));
 			expandedUnlockBosses.clear();
 			unlockPrereqsExpanded = false;
 			buildModeBar();
@@ -918,9 +903,9 @@ public class CombatAchievementsPanel extends PluginPanel
 	/** Preview/test hook: opens the first boss group on the quest-unlock page (they start closed). */
 	public void expandFirstUnlockBoss()
 	{
-		if (selectedUnlock != null && !selectedUnlock.unlockedCas.isEmpty())
+		if (route.unlock() != null && !route.unlock().unlockedCas.isEmpty())
 		{
-			expandedUnlockBosses.add(selectedUnlock.unlockedCas.get(0).monster);
+			expandedUnlockBosses.add(route.unlock().unlockedCas.get(0).monster);
 			rebuild();
 		}
 	}
@@ -930,10 +915,7 @@ public class CombatAchievementsPanel extends PluginPanel
 	{
 		if (model.path() != null && !model.path().lockedCas.isEmpty())
 		{
-			currentMode = PanelMode.ROUTE;
-			selectedBoss = null;
-			selectedUnlock = null;
-			selectedCa = model.path().lockedCas.get(0);
+			route = PanelRoute.of(PanelMode.ROUTE).withCa(model.path().lockedCas.get(0));
 			buildModeBar();
 			rebuild();
 		}
@@ -1067,12 +1049,10 @@ public class CombatAchievementsPanel extends PluginPanel
 	private void rebuild()
 	{
 		boolean ready = model.state() == SidePanelViewModel.State.READY;
-		boolean detailOpen = selectedCa != null
-			|| (selectedBoss != null && currentMode == PanelMode.BOSSES)
-			|| (selectedUnlock != null && currentMode == PanelMode.ROUTE);
-		boolean caMode = currentMode == PanelMode.RECOMMENDED;
-		boolean routeMode = ready && !detailOpen && currentMode == PanelMode.ROUTE;
-		boolean searchable = ready && !detailOpen && (caMode || currentMode == PanelMode.BOSSES);
+		boolean detailOpen = route.detailOpen();
+		boolean caMode = route.mode() == PanelMode.RECOMMENDED;
+		boolean routeMode = ready && !detailOpen && route.mode() == PanelMode.ROUTE;
+		boolean searchable = ready && !detailOpen && (caMode || route.mode() == PanelMode.BOSSES);
 		searchField.setVisible(searchable);
 		orderLabel.setVisible(searchable);
 		sortBox.setVisible(searchable);
@@ -1082,9 +1062,9 @@ public class CombatAchievementsPanel extends PluginPanel
 		controlBar.setVisible(searchable || routeMode);
 		content.removeAll();
 
-		if (selectedCa != null)
+		if (route.ca() != null)
 		{
-			renderCaDetail(selectedCa); // the drill-in overrides whatever mode is active
+			renderCaDetail(route.ca()); // the drill-in overrides whatever mode is active
 		}
 		else if (!ready)
 		{
@@ -1092,15 +1072,15 @@ public class CombatAchievementsPanel extends PluginPanel
 		}
 		else
 		{
-			switch (currentMode)
+			switch (route.mode())
 			{
 				case RECOMMENDED:
 					buildRecommended();
 					break;
 				case BOSSES:
-					if (selectedBoss != null)
+					if (route.boss() != null)
 					{
-						buildBossDetail(selectedBoss);
+						buildBossDetail(route.boss());
 					}
 					else
 					{
@@ -1108,9 +1088,9 @@ public class CombatAchievementsPanel extends PluginPanel
 					}
 					break;
 				case ROUTE:
-					if (selectedUnlock != null)
+					if (route.unlock() != null)
 					{
-						renderUnlockDetail(selectedUnlock);
+						renderUnlockDetail(route.unlock());
 					}
 					else
 					{
@@ -1143,7 +1123,7 @@ public class CombatAchievementsPanel extends PluginPanel
 		// for a different quick route. (Shares the header control bar, which lays out reliably.)
 		styleAsRefresh(shuffleButton, "Shuffle — show a different set");
 		shuffleButton.addActionListener(e -> {
-			if (currentMode == PanelMode.ROUTE)
+			if (route.mode() == PanelMode.ROUTE)
 			{
 				emit(PanelAction.RESHUFFLE_ROUTE);
 			}
@@ -1310,7 +1290,7 @@ public class CombatAchievementsPanel extends PluginPanel
 		card.add(linkRow(row.wikiUrl, row.guideUrl, row.curatedVideo), BorderLayout.SOUTH);
 		CardKit.addHover(card, ColorScheme.DARK_GRAY_COLOR, ColorScheme.DARK_GRAY_HOVER_COLOR);
 		CardKit.onClick(card, () -> {
-			selectedCa = row.detail;
+			route = route.withCa(row.detail);
 			rebuild();
 		});
 		return CardKit.fullWidth(card);
@@ -1487,7 +1467,7 @@ public class CombatAchievementsPanel extends PluginPanel
 		card.add(new JLabel(sb.toString()), BorderLayout.CENTER);
 		CardKit.addHover(card, ColorScheme.DARK_GRAY_COLOR, ColorScheme.DARK_GRAY_HOVER_COLOR);
 		CardKit.onClick(card, () -> {
-			selectedBoss = b.monster;
+			route = route.withBoss(b.monster);
 			rebuild();
 		});
 		return CardKit.fullWidth(card);
@@ -1734,9 +1714,7 @@ public class CombatAchievementsPanel extends PluginPanel
 		if (bossExists(boss))
 		{
 			Runnable openBoss = () -> {
-				currentMode = PanelMode.BOSSES;
-				selectedCa = null;
-				selectedBoss = boss;
+				route = route.toBoss(boss);
 				buildModeBar();
 				rebuild();
 			};
@@ -1797,7 +1775,7 @@ public class CombatAchievementsPanel extends PluginPanel
 		}
 		CardKit.addHover(card, ColorScheme.DARK_GRAY_COLOR, ColorScheme.DARK_GRAY_HOVER_COLOR);
 		CardKit.onClick(card, () -> {
-			selectedCa = c;
+			route = route.withCa(c);
 			rebuild();
 		});
 		CardKit.fullWidth(card);
@@ -1862,7 +1840,7 @@ public class CombatAchievementsPanel extends PluginPanel
 		}
 		CardKit.addHover(card, ColorScheme.DARK_GRAY_COLOR, ColorScheme.DARK_GRAY_HOVER_COLOR);
 		CardKit.onClick(card, () -> {
-			selectedCa = c;
+			route = route.withCa(c);
 			rebuild();
 		});
 		CardKit.fullWidth(card);
@@ -1995,7 +1973,7 @@ public class CombatAchievementsPanel extends PluginPanel
 		if (!u.unlockedCas.isEmpty())
 		{
 			CardKit.onClick(card, () -> {
-				selectedUnlock = u;
+				route = route.withUnlock(u);
 				expandedUnlockBosses.clear();
 				unlockPrereqsExpanded = false;
 				rebuild();
@@ -2008,7 +1986,7 @@ public class CombatAchievementsPanel extends PluginPanel
 	private void renderUnlockDetail(SidePanelViewModel.UnlockView u)
 	{
 		content.add(backButton("← Back", () -> {
-			selectedUnlock = null;
+			route = route.clearUnlock();
 			rebuild();
 		}));
 		content.add(CardKit.spacer());
@@ -2146,10 +2124,7 @@ public class CombatAchievementsPanel extends PluginPanel
 		if (bossExists(boss))
 		{
 			Runnable openBoss = () -> {
-				currentMode = PanelMode.BOSSES;
-				selectedCa = null;
-				selectedUnlock = null;
-				selectedBoss = boss;
+				route = PanelRoute.of(PanelMode.BOSSES).withBoss(boss);
 				buildModeBar();
 				rebuild();
 			};
@@ -2187,7 +2162,7 @@ public class CombatAchievementsPanel extends PluginPanel
 		card.add(CardKit.wrappedHtmlLabel(sb.toString(), CARD_TEXT_WIDTH), BorderLayout.CENTER);
 		CardKit.addHover(card, ColorScheme.DARK_GRAY_COLOR, ColorScheme.DARK_GRAY_HOVER_COLOR);
 		CardKit.onClick(card, () -> {
-			selectedCa = c;
+			route = route.withCa(c);
 			rebuild();
 		});
 		return CardKit.fullWidth(card);
@@ -2198,7 +2173,7 @@ public class CombatAchievementsPanel extends PluginPanel
 	private void renderCaDetail(SidePanelViewModel.CaDetail d)
 	{
 		content.add(backButton("← Back", () -> {
-			selectedCa = null;
+			route = route.clearCa();
 			rebuild();
 		}));
 		content.add(CardKit.spacer());
@@ -2237,9 +2212,7 @@ public class CombatAchievementsPanel extends PluginPanel
 		{
 			String label = d.monster.length() > 18 ? d.monster.substring(0, 17) + "…" : d.monster;
 			content.add(backButton("View " + label + " →", () -> {
-				currentMode = PanelMode.BOSSES;
-				selectedCa = null;
-				selectedBoss = d.monster;
+				route = route.toBoss(d.monster);
 				buildModeBar();
 				rebuild();
 			}));
@@ -2365,7 +2338,7 @@ public class CombatAchievementsPanel extends PluginPanel
 	private void buildBossDetail(String monster)
 	{
 		content.add(backButton("← All bosses", () -> {
-			selectedBoss = null;
+			route = route.clearBoss();
 			rebuild();
 		}));
 		content.add(CardKit.spacer());
@@ -2514,7 +2487,7 @@ public class CombatAchievementsPanel extends PluginPanel
 		card.add(new JLabel(sb.toString()), BorderLayout.CENTER);
 		CardKit.addHover(card, ColorScheme.DARK_GRAY_COLOR, ColorScheme.DARK_GRAY_HOVER_COLOR);
 		CardKit.onClick(card, () -> {
-			selectedCa = d;
+			route = route.withCa(d);
 			rebuild();
 		});
 		return CardKit.fullWidth(card);
@@ -2571,7 +2544,7 @@ public class CombatAchievementsPanel extends PluginPanel
 		}
 		CardKit.addHover(card, ColorScheme.DARK_GRAY_COLOR, ColorScheme.DARK_GRAY_HOVER_COLOR);
 		CardKit.onClick(card, () -> {
-			selectedCa = d;
+			route = route.withCa(d);
 			rebuild();
 		});
 		CardKit.fullWidth(card);
