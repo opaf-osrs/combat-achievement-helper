@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Set;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -87,6 +88,51 @@ public class RouteReadinessTest
 			.build(new ProgressSnapshot(Collections.emptySet(), gamePoints, gamePoints, null, 1L),
 				new ProfileSignalsProvider(effort, recStats, profile), null)
 			.path();
+	}
+
+	private SidePanelViewModel.PathView routeBarring(PlayerProfile profile, int gamePoints,
+		java.util.Set<Integer> barred)
+	{
+		return new SidePanelViewModelBuilder(lib, effort, VideoGuideLibrary.loadBundled(),
+			GuideLibrary.loadBundled(), TierRewardLibrary.loadBundled(), EffortModel.standard())
+			.difficulty(TaskDifficultyLibrary.loadBundled())
+			.recStats(recStats)
+			.bossDifficulty(BossDifficultyLibrary.loadBundled())
+			.detail(TaskDetailLibrary.loadBundled())
+			.barred(barred)
+			.effortEngine(BossTimingLibrary.loadBundled(), QuestEffortLibrary.loadBundled(),
+				SkillXpLibrary.loadBundled(), CombatExperience.empty(), profile, 6)
+			.build(new ProgressSnapshot(Collections.emptySet(), gamePoints, gamePoints, null, 1L),
+				new ProfileSignalsProvider(effort, recStats, profile), null)
+			.path();
+	}
+
+	@Test
+	public void barringARouteTaskReplacesItAndStillClosesTheGap()
+	{
+		PlayerProfile maxed = account(99);
+		SidePanelViewModel.PathView before = routeBarring(maxed, 1000, Collections.emptySet());
+		assertTrue("precondition: a real route", before.steps.size() > 2);
+		assertTrue("precondition: it closes the gap", before.reachable);
+
+		// Bar the route's first task: it must vanish, and the solver must close the same gap without it.
+		int barredId = before.steps.get(0).id;
+		SidePanelViewModel.PathView after = routeBarring(maxed, 1000,
+			Collections.singleton(barredId));
+
+		assertTrue("the barred task is gone from the route",
+			after.steps.stream().noneMatch(s -> s.id == barredId));
+		assertTrue("the gap is still closed by the next-best tasks", after.reachable);
+		assertTrue("the route still covers the points gap",
+			after.shownPoints() >= after.pointsGap);
+	}
+
+	@Test
+	public void shownPointsIsTheSumOfTheListedTasks()
+	{
+		SidePanelViewModel.PathView path = routeAtPoints(account(99), 1000);
+		int sum = path.steps.stream().mapToInt(s -> s.points).sum();
+		assertEquals("the header total matches the cards", sum, path.shownPoints());
 	}
 
 	@Test

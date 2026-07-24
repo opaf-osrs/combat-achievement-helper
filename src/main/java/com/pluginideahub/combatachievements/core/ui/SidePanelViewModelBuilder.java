@@ -43,11 +43,14 @@ import com.pluginideahub.combatachievements.core.tier.TierMath;
 import com.pluginideahub.combatachievements.core.tier.TierProgress;
 import com.pluginideahub.combatachievements.core.video.VideoGuideLibrary;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Pure assembler: turns a {@link ProgressSnapshot} plus the loaded libraries into a render-ready
@@ -84,6 +87,8 @@ public final class SidePanelViewModelBuilder
 	private double unlockBias = 1.0;
 	private double unlockDifficultyWeight = 1.0;
 	private long routeShuffleSeed;
+	/** Task ids the player has barred from the Route ("I'm not doing that one"). */
+	private Set<Integer> barredTasks = Collections.emptySet();
 	// Deliberately fixed (not config): the panel shows a focused shortlist of the best sessions/unlocks;
 	// the underlying rankings are complete, these just cap what is rendered.
 	private static final int SESSIONS_LIMIT = 8;
@@ -172,6 +177,18 @@ public final class SidePanelViewModelBuilder
 	{
 		this.unlockBias = unlockBias;
 		this.unlockDifficultyWeight = unlockDifficultyWeight;
+		return this;
+	}
+
+	/**
+	 * Tasks the player has barred from the Route. They are dropped from the candidate set before the solve,
+	 * so the solver closes the gap with the next-best task instead — or, if nothing can replace them, leaves
+	 * the gap open and the Route says what is still needed.
+	 */
+	public SidePanelViewModelBuilder barred(Set<Integer> taskIds)
+	{
+		this.barredTasks = taskIds == null || taskIds.isEmpty()
+			? Collections.emptySet() : new HashSet<>(taskIds);
 		return this;
 	}
 
@@ -425,7 +442,11 @@ public final class SidePanelViewModelBuilder
 			int readyPoints = 0;
 			for (RankedTask rt : rankedIncomplete)
 			{
-				if (!rt.doableNow())
+				// Barred tasks are ones the player has explicitly said they do not want to do. Dropping them
+				// before the solve (rather than filtering the result) is what lets the next-best task take
+				// the freed slot; if nothing is left to take it, the gap simply stays open and the Route
+				// falls back to Train next / "not enough doable tasks", which is the honest answer.
+				if (!rt.doableNow() || barredTasks.contains(rt.achievement().id()))
 				{
 					continue;
 				}

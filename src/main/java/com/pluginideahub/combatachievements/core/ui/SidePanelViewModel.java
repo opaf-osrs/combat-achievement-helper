@@ -253,6 +253,17 @@ public final class SidePanelViewModel
 		 */
 		public final boolean trainFirst;
 
+		/** Points the listed CAs add up to — what following the whole visible route is worth. */
+		public int shownPoints()
+		{
+			int sum = 0;
+			for (PathRow r : steps)
+			{
+				sum += r.points;
+			}
+			return sum;
+		}
+
 		public PathView(String targetTierName, int pointsGap, boolean reachable,
 			boolean alreadyUnlocked, List<PathRow> steps, String targetRewardHeadline,
 			List<CaDetail> lockedCas, boolean trainFirst)

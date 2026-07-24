@@ -100,8 +100,23 @@ public class CombatAchievementsPanel extends PluginPanel
 	private static final int SPINNER_HEIGHT = 18;
 	/** Wrap width for the CA-detail how-to prose, kept clear of the scrollbar the tall view brings in. */
 	private static final int DETAIL_TEXT_WIDTH = 170;
+	/** Route card text width, and the slice the per-CA "-" (bar) control takes on the right. */
+	private static final int ROUTE_TEXT_WIDTH = 182;
+	private static final int BAR_BUTTON_WIDTH = 16;
+	/**
+	 * Hard cap on a route card's width. The content column sizes itself to its widest child, and a
+	 * long unlock card can push that past the ~225px panel; a full-width route card would then put
+	 * its right-hand "-" outside the visible area. Capping keeps the control on screen.
+	 */
+	private static final int ROUTE_CARD_MAX_WIDTH = 211;
 
 	private final transient Consumer<PanelAction> onAction;
+	/** Bar a task from the Route (the "−" on a route card); the plugin persists it and re-solves. */
+	private transient Consumer<Integer> onBarTask;
+	/** Clear every barred task, putting them all back in the running. */
+	private transient Runnable onClearBarred;
+	/** How many tasks are currently barred, for the "N barred · restore" affordance. */
+	private int barredCount;
 
 	private transient SidePanelViewModel model = SidePanelViewModel.loggedOut();
 	private PanelMode currentMode = PanelMode.RECOMMENDED;
@@ -818,6 +833,19 @@ public class CombatAchievementsPanel extends PluginPanel
 		}
 	}
 
+	/** Wires the Route's bar/restore controls to the plugin, which owns and persists the barred set. */
+	public void setBarHandlers(Consumer<Integer> barTask, Runnable clearBarred)
+	{
+		this.onBarTask = barTask;
+		this.onClearBarred = clearBarred;
+	}
+
+	/** How many tasks are barred, so the Route can offer to put them back. */
+	public void setBarredCount(int count)
+	{
+		this.barredCount = Math.max(0, count);
+	}
+
 	/**
 	 * Swaps the active colour palette (from the config theme) and re-themes the persistent header
 	 * components + the mode bar, then re-renders. Safe to call off the EDT.
@@ -1423,6 +1451,30 @@ public class CombatAchievementsPanel extends PluginPanel
 					route.add(step.detail);
 				}
 			}
+
+			// What the whole visible list is worth, so the total is readable without adding the cards up.
+			if (!route.isEmpty())
+			{
+				StringBuilder tot = new StringBuilder("<html><body style='width:182px'>");
+				tot.append("<span style='color:" + metaHex() + "'>").append(route.size())
+					.append(route.size() == 1 ? " CA · " : " CAs · ")
+					.append("</span><span style='color:")
+					.append(CombatAchievementsTheme.hex(CombatAchievementsTheme.POINTS))
+					.append("'>").append(path.shownPoints()).append(" pts</span>");
+				tot.append("</body></html>");
+				content.add(fullWidth(new JLabel(tot.toString())));
+				content.add(spacer());
+			}
+			if (barredCount > 0 && onClearBarred != null)
+			{
+				content.add(backButton("Restore " + barredCount + " hidden", () -> {
+					if (onClearBarred != null)
+					{
+						onClearBarred.run();
+					}
+				}));
+				content.add(spacer());
+			}
 			renderRouteGroups(route);
 		}
 	}
@@ -1508,13 +1560,14 @@ public class CombatAchievementsPanel extends PluginPanel
 
 	private JPanel routeCaCard(SidePanelViewModel.CaDetail c, boolean grouped)
 	{
+		final int textWidth = onBarTask != null ? ROUTE_TEXT_WIDTH - BAR_BUTTON_WIDTH : ROUTE_TEXT_WIDTH;
 		JPanel card = new JPanel(new BorderLayout());
 		card.setBackground(ColorScheme.DARK_GRAY_COLOR);
 		Color accent = c.doableNow ? CombatAchievementsTheme.NAME : CombatAchievementsTheme.NEGATIVE;
 		card.setBorder(BorderFactory.createCompoundBorder(
 			BorderFactory.createMatteBorder(0, 3, 0, 0, accent),
 			BorderFactory.createEmptyBorder(5, 7, 5, 7)));
-		StringBuilder sb = new StringBuilder("<html><body style='width:182px'>");
+		StringBuilder sb = new StringBuilder("<html><body style='width:" + textWidth + "px'>");
 		sb.append("<span style='color:").append(CombatAchievementsTheme.hex(accent))
 			.append("'><b>").append(escape(c.name)).append("</b></span>");
 		sb.append("<br><span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.POINTS))
@@ -1537,13 +1590,55 @@ public class CombatAchievementsPanel extends PluginPanel
 				.append("'>").append(escape(c.lockReason)).append("</span>");
 		}
 		sb.append("</body></html>");
-		card.add(new JLabel(sb.toString()), BorderLayout.CENTER);
+		JLabel routeLabel = new JLabel(sb.toString());
+		// The HTML body width only drives WRAPPING; the label still reports a wider preferred size,
+		// which pushed the card past the panel and clipped the "-" clean off the right edge.
+		Dimension routePref = routeLabel.getPreferredSize();
+		Dimension capped = new Dimension(Math.min(routePref.width, textWidth), routePref.height);
+		routeLabel.setPreferredSize(capped);
+		routeLabel.setMaximumSize(capped);
+		card.add(routeLabel, BorderLayout.CENTER);
+		// "Not doing that one" — bars the task so the solver closes the gap with the next best instead.
+		if (onBarTask != null)
+		{
+			card.add(barButton(c), BorderLayout.EAST);
+		}
 		addHover(card, ColorScheme.DARK_GRAY_COLOR, ColorScheme.DARK_GRAY_HOVER_COLOR);
 		onClick(card, () -> {
 			selectedCa = c;
 			rebuild();
 		});
-		return fullWidth(card);
+		fullWidth(card);
+		card.setMaximumSize(new Dimension(ROUTE_CARD_MAX_WIDTH, card.getPreferredSize().height));
+		return card;
+	}
+
+	/**
+	 * The small "−" on a route card. Kept visually quiet so it never competes with the task name, and it
+	 * consumes its own click so barring a task cannot also open its detail.
+	 */
+	private JButton barButton(SidePanelViewModel.CaDetail c)
+	{
+		// Plain ASCII "-": the RuneScape font does not carry U+2212, which rendered as nothing.
+		JButton bar = new JButton("-");
+		bar.setFont(FontManager.getRunescapeSmallFont());
+		bar.setToolTipText("Don't show " + c.name + " in the route");
+		bar.setFocusPainted(false);
+		bar.setBorderPainted(false);
+		bar.setContentAreaFilled(false);
+		bar.setOpaque(false);
+		bar.setForeground(CombatAchievementsTheme.LOCKED);
+		bar.setPreferredSize(new Dimension(BAR_BUTTON_WIDTH, 16));
+		bar.setMargin(new Insets(0, 4, 0, 0));
+		bar.setBorder(BorderFactory.createEmptyBorder(0, 4, 0, 0));
+		bar.setCursor(java.awt.Cursor.getPredefinedCursor(java.awt.Cursor.HAND_CURSOR));
+		bar.addActionListener(e -> {
+			if (onBarTask != null)
+			{
+				onBarTask.accept(c.id);
+			}
+		});
+		return bar;
 	}
 
 	/** A bold gold section header that toggles a collapsed section when clicked (▸ collapsed / ▾ open). */

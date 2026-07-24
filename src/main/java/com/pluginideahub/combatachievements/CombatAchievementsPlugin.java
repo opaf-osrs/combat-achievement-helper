@@ -33,6 +33,8 @@ import javax.inject.Inject;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import java.util.HashMap;
+import java.util.Set;
+import java.util.HashSet;
 import java.util.Map;
 import net.runelite.api.Client;
 import net.runelite.api.GameState;
@@ -87,6 +89,8 @@ public class CombatAchievementsPlugin extends Plugin
 	private CombatAchievementsPanel panel;
 	/** Bumped by the Route refresh button so each press re-solves toward a different set (0 = the optimum). */
 	private long routeShuffleSeed;
+	/** Task ids the player barred from the Route; persisted per account so the choice survives restarts. */
+	private final Set<Integer> barredTasks = new HashSet<>();
 	private NavigationButton navigationButton;
 
 	private CombatAchievementLibrary library;
@@ -144,6 +148,7 @@ public class CombatAchievementsPlugin extends Plugin
 		panel.applyTheme(config.panelTheme().palette());
 		panel.setHowToDefault(config.showHowTo());
 		panel.setDeveloperMode(config.developerMode());
+		panel.setBarHandlers(this::barTask, this::clearBarredTasks);
 		navigationButton = NavigationButton.builder()
 			.tooltip("Combat Achievement Helper")
 			.icon(ImageUtil.loadImageResource(CombatAchievementsPlugin.class, "icon.png"))
@@ -201,6 +206,7 @@ public class CombatAchievementsPlugin extends Plugin
 			{
 				lastAccountHash = hash;
 				loadKillCounts(hash);
+				loadBarredTasks(hash);
 				backfillKillCountsFromHiscores();
 			}
 			requestRefresh();
@@ -327,6 +333,70 @@ public class CombatAchievementsPlugin extends Plugin
 		return "killcounts_" + accountHash;
 	}
 
+	private static String barredKey(long accountHash)
+	{
+		return "barred_" + accountHash;
+	}
+
+	/** Bars a task from the Route and re-solves, so the next-best task takes the freed slot. */
+	private void barTask(int taskId)
+	{
+		if (barredTasks.add(taskId))
+		{
+			saveBarredTasks();
+			refresh();
+		}
+	}
+
+	private void clearBarredTasks()
+	{
+		if (!barredTasks.isEmpty())
+		{
+			barredTasks.clear();
+			saveBarredTasks();
+			refresh();
+		}
+	}
+
+	private void saveBarredTasks()
+	{
+		if (lastAccountHash == -1L)
+		{
+			return;
+		}
+		try
+		{
+			configManager.setConfiguration(KC_CONFIG_GROUP, barredKey(lastAccountHash),
+				GSON.toJson(barredTasks));
+		}
+		catch (RuntimeException ex)
+		{
+			log.debug("Combat Achievement Helper: failed to persist barred tasks", ex);
+		}
+	}
+
+	private void loadBarredTasks(long accountHash)
+	{
+		barredTasks.clear();
+		try
+		{
+			String json = configManager.getConfiguration(KC_CONFIG_GROUP, barredKey(accountHash));
+			if (json != null && !json.isEmpty())
+			{
+				Set<Integer> saved = GSON.fromJson(json,
+					new TypeToken<HashSet<Integer>>() { }.getType());
+				if (saved != null)
+				{
+					barredTasks.addAll(saved);
+				}
+			}
+		}
+		catch (RuntimeException ex)
+		{
+			log.debug("Combat Achievement Helper: failed to load barred tasks", ex);
+		}
+	}
+
 	private void onAction(PanelAction action)
 	{
 		if (action == PanelAction.REFRESH)
@@ -430,10 +500,12 @@ public class CombatAchievementsPlugin extends Plugin
 			.recStats(recStatsLibrary)
 			.bossDifficulty(com.pluginideahub.combatachievements.core.effort.BossDifficultyLibrary.loadBundled())
 			.routeShuffle(routeShuffleSeed)
+			.barred(barredTasks)
 			.detail(taskDetailLibrary)
 			.scaling(scalingLibrary)
 			.effortEngine(bossTimingLibrary, questEffortLibrary, skillXpLibrary, experience, profile, 6);
 		SidePanelViewModel viewModel = builder.build(snapshot, signals, null);
+		panel.setBarredCount(barredTasks.size());
 		panel.render(viewModel);
 	}
 
