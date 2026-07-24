@@ -1,7 +1,15 @@
 # Combat Achievement Helper
 
+![Build](https://github.com/opaf-osrs/combat-achievement-helper/actions/workflows/build.yml/badge.svg)
+
 A RuneLite plugin that reads your Combat Achievement progress live and tells you what to do next —
 ordered by what your account can actually do, not by what is worth the most points in the abstract.
+
+<p>
+  <img src="img/cas.png" width="225" alt="the CAs list">
+  <img src="img/boss.png" width="225" alt="a boss page">
+  <img src="img/route.png" width="225" alt="the route to the next tier">
+</p>
 
 ## What it does
 
