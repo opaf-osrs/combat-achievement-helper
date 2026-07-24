@@ -71,15 +71,6 @@ tasks.register('curationExport', JavaExec) {
 	systemProperty 'java.awt.headless', 'true'
 }
 
-// Throwaway: render the Quest-Helper-style layout mockup to build/ui-preview/mock-*.png.
-tasks.register('mockupUi', JavaExec) {
-	group = 'application'
-	description = 'Render the Quest-Helper-style CA panel mockup (visual proposal, not wired).'
-	classpath = sourceSets.test.runtimeClasspath
-	mainClass = 'com.pluginideahub.combatachievements.QuestHelperStyleMockup'
-	systemProperty 'java.awt.headless', 'true'
-}
-
 tasks.register('shadowJar', Jar) {
 	dependsOn configurations.testRuntimeClasspath
 	manifest {

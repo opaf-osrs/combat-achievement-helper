@@ -14,10 +14,10 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Loads the wiki's player-completion percentage per task (the rarity/difficulty backbone). A lower
- * percentage means fewer players have done it — a strong, holistic difficulty signal that captures
- * gear/RNG/skill the synthetic effort weights can't. Pure Java (Gson only). See
- * docs/REQUIREMENTS-RESEARCH.md.
+ * Loads the wiki's player-completion percentage per task. Not read at runtime right now — the
+ * curated 1-10 Difficulty replaced completion% as the difficulty signal (popular-but-hard milestones
+ * like Fight Caves skewed it) — but the data is kept current for a planned rarity display
+ * ("only 2.5% of players have this"). Pure Java (Gson only).
  */
 public final class CompletionLibrary
 {
