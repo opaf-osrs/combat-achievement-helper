@@ -9,7 +9,9 @@ public enum PanelTheme
 	// user's chosen theme.
 	CLASSIC("Classic", Palette.CLASSIC),
 	MOLTEN_GAUNTLET("Vivid", Palette.MOLTEN_GAUNTLET),
-	RUNELITE_CITIZEN("Slate", Palette.RUNELITE_CITIZEN),
+	// Constant kept as-is deliberately: it is the value config persists, so renaming it would silently
+	// reset the theme for anyone who had picked it. Only the label and palette changed.
+	RUNELITE_CITIZEN("Lite", Palette.LITE),
 	MODERN_DARK("Plain", Palette.MODERN_DARK),
 	HIGH_CONTRAST("High contrast", Palette.HIGH_CONTRAST);
 

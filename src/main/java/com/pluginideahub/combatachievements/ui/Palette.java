@@ -115,14 +115,17 @@ public final class Palette
 		.tierEasy("#8BD48B").tierMedium("#78B4DC").tierHard("#C8AA5A")
 		.tierElite("#C88FD2").tierMaster("#DC8A78").tierGrandmaster("#E6C85A").build();
 
-	/** RuneLite's own greys and brand orange, with green/red for state. Headers take the gold. */
-	public static final Palette RUNELITE_CITIZEN = builder()
-		.name("#E8A44C").points("#5FD07A").headerAccent("#DC8A00").desc("#A9A28C")
-		.positive("#55C25A").negative("#EA7264").locked("#969696").neutralMeta("#9A9A9A")
-		.accent("#DC8A00").modeSelected("#DC8A00").modeSelectedText("#1E1E1E")
-		.diffEasy("#55C25A").diffMid("#E5B84A").diffHard("#EA7264")
-		.tierEasy("#6FC26F").tierMedium("#6FB0DC").tierHard("#D8B45A")
-		.tierElite("#C888D0").tierMaster("#E0786E").tierGrandmaster("#E6C85A").build();
+	/**
+	 * Neutral and cool: near-white names on pale blue headers and grey meta, with only the difficulty and
+	 * tier ramps keeping any colour — muted, so they stay readable without breaking the calm.
+	 */
+	public static final Palette LITE = builder()
+		.name("#E7EDF3").points("#8FC7EA").headerAccent("#B3D6F2").desc("#98A2AE")
+		.positive("#87C7DE").negative("#D9908F").locked("#78818D").neutralMeta("#88919D")
+		.accent("#6BA6D6").modeSelected("#4E86B8").modeSelectedText("#FFFFFF")
+		.diffEasy("#8AC7B4").diffMid("#D3C08F").diffHard("#D9908F")
+		.tierEasy("#8FC7AE").tierMedium("#8FC0E4").tierHard("#D3C08F")
+		.tierElite("#B6A8DC").tierMaster("#D9A492").tierGrandmaster("#D8CA96").build();
 
 	/** One warm accent and near-white headers, so headings separate by weight rather than a third colour. */
 	public static final Palette MODERN_DARK = builder()
