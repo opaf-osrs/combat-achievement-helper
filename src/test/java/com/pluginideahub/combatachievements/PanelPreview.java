@@ -99,16 +99,38 @@ public final class PanelPreview
 			.effortEngine(timing, questEffort, skillXp, experience, profile, 6)
 			.build(snapshot, signals, null);
 
+		// A couple of CAs barred, so the Route's "Not doing these" section appears in the previews.
+		Set<Integer> barredSample = new HashSet<>();
+		for (SidePanelViewModel.PathRow r : viewModel.path().steps)
+		{
+			if (barredSample.size() < 2)
+			{
+				barredSample.add(r.id);
+			}
+		}
+		SidePanelViewModel barredModel = new SidePanelViewModelBuilder(lib, effort, video, guides,
+			rewards, EffortModel.standard())
+			.difficulty(TaskDifficultyLibrary.loadBundled())
+			.recStats(com.pluginideahub.combatachievements.core.achievement.RecStatsLibrary.loadBundled())
+			.detail(com.pluginideahub.combatachievements.core.achievement.TaskDetailLibrary.loadBundled())
+			.barred(barredSample)
+			.effortEngine(timing, questEffort, skillXp, experience, profile, 6)
+			.build(snapshot, signals, null);
+
 		SwingUtilities.invokeAndWait(() ->
 		{
 			CombatAchievementsPanel panel = new CombatAchievementsPanel(action -> { });
 			// No-op handlers so the Route's per-CA "−" (bar) control renders in the previews.
-			panel.setBarHandlers(id -> { }, () -> { });
+			panel.setBarHandlers(id -> { }, id -> { }, () -> { });
 			panel.render(viewModel);
 
 			write(panel, PanelMode.RECOMMENDED, new File(outDir, "02-recommended.png"));
 			write(panel, PanelMode.BOSSES, new File(outDir, "07-bosses.png"));
 			write(panel, PanelMode.ROUTE, new File(outDir, "03-route.png"));
+			panel.render(barredModel);
+			panel.setBarredCollapsed(false);
+			write(panel, PanelMode.ROUTE, new File(outDir, "18-route-barred.png"));
+			panel.render(viewModel);
 			panel.openFirstCaDetail();
 			snapshot(panel, new File(outDir, "08-ca-detail.png")); // how-to collapsed (lean default)
 			panel.setHowToDefault(true);

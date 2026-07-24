@@ -148,7 +148,7 @@ public class CombatAchievementsPlugin extends Plugin
 		panel.applyTheme(config.panelTheme().palette());
 		panel.setHowToDefault(config.showHowTo());
 		panel.setDeveloperMode(config.developerMode());
-		panel.setBarHandlers(this::barTask, this::clearBarredTasks);
+		panel.setBarHandlers(this::barTask, this::unbarTask, this::clearBarredTasks);
 		navigationButton = NavigationButton.builder()
 			.tooltip("Combat Achievement Helper")
 			.icon(ImageUtil.loadImageResource(CombatAchievementsPlugin.class, "icon.png"))
@@ -348,6 +348,16 @@ public class CombatAchievementsPlugin extends Plugin
 		}
 	}
 
+	/** Puts a single barred task back in the running. */
+	private void unbarTask(int taskId)
+	{
+		if (barredTasks.remove(taskId))
+		{
+			saveBarredTasks();
+			refresh();
+		}
+	}
+
 	private void clearBarredTasks()
 	{
 		if (!barredTasks.isEmpty())
@@ -505,7 +515,6 @@ public class CombatAchievementsPlugin extends Plugin
 			.scaling(scalingLibrary)
 			.effortEngine(bossTimingLibrary, questEffortLibrary, skillXpLibrary, experience, profile, 6);
 		SidePanelViewModel viewModel = builder.build(snapshot, signals, null);
-		panel.setBarredCount(barredTasks.size());
 		panel.render(viewModel);
 	}
 

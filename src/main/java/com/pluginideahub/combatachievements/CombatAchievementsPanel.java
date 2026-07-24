@@ -113,10 +113,10 @@ public class CombatAchievementsPanel extends PluginPanel
 	private final transient Consumer<PanelAction> onAction;
 	/** Bar a task from the Route (the "−" on a route card); the plugin persists it and re-solves. */
 	private transient Consumer<Integer> onBarTask;
+	/** Put one barred task back in the running. */
+	private transient Consumer<Integer> onUnbarTask;
 	/** Clear every barred task, putting them all back in the running. */
 	private transient Runnable onClearBarred;
-	/** How many tasks are currently barred, for the "N barred · restore" affordance. */
-	private int barredCount;
 
 	private transient SidePanelViewModel model = SidePanelViewModel.loggedOut();
 	private PanelMode currentMode = PanelMode.RECOMMENDED;
@@ -125,6 +125,8 @@ public class CombatAchievementsPanel extends PluginPanel
 	private long shuffleSeed;
 	private boolean unlocksCollapsed;
 	private boolean trainingsCollapsed;
+	/** Whether the Route's barred ("Not doing these") section is collapsed. */
+	private boolean barredCollapsed = true;
 	/** Per-visit overhead (min) amortised into the Bosses "Recommended" sort — the clustering dial: the
 	 *  higher it is, the more the sort favours bosses with several doable CAs (less boss-swapping). */
 	private int tripOverheadMinutes = DEFAULT_TRIP_OVERHEAD;
@@ -836,14 +838,22 @@ public class CombatAchievementsPanel extends PluginPanel
 	/** Wires the Route's bar/restore controls to the plugin, which owns and persists the barred set. */
 	public void setBarHandlers(Consumer<Integer> barTask, Runnable clearBarred)
 	{
+		setBarHandlers(barTask, null, clearBarred);
+	}
+
+	/** Wires bar / un-bar / restore-all to the plugin, which owns and persists the barred set. */
+	public void setBarHandlers(Consumer<Integer> barTask, Consumer<Integer> unbarTask,
+		Runnable clearBarred)
+	{
 		this.onBarTask = barTask;
+		this.onUnbarTask = unbarTask;
 		this.onClearBarred = clearBarred;
 	}
 
-	/** How many tasks are barred, so the Route can offer to put them back. */
-	public void setBarredCount(int count)
+	/** Expands or collapses the Route's barred section (used by the preview renderer). */
+	public void setBarredCollapsed(boolean collapsed)
 	{
-		this.barredCount = Math.max(0, count);
+		this.barredCollapsed = collapsed;
 	}
 
 	/**
@@ -1465,17 +1475,36 @@ public class CombatAchievementsPanel extends PluginPanel
 				content.add(fullWidth(new JLabel(tot.toString())));
 				content.add(spacer());
 			}
-			if (barredCount > 0 && onClearBarred != null)
+			renderRouteGroups(route);
+
+			// "Not doing these": the CAs barred out of the route, collapsible like Unlock/Train next, each
+			// restorable on its own. Absent entirely when nothing is barred, so it costs nothing normally.
+			List<SidePanelViewModel.CaDetail> barred = path.barredCas;
+			if (barred != null && !barred.isEmpty())
 			{
-				content.add(backButton("Restore " + barredCount + " hidden", () -> {
-					if (onClearBarred != null)
+				content.add(spacer());
+				content.add(collapseHeader("Not doing these", barredCollapsed,
+					() -> { barredCollapsed = !barredCollapsed; rebuild(); }));
+				if (!barredCollapsed)
+				{
+					content.add(spacer());
+					for (SidePanelViewModel.CaDetail c : barred)
 					{
-						onClearBarred.run();
+						content.add(barredCard(c));
+						content.add(spacer());
 					}
-				}));
+					if (barred.size() > 1 && onClearBarred != null)
+					{
+						content.add(backButton("Restore all " + barred.size(), () -> {
+							if (onClearBarred != null)
+							{
+								onClearBarred.run();
+							}
+						}));
+					}
+				}
 				content.add(spacer());
 			}
-			renderRouteGroups(route);
 		}
 	}
 
@@ -1602,6 +1631,67 @@ public class CombatAchievementsPanel extends PluginPanel
 		if (onBarTask != null)
 		{
 			card.add(barButton(c), BorderLayout.EAST);
+		}
+		addHover(card, ColorScheme.DARK_GRAY_COLOR, ColorScheme.DARK_GRAY_HOVER_COLOR);
+		onClick(card, () -> {
+			selectedCa = c;
+			rebuild();
+		});
+		fullWidth(card);
+		card.setMaximumSize(new Dimension(ROUTE_CARD_MAX_WIDTH, card.getPreferredSize().height));
+		return card;
+	}
+
+	/**
+	 * A barred CA, listed under "Not doing these". Same card shape as the route, with a "+" that puts this
+	 * one back in the running instead of the "-" that took it out.
+	 */
+	private JPanel barredCard(SidePanelViewModel.CaDetail c)
+	{
+		JPanel card = new JPanel(new BorderLayout());
+		card.setBackground(ColorScheme.DARK_GRAY_COLOR);
+		card.setBorder(BorderFactory.createCompoundBorder(
+			BorderFactory.createMatteBorder(0, 3, 0, 0, CombatAchievementsTheme.LOCKED),
+			BorderFactory.createEmptyBorder(5, 7, 5, 7)));
+
+		int textWidth = ROUTE_TEXT_WIDTH - BAR_BUTTON_WIDTH;
+		StringBuilder sb = new StringBuilder("<html><body style='width:" + textWidth + "px'>");
+		sb.append("<span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.LOCKED))
+			.append("'><b>").append(escape(c.name)).append("</b></span>");
+		sb.append("<br><span style='color:" + metaHex() + "'>").append(c.points)
+			.append(c.points == 1 ? " pt" : " pts");
+		if (!c.monster.isEmpty())
+		{
+			sb.append(" · ").append(escape(c.monster));
+		}
+		sb.append("</span></body></html>");
+		JLabel label = new JLabel(sb.toString());
+		Dimension pref = label.getPreferredSize();
+		Dimension capped = new Dimension(Math.min(pref.width, textWidth), pref.height);
+		label.setPreferredSize(capped);
+		label.setMaximumSize(capped);
+		card.add(label, BorderLayout.CENTER);
+
+		if (onUnbarTask != null)
+		{
+			JButton restore = new JButton("+");
+			restore.setFont(FontManager.getRunescapeSmallFont());
+			restore.setToolTipText("Put " + c.name + " back in the route");
+			restore.setFocusPainted(false);
+			restore.setBorderPainted(false);
+			restore.setContentAreaFilled(false);
+			restore.setOpaque(false);
+			restore.setForeground(CombatAchievementsTheme.POSITIVE);
+			restore.setBorder(BorderFactory.createEmptyBorder(0, 4, 0, 0));
+			restore.setPreferredSize(new Dimension(BAR_BUTTON_WIDTH, 16));
+			restore.setCursor(java.awt.Cursor.getPredefinedCursor(java.awt.Cursor.HAND_CURSOR));
+			restore.addActionListener(e -> {
+				if (onUnbarTask != null)
+				{
+					onUnbarTask.accept(c.id);
+				}
+			});
+			card.add(restore, BorderLayout.EAST);
 		}
 		addHover(card, ColorScheme.DARK_GRAY_COLOR, ColorScheme.DARK_GRAY_HOVER_COLOR);
 		onClick(card, () -> {

@@ -478,9 +478,23 @@ public final class SidePanelViewModelBuilder
 				a.points(), step.cumulativePoints(), a.wikiUrl(),
 				videoLib.bestGuideUrl(a.id(), a.name()), buildCaDetail(a, true, "")));
 		}
+		// The barred pile, so the panel can list what was set aside and offer it back. Drawn from the
+		// incomplete tasks, so anything since completed drops off the list by itself.
+		List<SidePanelViewModel.CaDetail> barredCas = new ArrayList<>();
+		if (!barredTasks.isEmpty())
+		{
+			for (RankedTask rt : rankedIncomplete)
+			{
+				if (barredTasks.contains(rt.achievement().id()))
+				{
+					barredCas.add(buildCaDetail(rt.achievement(), rt.doableNow(), rt.lockReason()));
+				}
+			}
+		}
+
 		return new SidePanelViewModel.PathView(target.displayName(), plan.pointsGap(),
 			plan.reachable(), plan.alreadyUnlocked(), steps, rewardLib.forTier(target).headline(),
-			lockedCas, trainFirst);
+			lockedCas, trainFirst, barredCas);
 	}
 
 	/**

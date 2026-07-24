@@ -264,10 +264,23 @@ public final class SidePanelViewModel
 			return sum;
 		}
 
+		/** CAs the player has barred from the Route, so they can be reviewed and put back. */
+		public final List<CaDetail> barredCas;
+
 		public PathView(String targetTierName, int pointsGap, boolean reachable,
 			boolean alreadyUnlocked, List<PathRow> steps, String targetRewardHeadline,
 			List<CaDetail> lockedCas, boolean trainFirst)
 		{
+			this(targetTierName, pointsGap, reachable, alreadyUnlocked, steps, targetRewardHeadline,
+				lockedCas, trainFirst, Collections.emptyList());
+		}
+
+		public PathView(String targetTierName, int pointsGap, boolean reachable,
+			boolean alreadyUnlocked, List<PathRow> steps, String targetRewardHeadline,
+			List<CaDetail> lockedCas, boolean trainFirst, List<CaDetail> barredCas)
+		{
+			this.barredCas = Collections.unmodifiableList(
+				barredCas == null ? Collections.emptyList() : barredCas);
 			this.targetTierName = targetTierName;
 			this.pointsGap = pointsGap;
 			this.reachable = reachable;
