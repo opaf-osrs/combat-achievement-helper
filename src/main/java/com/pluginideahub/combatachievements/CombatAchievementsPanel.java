@@ -185,9 +185,6 @@ public class CombatAchievementsPanel extends PluginPanel
 	private final JComboBox<Sort> sortBox = new JComboBox<>(Sort.values());
 	private final JButton shuffleButton = new JButton("⟳");
 	/** Clears every pinned/barred CA, putting the Route back to the solver's own answer. */
-	// Plain word, not another circular arrow: beside the shuffle glyph two near-identical arrows were
-	// indistinguishable at a glance, and these do very different things.
-	private final JButton resetCustomButton = new JButton("Reset");
 	/** True when anything is pinned or barred; the reset control only exists when there is something to reset. */
 	private boolean routeCustomised;
 	private transient Runnable onResetCustom;
@@ -1068,8 +1065,6 @@ public class CombatAchievementsPanel extends PluginPanel
 		sortBox.setVisible(searchable);
 		orderRow.setVisible(searchable || routeMode); // Order controls (CAs/Bosses) and/or the refresh button
 		shuffleButton.setVisible(caMode || routeMode); // CAs reshuffle + Route re-solve; not Bosses
-		// Route only, and only once something is actually pinned or barred - no dead control otherwise.
-		resetCustomButton.setVisible(routeMode && routeCustomised);
 		shuffleButton.setToolTipText(routeMode ? "Suggest a different route" : "Shuffle — show a different set of CAs");
 		controlBar.setVisible(searchable || routeMode);
 		content.removeAll();
@@ -1152,19 +1147,7 @@ public class CombatAchievementsPanel extends PluginPanel
 				rebuild();
 			}
 		});
-		styleAsRefresh(resetCustomButton, "Reset your pinned and skipped CAs");
-		resetCustomButton.setFont(FontManager.getRunescapeSmallFont());
-		resetCustomButton.addActionListener(e -> {
-			if (onResetCustom != null)
-			{
-				onResetCustom.run();
-			}
-		});
-		JPanel routeButtons = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
-		routeButtons.setOpaque(false);
-		routeButtons.add(resetCustomButton);
-		routeButtons.add(shuffleButton);
-		orderRow.add(routeButtons, BorderLayout.EAST);
+		orderRow.add(shuffleButton, BorderLayout.EAST);
 
 		controlBar.add(searchField, BorderLayout.NORTH);
 		controlBar.add(orderRow, BorderLayout.CENTER);
@@ -1642,6 +1625,18 @@ public class CombatAchievementsPanel extends PluginPanel
 					.append("'>").append(path.shownPoints()).append(" pts</span>");
 				tot.append("</body></html>");
 				content.add(fullWidth(new JLabel(tot.toString())));
+				content.add(spacer());
+			}
+			// Sits with the route it affects rather than in the control bar, and only exists once something
+			// is actually pinned or barred.
+			if (routeCustomised && onResetCustom != null)
+			{
+				content.add(backButton("Reset custom CAs", () -> {
+					if (onResetCustom != null)
+					{
+						onResetCustom.run();
+					}
+				}));
 				content.add(spacer());
 			}
 			renderRouteGroups(route);
