@@ -5,6 +5,7 @@ import com.pluginideahub.combatachievements.core.feedback.FeedbackLink;
 import com.pluginideahub.combatachievements.core.ui.PanelAction;
 import com.pluginideahub.combatachievements.core.ui.PanelMode;
 import com.pluginideahub.combatachievements.core.ui.SidePanelViewModel;
+import com.pluginideahub.combatachievements.ui.CardKit;
 import com.pluginideahub.combatachievements.ui.CombatAchievementsTheme;
 import com.pluginideahub.combatachievements.ui.Palette;
 import java.awt.BorderLayout;
@@ -366,7 +367,7 @@ public class CombatAchievementsPanel extends PluginPanel
 		headerRow.setOpaque(false);
 		headerRow.setBorder(BorderFactory.createEmptyBorder(4, 0, 3, 0));
 		headerRow.add(devHeader, BorderLayout.WEST);
-		onClick(headerRow, () -> setDevCollapsed(!devCollapsed));
+		CardKit.onClick(headerRow, () -> setDevCollapsed(!devCollapsed));
 		devSection.add(headerRow, BorderLayout.NORTH);
 
 		devBody.setLayout(new BoxLayout(devBody, BoxLayout.Y_AXIS));
@@ -382,8 +383,8 @@ public class CombatAchievementsPanel extends PluginPanel
 			presets.add(pillButton(String.valueOf(level), e -> applyLevelPreset(level)));
 		}
 		presets.add(pillButton("Real", e -> clearLevelSimulation()));
-		devBody.add(fullWidth(presets));
-		devBody.add(spacer());
+		devBody.add(CardKit.fullWidth(presets));
+		devBody.add(CardKit.spacer());
 
 		styleDevCheckBox(devZeroCas,
 			"Hide your completed CAs, so the panel treats you as having 0 points");
@@ -395,8 +396,8 @@ public class CombatAchievementsPanel extends PluginPanel
 		switches.setOpaque(false);
 		switches.add(devZeroCas);
 		switches.add(devZeroQuests);
-		devBody.add(fullWidth(switches));
-		devBody.add(spacer());
+		devBody.add(CardKit.fullWidth(switches));
+		devBody.add(CardKit.spacer());
 
 		// Two columns: at three, the label plus the spinner's arrows exceed the cell and the last column's
 		// spinner is clipped off the panel.
@@ -406,7 +407,7 @@ public class CombatAchievementsPanel extends PluginPanel
 		{
 			grid.add(devSkillCell(skill));
 		}
-		devBody.add(fullWidth(grid));
+		devBody.add(CardKit.fullWidth(grid));
 
 		devSection.add(devBody, BorderLayout.CENTER);
 		refreshDevHeader();
@@ -747,7 +748,7 @@ public class CombatAchievementsPanel extends PluginPanel
 		link.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		link.setToolTipText(tooltip);
 		link.addActionListener(e -> LinkBrowser.browse(url));
-		addForegroundHover(link, CombatAchievementsTheme.NEUTRAL_META,
+		CardKit.addForegroundHover(link, CombatAchievementsTheme.NEUTRAL_META,
 			CombatAchievementsTheme.HEADER_GOLD);
 		return link;
 	}
@@ -790,7 +791,7 @@ public class CombatAchievementsPanel extends PluginPanel
 			});
 			if (!sel)
 			{
-				addHover(button, ColorScheme.DARK_GRAY_COLOR, ColorScheme.DARK_GRAY_HOVER_COLOR);
+				CardKit.addHover(button, ColorScheme.DARK_GRAY_COLOR, ColorScheme.DARK_GRAY_HOVER_COLOR);
 			}
 			// "Recommended" is the widest label — give it more of the row so it doesn't clip.
 			gc.gridx = i;
@@ -813,7 +814,7 @@ public class CombatAchievementsPanel extends PluginPanel
 		b.setForeground(ColorScheme.LIGHT_GRAY_COLOR);
 		b.setBorder(BorderFactory.createEmptyBorder(3, 8, 3, 8));
 		b.addActionListener(onClick);
-		addHover(b, ColorScheme.DARK_GRAY_COLOR, ColorScheme.DARK_GRAY_HOVER_COLOR);
+		CardKit.addHover(b, ColorScheme.DARK_GRAY_COLOR, ColorScheme.DARK_GRAY_HOVER_COLOR);
 		return b;
 	}
 
@@ -829,44 +830,7 @@ public class CombatAchievementsPanel extends PluginPanel
 		b.setForeground(CombatAchievementsTheme.HEADER_GOLD);
 		b.setBorder(BorderFactory.createEmptyBorder(0, 8, 0, 4));
 		b.setMargin(new Insets(0, 0, 0, 0));
-		addHover(b, ColorScheme.DARK_GRAY_COLOR, ColorScheme.DARK_GRAY_HOVER_COLOR);
-	}
-
-	/** Hover that brightens the TEXT (for transparent link-style buttons), mirroring {@link #addHover}. */
-	private static void addForegroundHover(JComponent c, Color base, Color hover)
-	{
-		c.addMouseListener(new java.awt.event.MouseAdapter()
-		{
-			@Override
-			public void mouseEntered(java.awt.event.MouseEvent e)
-			{
-				c.setForeground(hover);
-			}
-
-			@Override
-			public void mouseExited(java.awt.event.MouseEvent e)
-			{
-				c.setForeground(base);
-			}
-		});
-	}
-
-	private static void addHover(JComponent c, Color base, Color hover)
-	{
-		c.addMouseListener(new java.awt.event.MouseAdapter()
-		{
-			@Override
-			public void mouseEntered(java.awt.event.MouseEvent e)
-			{
-				c.setBackground(hover);
-			}
-
-			@Override
-			public void mouseExited(java.awt.event.MouseEvent e)
-			{
-				c.setBackground(base);
-			}
-		});
+		CardKit.addHover(b, ColorScheme.DARK_GRAY_COLOR, ColorScheme.DARK_GRAY_HOVER_COLOR);
 	}
 
 	/** Switches the active mode and re-renders (used by the headless preview harness and tests). */
@@ -1159,20 +1123,6 @@ public class CombatAchievementsPanel extends PluginPanel
 		content.repaint();
 	}
 
-	/** Adds a click handler + hand cursor to a card, without disturbing its inner link buttons. */
-	private static void onClick(JComponent c, Runnable action)
-	{
-		c.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		c.addMouseListener(new java.awt.event.MouseAdapter()
-		{
-			@Override
-			public void mouseClicked(java.awt.event.MouseEvent e)
-			{
-				action.run();
-			}
-		});
-	}
-
 	// ---- Recommended -------------------------------------------------------------------------------
 
 	private void buildControlBar()
@@ -1259,7 +1209,7 @@ public class CombatAchievementsPanel extends PluginPanel
 				break;
 			}
 			content.add(taskCard(r));
-			content.add(spacer());
+			content.add(CardKit.spacer());
 			shown++;
 		}
 	}
@@ -1327,26 +1277,26 @@ public class CombatAchievementsPanel extends PluginPanel
 		String name = CombatAchievementsTheme.hex(row.doableNow
 			? CombatAchievementsTheme.NAME : CombatAchievementsTheme.LOCKED);
 		StringBuilder sb = new StringBuilder("<html><body style='width:166px'>");
-		sb.append("<span style='color:").append(name).append("'><b>").append(escape(row.name)).append("</b></span>");
+		sb.append("<span style='color:").append(name).append("'><b>").append(CardKit.escape(row.name)).append("</b></span>");
 		if (!row.doableNow)
 		{
 			String lock = (row.lockReason == null || row.lockReason.isEmpty()) ? "locked" : row.lockReason;
 			sb.append(" <span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.LOCKED))
-				.append("'>(").append(escape(lock)).append(")</span>");
+				.append("'>(").append(CardKit.escape(lock)).append(")</span>");
 		}
 		if (!row.curated)
 		{
 			sb.append(" <span style='color:#6f6f6f'>&#9679;</span>");
 		}
 		sb.append("<br><span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.DESC))
-			.append("'>").append(escape(row.description)).append("</span>");
+			.append("'>").append(CardKit.escape(row.description)).append("</span>");
 		sb.append("<br><span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.POINTS))
 			.append("'>").append(row.points).append(" pts</span>")
-			.append(" <span style='color:" + metaHex() + "'>· ").append(escape(row.tierName)).append("</span>");
+			.append(" <span style='color:" + CardKit.metaHex() + "'>· ").append(CardKit.escape(row.tierName)).append("</span>");
 		if (row.difficulty > 0)
 		{
-			sb.append(" <span style='color:" + metaHex() + "'>· </span><span style='color:")
-				.append(CombatAchievementsTheme.hex(difficultyColor(row.difficulty)))
+			sb.append(" <span style='color:" + CardKit.metaHex() + "'>· </span><span style='color:")
+				.append(CombatAchievementsTheme.hex(CardKit.difficultyColor(row.difficulty)))
 				.append("'>difficulty ").append(row.difficulty).append("</span>");
 		}
 		sb.append("</body></html>");
@@ -1355,37 +1305,12 @@ public class CombatAchievementsPanel extends PluginPanel
 		card.add(label, BorderLayout.CENTER);
 
 		card.add(linkRow(row.wikiUrl, row.guideUrl, row.curatedVideo), BorderLayout.SOUTH);
-		addHover(card, ColorScheme.DARK_GRAY_COLOR, ColorScheme.DARK_GRAY_HOVER_COLOR);
-		onClick(card, () -> {
+		CardKit.addHover(card, ColorScheme.DARK_GRAY_COLOR, ColorScheme.DARK_GRAY_HOVER_COLOR);
+		CardKit.onClick(card, () -> {
 			selectedCa = row.detail;
 			rebuild();
 		});
-		return fullWidth(card);
-	}
-
-	/** Easy → mid → hard on the 1–10 Difficulty scale, using the theme's dedicated difficulty ramp so a
-	 *  "diff N" never reads as the green points or a gold header sharing its line. */
-	private static Color difficultyColor(int d)
-	{
-		if (d <= 0)
-		{
-			return CombatAchievementsTheme.DESC;
-		}
-		if (d <= 3)
-		{
-			return CombatAchievementsTheme.DIFF_EASY;
-		}
-		if (d <= 6)
-		{
-			return CombatAchievementsTheme.DIFF_MID;
-		}
-		return CombatAchievementsTheme.DIFF_HARD;
-	}
-
-	/** Themed grey for the muted "·" separators / secondary meta, as an HTML hex (follows the palette). */
-	private static String metaHex()
-	{
-		return CombatAchievementsTheme.hex(CombatAchievementsTheme.NEUTRAL_META);
+		return CardKit.fullWidth(card);
 	}
 
 	// ---- Bosses ------------------------------------------------------------------------------------
@@ -1416,7 +1341,7 @@ public class CombatAchievementsPanel extends PluginPanel
 		for (SidePanelViewModel.BossRow b : bosses)
 		{
 			content.add(bossRowCard(b));
-			content.add(spacer());
+			content.add(CardKit.spacer());
 		}
 	}
 
@@ -1525,7 +1450,7 @@ public class CombatAchievementsPanel extends PluginPanel
 
 		StringBuilder sb = new StringBuilder("<html><body style='width:182px'>");
 		sb.append("<span style='color:").append(CombatAchievementsTheme.hex(accent))
-			.append("'><b>").append(escape(b.monster)).append("</b></span>");
+			.append("'><b>").append(CardKit.escape(b.monster)).append("</b></span>");
 		if (b.locked)
 		{
 			String reason = "needs access";
@@ -1537,17 +1462,17 @@ public class CombatAchievementsPanel extends PluginPanel
 					break;
 				}
 			}
-			sb.append(" <span style='color:" + metaHex() + "'>(locked)</span>");
+			sb.append(" <span style='color:" + CardKit.metaHex() + "'>(locked)</span>");
 			sb.append("<br><span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.NEGATIVE))
-				.append("'>").append(escape(reason)).append("</span>")
-				.append(" <span style='color:" + metaHex() + "'>· ").append(b.lockedCount)
+				.append("'>").append(CardKit.escape(reason)).append("</span>")
+				.append(" <span style='color:" + CardKit.metaHex() + "'>· ").append(b.lockedCount)
 				.append(b.lockedCount == 1 ? " CA</span>" : " CAs</span>");
 		}
 		else
 		{
 			sb.append("<br><span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.POINTS))
 				.append("'>").append(b.projectedPoints).append(" pts available</span>")
-				.append(" <span style='color:" + metaHex() + "'>· ").append(b.doableCount)
+				.append(" <span style='color:" + CardKit.metaHex() + "'>· ").append(b.doableCount)
 				.append(b.doableCount == 1 ? " CA" : " CAs");
 			if (b.lockedCount > 0)
 			{
@@ -1557,12 +1482,12 @@ public class CombatAchievementsPanel extends PluginPanel
 		}
 		sb.append("</body></html>");
 		card.add(new JLabel(sb.toString()), BorderLayout.CENTER);
-		addHover(card, ColorScheme.DARK_GRAY_COLOR, ColorScheme.DARK_GRAY_HOVER_COLOR);
-		onClick(card, () -> {
+		CardKit.addHover(card, ColorScheme.DARK_GRAY_COLOR, ColorScheme.DARK_GRAY_HOVER_COLOR);
+		CardKit.onClick(card, () -> {
 			selectedBoss = b.monster;
 			rebuild();
 		});
-		return fullWidth(card);
+		return CardKit.fullWidth(card);
 	}
 
 	// ---- Route -------------------------------------------------------------------------------------
@@ -1588,14 +1513,14 @@ public class CombatAchievementsPanel extends PluginPanel
 				() -> { unlocksCollapsed = !unlocksCollapsed; rebuild(); }));
 			if (!unlocksCollapsed)
 			{
-				content.add(spacer());
+				content.add(CardKit.spacer());
 				for (SidePanelViewModel.UnlockView u : unlocks)
 				{
 					content.add(unlockCard(u));
-					content.add(spacer());
+					content.add(CardKit.spacer());
 				}
 			}
-			content.add(spacer());
+			content.add(CardKit.spacer());
 		}
 
 		// "Train next": only present when the account is actually held back by levels, so it quietly
@@ -1607,20 +1532,20 @@ public class CombatAchievementsPanel extends PluginPanel
 				() -> { trainingsCollapsed = !trainingsCollapsed; rebuild(); }));
 			if (!trainingsCollapsed)
 			{
-				content.add(spacer());
+				content.add(CardKit.spacer());
 				for (SidePanelViewModel.TrainingView t : trainings)
 				{
 					content.add(trainingCard(t));
-					content.add(spacer());
+					content.add(CardKit.spacer());
 				}
 			}
-			content.add(spacer());
+			content.add(CardKit.spacer());
 		}
 
 		if (path != null)
 		{
 			StringBuilder sb = new StringBuilder();
-			sb.append("Goal: <b>").append(escape(path.targetTierName)).append("</b>");
+			sb.append("Goal: <b>").append(CardKit.escape(path.targetTierName)).append("</b>");
 			if (path.alreadyUnlocked)
 			{
 				sb.append("<br><span style='color:")
@@ -1650,8 +1575,8 @@ public class CombatAchievementsPanel extends PluginPanel
 						.append("'>Not enough doable tasks yet —<br>shows the closest set.</span>");
 				}
 			}
-			content.add(fullWidth(wrappedHtmlLabel(sb.toString(), CARD_TEXT_WIDTH)));
-			content.add(spacer());
+			content.add(CardKit.fullWidth(CardKit.wrappedHtmlLabel(sb.toString(), CARD_TEXT_WIDTH)));
+			content.add(CardKit.spacer());
 
 			// Only CAs the player can go and do right now, grouped by boss so one trip clears several.
 			// Nothing out of reach and nothing behind a quest: the Route is a plan to follow, and listing
@@ -1670,13 +1595,13 @@ public class CombatAchievementsPanel extends PluginPanel
 			if (!route.isEmpty())
 			{
 				StringBuilder tot = new StringBuilder();
-				tot.append("<span style='color:" + metaHex() + "'>").append(route.size())
+				tot.append("<span style='color:" + CardKit.metaHex() + "'>").append(route.size())
 					.append(route.size() == 1 ? " CA · " : " CAs · ")
 					.append("</span><span style='color:")
 					.append(CombatAchievementsTheme.hex(CombatAchievementsTheme.POINTS))
 					.append("'>").append(path.shownPoints()).append(" pts</span>");
-				content.add(fullWidth(wrappedHtmlLabel(tot.toString(), CARD_TEXT_WIDTH)));
-				content.add(spacer());
+				content.add(CardKit.fullWidth(CardKit.wrappedHtmlLabel(tot.toString(), CARD_TEXT_WIDTH)));
+				content.add(CardKit.spacer());
 			}
 			// Sits with the route it affects rather than in the control bar, and only exists once something
 			// is actually pinned or barred.
@@ -1688,7 +1613,7 @@ public class CombatAchievementsPanel extends PluginPanel
 						onResetCustom.run();
 					}
 				}));
-				content.add(spacer());
+				content.add(CardKit.spacer());
 			}
 			renderRouteGroups(route);
 
@@ -1697,16 +1622,16 @@ public class CombatAchievementsPanel extends PluginPanel
 			List<SidePanelViewModel.CaDetail> barred = path.barredCas;
 			if (barred != null && !barred.isEmpty())
 			{
-				content.add(spacer());
+				content.add(CardKit.spacer());
 				content.add(collapseHeader("Not doing these", barredCollapsed,
 					() -> { barredCollapsed = !barredCollapsed; rebuild(); }));
 				if (!barredCollapsed)
 				{
-					content.add(spacer());
+					content.add(CardKit.spacer());
 					for (SidePanelViewModel.CaDetail c : barred)
 					{
 						content.add(barredCard(c));
-						content.add(spacer());
+						content.add(CardKit.spacer());
 					}
 					if (barred.size() > 1 && onClearBarred != null)
 					{
@@ -1718,7 +1643,7 @@ public class CombatAchievementsPanel extends PluginPanel
 						}));
 					}
 				}
-				content.add(spacer());
+				content.add(CardKit.spacer());
 			}
 		}
 	}
@@ -1780,7 +1705,7 @@ public class CombatAchievementsPanel extends PluginPanel
 			for (SidePanelViewModel.CaDetail c : g)
 			{
 				content.add(routeCaCard(c, grouped));
-				content.add(spacer());
+				content.add(CardKit.spacer());
 			}
 		}
 	}
@@ -1791,7 +1716,7 @@ public class CombatAchievementsPanel extends PluginPanel
 		// Just the boss name: the cards beneath it already show how many there are, and keeping it short
 		// avoids the clipping a longer label hit ("Deranged Archaeologist · 2 tasks" cut off mid-word —
 		// Swing sizes an HTML label from its own preferred width, so a body-width wrap doesn't rescue it).
-		JLabel label = new JLabel(escape(boss));
+		JLabel label = new JLabel(CardKit.escape(boss));
 		label.setFont(FontManager.getRunescapeBoldFont());
 		label.setForeground(CombatAchievementsTheme.HEADER_GOLD);
 
@@ -1812,14 +1737,14 @@ public class CombatAchievementsPanel extends PluginPanel
 				buildModeBar();
 				rebuild();
 			};
-			addForegroundHover(label, CombatAchievementsTheme.HEADER_GOLD, CombatAchievementsTheme.NAME);
+			CardKit.addForegroundHover(label, CombatAchievementsTheme.HEADER_GOLD, CombatAchievementsTheme.NAME);
 			// The listener has to go on the LABEL as well as the row. AWT does not bubble mouse events the
 			// way the DOM does: a component with any listener of its own consumes them, and the hover tint
 			// above gives the label one — so a click on the name never reached a row-only handler.
-			onClick(label, openBoss);
-			onClick(row, openBoss);
+			CardKit.onClick(label, openBoss);
+			CardKit.onClick(row, openBoss);
 		}
-		return fullWidth(row);
+		return CardKit.fullWidth(row);
 	}
 
 	private JPanel routeCaCard(SidePanelViewModel.CaDetail c, boolean grouped)
@@ -1833,25 +1758,25 @@ public class CombatAchievementsPanel extends PluginPanel
 			BorderFactory.createEmptyBorder(5, 7, 5, 7)));
 		StringBuilder sb = new StringBuilder("<html><body style='width:" + textWidth + "px'>");
 		sb.append("<span style='color:").append(CombatAchievementsTheme.hex(accent))
-			.append("'><b>").append(escape(c.name)).append("</b></span>");
+			.append("'><b>").append(CardKit.escape(c.name)).append("</b></span>");
 		sb.append("<br><span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.POINTS))
 			.append("'>").append(c.points).append(" pts</span>");
 		if (c.difficulty > 0)
 		{
-			sb.append(" <span style='color:" + metaHex() + "'>· </span><span style='color:")
-				.append(CombatAchievementsTheme.hex(difficultyColor(c.difficulty)))
+			sb.append(" <span style='color:" + CardKit.metaHex() + "'>· </span><span style='color:")
+				.append(CombatAchievementsTheme.hex(CardKit.difficultyColor(c.difficulty)))
 				.append("'>difficulty ").append(c.difficulty).append("</span>");
 		}
 		// Time estimates are intentionally not shown — the engine still uses them for ordering.
 		// When not under a boss header, name the boss so a solo route step still tells you where to go.
 		if (!grouped && !c.monster.isEmpty())
 		{
-			sb.append("<br><span style='color:" + metaHex() + "'>").append(escape(c.monster)).append("</span>");
+			sb.append("<br><span style='color:" + CardKit.metaHex() + "'>").append(CardKit.escape(c.monster)).append("</span>");
 		}
 		if (!c.doableNow && !c.lockReason.isEmpty())
 		{
 			sb.append("<br><span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.NEGATIVE))
-				.append("'>").append(escape(c.lockReason)).append("</span>");
+				.append("'>").append(CardKit.escape(c.lockReason)).append("</span>");
 		}
 		sb.append("</body></html>");
 		JLabel routeLabel = new JLabel(sb.toString());
@@ -1867,12 +1792,12 @@ public class CombatAchievementsPanel extends PluginPanel
 		{
 			card.add(barButton(c), BorderLayout.EAST);
 		}
-		addHover(card, ColorScheme.DARK_GRAY_COLOR, ColorScheme.DARK_GRAY_HOVER_COLOR);
-		onClick(card, () -> {
+		CardKit.addHover(card, ColorScheme.DARK_GRAY_COLOR, ColorScheme.DARK_GRAY_HOVER_COLOR);
+		CardKit.onClick(card, () -> {
 			selectedCa = c;
 			rebuild();
 		});
-		fullWidth(card);
+		CardKit.fullWidth(card);
 		card.setMaximumSize(new Dimension(ROUTE_CARD_MAX_WIDTH, card.getPreferredSize().height));
 		return card;
 	}
@@ -1892,12 +1817,12 @@ public class CombatAchievementsPanel extends PluginPanel
 		int textWidth = ROUTE_TEXT_WIDTH - BAR_BUTTON_WIDTH;
 		StringBuilder sb = new StringBuilder("<html><body style='width:" + textWidth + "px'>");
 		sb.append("<span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.LOCKED))
-			.append("'><b>").append(escape(c.name)).append("</b></span>");
-		sb.append("<br><span style='color:" + metaHex() + "'>").append(c.points)
+			.append("'><b>").append(CardKit.escape(c.name)).append("</b></span>");
+		sb.append("<br><span style='color:" + CardKit.metaHex() + "'>").append(c.points)
 			.append(c.points == 1 ? " pt" : " pts");
 		if (!c.monster.isEmpty())
 		{
-			sb.append(" · ").append(escape(c.monster));
+			sb.append(" · ").append(CardKit.escape(c.monster));
 		}
 		sb.append("</span></body></html>");
 		JLabel label = new JLabel(sb.toString());
@@ -1919,7 +1844,7 @@ public class CombatAchievementsPanel extends PluginPanel
 			restore.setContentAreaFilled(false);
 			restore.setOpaque(false);
 			restore.setForeground(CombatAchievementsTheme.POSITIVE);
-			addForegroundHover(restore, CombatAchievementsTheme.POSITIVE,
+			CardKit.addForegroundHover(restore, CombatAchievementsTheme.POSITIVE,
 				CombatAchievementsTheme.NAME);
 			restore.setBorder(BorderFactory.createEmptyBorder(0, 4, 0, 0));
 			restore.setPreferredSize(new Dimension(BAR_BUTTON_WIDTH, 18));
@@ -1932,12 +1857,12 @@ public class CombatAchievementsPanel extends PluginPanel
 			});
 			card.add(restore, BorderLayout.EAST);
 		}
-		addHover(card, ColorScheme.DARK_GRAY_COLOR, ColorScheme.DARK_GRAY_HOVER_COLOR);
-		onClick(card, () -> {
+		CardKit.addHover(card, ColorScheme.DARK_GRAY_COLOR, ColorScheme.DARK_GRAY_HOVER_COLOR);
+		CardKit.onClick(card, () -> {
 			selectedCa = c;
 			rebuild();
 		});
-		fullWidth(card);
+		CardKit.fullWidth(card);
 		card.setMaximumSize(new Dimension(ROUTE_CARD_MAX_WIDTH, card.getPreferredSize().height));
 		return card;
 	}
@@ -1961,7 +1886,7 @@ public class CombatAchievementsPanel extends PluginPanel
 		bar.setOpaque(false);
 		Color barIdle = blend(CombatAchievementsTheme.NEUTRAL_META, CombatAchievementsTheme.NEGATIVE, 0.72);
 		bar.setForeground(barIdle);
-		addForegroundHover(bar, barIdle, CombatAchievementsTheme.NEGATIVE);
+		CardKit.addForegroundHover(bar, barIdle, CombatAchievementsTheme.NEGATIVE);
 		bar.setPreferredSize(new Dimension(BAR_BUTTON_WIDTH, 18));
 		bar.setMargin(new Insets(0, 4, 0, 0));
 		bar.setBorder(BorderFactory.createEmptyBorder(0, 4, 0, 0));
@@ -1982,7 +1907,7 @@ public class CombatAchievementsPanel extends PluginPanel
 		row.setOpaque(false);
 		row.setBorder(BorderFactory.createEmptyBorder(4, 0, 3, 0));
 		row.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		JLabel label = new JLabel((collapsed ? "▸ " : "▾ ") + escape(text));
+		JLabel label = new JLabel((collapsed ? "▸ " : "▾ ") + CardKit.escape(text));
 		label.setFont(FontManager.getRunescapeBoldFont());
 		label.setForeground(CombatAchievementsTheme.HEADER_GOLD);
 		row.add(label, BorderLayout.WEST);
@@ -1994,7 +1919,7 @@ public class CombatAchievementsPanel extends PluginPanel
 				onToggle.run();
 			}
 		});
-		return fullWidth(row);
+		return CardKit.fullWidth(row);
 	}
 
 	/** A "train X to N" goal: what it opens and roughly how long, styled as a quieter sibling of unlockCard. */
@@ -2008,7 +1933,7 @@ public class CombatAchievementsPanel extends PluginPanel
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("<span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.HEADER_GOLD))
-			.append("'><b>").append(escape(t.label)).append("</b></span>");
+			.append("'><b>").append(CardKit.escape(t.label)).append("</b></span>");
 		sb.append("<br><span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.POSITIVE))
 			.append("'>").append(t.toward ? "toward " : "opens ").append(t.unlockedTaskCount)
 			.append(t.unlockedTaskCount == 1 ? " CA (" : " CAs (")
@@ -2016,23 +1941,23 @@ public class CombatAchievementsPanel extends PluginPanel
 		if (t.unlocksHint != null && !t.unlocksHint.isEmpty())
 		{
 			sb.append("<br><span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.DESC))
-				.append("'>mostly ").append(escape(t.unlocksHint)).append("</span>");
+				.append("'>mostly ").append(CardKit.escape(t.unlocksHint)).append("</span>");
 		}
-		card.add(wrappedHtmlLabel(sb.toString(), CARD_TEXT_WIDTH), BorderLayout.CENTER);
-		addHover(card, ColorScheme.DARK_GRAY_COLOR, ColorScheme.DARK_GRAY_HOVER_COLOR);
-		return fullWidth(card);
+		card.add(CardKit.wrappedHtmlLabel(sb.toString(), CARD_TEXT_WIDTH), BorderLayout.CENTER);
+		CardKit.addHover(card, ColorScheme.DARK_GRAY_COLOR, ColorScheme.DARK_GRAY_HOVER_COLOR);
+		return CardKit.fullWidth(card);
 	}
 
-	/** The unlock card's text (inner html, for {@link #wrappedHtmlLabel}): quest, difficulty, prize,
+	/** The unlock card's text (inner html, for {@link CardKit#wrappedHtmlLabel}): quest, difficulty, prize,
 	 *  prerequisites, unmet skills. Shared with the quest drill-in header so the two can never drift. */
 	private String unlockCardHtml(SidePanelViewModel.UnlockView u)
 	{
 		StringBuilder sb = new StringBuilder();
 		sb.append("<span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.HEADER_GOLD))
-			.append("'><b>").append(escape(u.questName)).append("</b></span>");
+			.append("'><b>").append(CardKit.escape(u.questName)).append("</b></span>");
 		if (u.difficulty != null && !u.difficulty.isEmpty())
 		{
-			sb.append(" <span style='color:" + metaHex() + "'>· ").append(escape(u.difficulty)).append("</span>");
+			sb.append(" <span style='color:" + CardKit.metaHex() + "'>· ").append(CardKit.escape(u.difficulty)).append("</span>");
 		}
 		sb.append("<br><span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.POSITIVE))
 			.append("'>unlocks ").append(u.unlockedTaskCount).append(" CAs (").append(u.unlockedPoints)
@@ -2040,12 +1965,12 @@ public class CombatAchievementsPanel extends PluginPanel
 		if (u.prerequisites != null && !u.prerequisites.isEmpty())
 		{
 			sb.append("<br><span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.DESC))
-				.append("'>first: ").append(escape(u.prerequisites)).append("</span>");
+				.append("'>first: ").append(CardKit.escape(u.prerequisites)).append("</span>");
 		}
 		if (u.unmetSkills != null && !u.unmetSkills.isEmpty())
 		{
 			sb.append("<br><span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.LOCKED))
-				.append("'>train: ").append(escape(u.unmetSkills)).append("</span>");
+				.append("'>train: ").append(CardKit.escape(u.unmetSkills)).append("</span>");
 		}
 		return sb.toString();
 	}
@@ -2057,17 +1982,17 @@ public class CombatAchievementsPanel extends PluginPanel
 		card.setBorder(BorderFactory.createCompoundBorder(
 			BorderFactory.createMatteBorder(0, 3, 0, 0, CombatAchievementsTheme.HEADER_GOLD),
 			BorderFactory.createEmptyBorder(5, 7, 5, 7)));
-		card.add(wrappedHtmlLabel(unlockCardHtml(u), CARD_TEXT_WIDTH), BorderLayout.CENTER);
-		addHover(card, ColorScheme.DARK_GRAY_COLOR, ColorScheme.DARK_GRAY_HOVER_COLOR);
+		card.add(CardKit.wrappedHtmlLabel(unlockCardHtml(u), CARD_TEXT_WIDTH), BorderLayout.CENTER);
+		CardKit.addHover(card, ColorScheme.DARK_GRAY_COLOR, ColorScheme.DARK_GRAY_HOVER_COLOR);
 		if (!u.unlockedCas.isEmpty())
 		{
-			onClick(card, () -> {
+			CardKit.onClick(card, () -> {
 				selectedUnlock = u;
 				expandedUnlockBosses.clear();
 				rebuild();
 			});
 		}
-		return fullWidth(card);
+		return CardKit.fullWidth(card);
 	}
 
 	/** The quest-unlock drill-in: the quest's headline, then the CAs it opens, each clickable. */
@@ -2077,7 +2002,7 @@ public class CombatAchievementsPanel extends PluginPanel
 			selectedUnlock = null;
 			rebuild();
 		}));
-		content.add(spacer());
+		content.add(CardKit.spacer());
 
 		// The same card the Route shows, minus the click: an html JLabel added bare to the BoxLayout
 		// clips long lines at the panel edge (its CSS body width is unreliable), while the card's
@@ -2087,24 +2012,24 @@ public class CombatAchievementsPanel extends PluginPanel
 		header.setBorder(BorderFactory.createCompoundBorder(
 			BorderFactory.createMatteBorder(0, 3, 0, 0, CombatAchievementsTheme.HEADER_GOLD),
 			BorderFactory.createEmptyBorder(5, 7, 5, 7)));
-		header.add(wrappedHtmlLabel(unlockCardHtml(u), CARD_TEXT_WIDTH), BorderLayout.CENTER);
-		content.add(fullWidth(header));
-		content.add(spacer());
+		header.add(CardKit.wrappedHtmlLabel(unlockCardHtml(u), CARD_TEXT_WIDTH), BorderLayout.CENTER);
+		content.add(CardKit.fullWidth(header));
+		content.add(CardKit.spacer());
 
 		JPanel links = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 1));
 		links.setOpaque(false);
-		links.add(linkButton("Wiki", questWikiUrl(u.questName)));
+		links.add(CardKit.linkButton("Wiki", questWikiUrl(u.questName)));
 		if (onOpenQuestHelper != null)
 		{
-			links.add(actionButton("Quest Helper", () -> onOpenQuestHelper.accept(u.questName)));
+			links.add(CardKit.actionButton("Quest Helper", () -> onOpenQuestHelper.accept(u.questName)));
 		}
-		content.add(fullWidth(links));
-		content.add(spacer());
+		content.add(CardKit.fullWidth(links));
+		content.add(CardKit.spacer());
 
 		// Grouped by boss, same as the Route: each boss header is a way in to its page, with the
 		// prize at that boss beside it. Group order follows the quickest-first CA order.
 		content.add(sectionHeader("Unlocks"));
-		content.add(spacer());
+		content.add(CardKit.spacer());
 		LinkedHashMap<String, List<SidePanelViewModel.CaDetail>> byBoss = new LinkedHashMap<>();
 		for (SidePanelViewModel.CaDetail c : u.unlockedCas)
 		{
@@ -2120,13 +2045,13 @@ public class CombatAchievementsPanel extends PluginPanel
 			}
 			boolean expanded = expandedUnlockBosses.contains(e.getKey());
 			content.add(unlockBossHeader(e.getKey(), e.getValue().size(), pts, expanded));
-			content.add(spacer());
+			content.add(CardKit.spacer());
 			if (expanded)
 			{
 				for (SidePanelViewModel.CaDetail c : e.getValue())
 				{
 					content.add(unlockCaCard(c));
-					content.add(spacer());
+					content.add(CardKit.spacer());
 				}
 			}
 		}
@@ -2149,7 +2074,7 @@ public class CombatAchievementsPanel extends PluginPanel
 		arrow.setFont(FontManager.getRunescapeBoldFont());
 		arrow.setForeground(CombatAchievementsTheme.HEADER_GOLD);
 
-		JLabel label = new JLabel(escape(boss));
+		JLabel label = new JLabel(CardKit.escape(boss));
 		label.setFont(FontManager.getRunescapeBoldFont());
 		label.setForeground(CombatAchievementsTheme.HEADER_GOLD);
 
@@ -2186,8 +2111,8 @@ public class CombatAchievementsPanel extends PluginPanel
 		// The row (and the arrow) toggle the group; the boss NAME jumps to the boss page instead,
 		// when there is one. AWT does not bubble mouse events, so each part needs its own handler —
 		// the name's hover listener alone would swallow clicks meant for the row.
-		onClick(arrow, toggle);
-		onClick(row, toggle);
+		CardKit.onClick(arrow, toggle);
+		CardKit.onClick(row, toggle);
 		if (bossExists(boss))
 		{
 			Runnable openBoss = () -> {
@@ -2198,14 +2123,14 @@ public class CombatAchievementsPanel extends PluginPanel
 				buildModeBar();
 				rebuild();
 			};
-			addForegroundHover(label, CombatAchievementsTheme.HEADER_GOLD, CombatAchievementsTheme.NAME);
-			onClick(label, openBoss);
+			CardKit.addForegroundHover(label, CombatAchievementsTheme.HEADER_GOLD, CombatAchievementsTheme.NAME);
+			CardKit.onClick(label, openBoss);
 		}
 		else
 		{
-			onClick(label, toggle);
+			CardKit.onClick(label, toggle);
 		}
-		return fullWidth(row);
+		return CardKit.fullWidth(row);
 	}
 
 	/** A CA the quest would open, on the quest's own page — grouped under its boss header, so no
@@ -2220,22 +2145,22 @@ public class CombatAchievementsPanel extends PluginPanel
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("<span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.NAME))
-			.append("'><b>").append(escape(c.name)).append("</b></span>");
+			.append("'><b>").append(CardKit.escape(c.name)).append("</b></span>");
 		sb.append("<br><span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.POINTS))
 			.append("'>").append(c.points).append(" pts</span>");
 		if (c.difficulty > 0)
 		{
-			sb.append(" <span style='color:" + metaHex() + "'>· </span><span style='color:")
-				.append(CombatAchievementsTheme.hex(difficultyColor(c.difficulty)))
+			sb.append(" <span style='color:" + CardKit.metaHex() + "'>· </span><span style='color:")
+				.append(CombatAchievementsTheme.hex(CardKit.difficultyColor(c.difficulty)))
 				.append("'>difficulty ").append(c.difficulty).append("</span>");
 		}
-		card.add(wrappedHtmlLabel(sb.toString(), CARD_TEXT_WIDTH), BorderLayout.CENTER);
-		addHover(card, ColorScheme.DARK_GRAY_COLOR, ColorScheme.DARK_GRAY_HOVER_COLOR);
-		onClick(card, () -> {
+		card.add(CardKit.wrappedHtmlLabel(sb.toString(), CARD_TEXT_WIDTH), BorderLayout.CENTER);
+		CardKit.addHover(card, ColorScheme.DARK_GRAY_COLOR, ColorScheme.DARK_GRAY_HOVER_COLOR);
+		CardKit.onClick(card, () -> {
 			selectedCa = c;
 			rebuild();
 		});
-		return fullWidth(card);
+		return CardKit.fullWidth(card);
 	}
 
 	// ---- CA detail & Boss detail -------------------------------------------------------------------
@@ -2246,35 +2171,35 @@ public class CombatAchievementsPanel extends PluginPanel
 			selectedCa = null;
 			rebuild();
 		}));
-		content.add(spacer());
+		content.add(CardKit.spacer());
 
 		StringBuilder crumb = new StringBuilder();
 		if (!d.monster.isEmpty())
 		{
-			crumb.append(escape(d.monster)).append(" · ");
+			crumb.append(CardKit.escape(d.monster)).append(" · ");
 		}
-		crumb.append(escape(d.tierName)).append(" · ").append(d.points).append(" pts");
+		crumb.append(CardKit.escape(d.tierName)).append(" · ").append(d.points).append(" pts");
 		if (!d.type.isEmpty())
 		{
-			crumb.append(" · ").append(escape(d.type));
+			crumb.append(" · ").append(CardKit.escape(d.type));
 		}
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("<span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.NAME))
-			.append("'><b style='font-size:11px'>").append(escape(d.name)).append("</b></span>");
-		sb.append("<br><span style='color:" + metaHex() + "'>").append(crumb).append("</span>");
+			.append("'><b style='font-size:11px'>").append(CardKit.escape(d.name)).append("</b></span>");
+		sb.append("<br><span style='color:" + CardKit.metaHex() + "'>").append(crumb).append("</span>");
 		if (!d.description.isEmpty())
 		{
 			sb.append("<br><span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.DESC))
-				.append("'>").append(escape(d.description)).append("</span>");
+				.append("'>").append(CardKit.escape(d.description)).append("</span>");
 		}
 		if (!d.doableNow && !d.lockReason.isEmpty())
 		{
 			sb.append("<br><span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.NEGATIVE))
-				.append("'>").append(escape(d.lockReason)).append("</span>");
+				.append("'>").append(CardKit.escape(d.lockReason)).append("</span>");
 		}
-		content.add(fullWidth(wrappedHtmlLabel(sb.toString(), CARD_TEXT_WIDTH)));
-		content.add(spacer());
+		content.add(CardKit.fullWidth(CardKit.wrappedHtmlLabel(sb.toString(), CARD_TEXT_WIDTH)));
+		content.add(CardKit.spacer());
 
 		// Jump to the boss this CA is at, to see everything else you could knock out on the same trip.
 		// Only offered when that boss actually has a page in the directory, so it can never be a dead end.
@@ -2288,7 +2213,7 @@ public class CombatAchievementsPanel extends PluginPanel
 				buildModeBar();
 				rebuild();
 			}));
-			content.add(spacer());
+			content.add(CardKit.spacer());
 		}
 
 		if (!d.requirements.isEmpty())
@@ -2297,33 +2222,33 @@ public class CombatAchievementsPanel extends PluginPanel
 				() -> { reqsExpanded = !reqsExpanded; rebuild(); }));
 			if (reqsExpanded)
 			{
-				content.add(spacer());
+				content.add(CardKit.spacer());
 				for (SidePanelViewModel.CaReq r : d.requirements)
 				{
 					content.add(reqRow(r));
 				}
 			}
-			content.add(spacer());
+			content.add(CardKit.spacer());
 		}
 
 		content.add(sectionHeader("Difficulty"));
 		double rating = displayedDifficulty(d);
 		StringBuilder diff = new StringBuilder();
-		diff.append("<span style='color:").append(CombatAchievementsTheme.hex(difficultyColor(d.difficulty)))
+		diff.append("<span style='color:").append(CombatAchievementsTheme.hex(CardKit.difficultyColor(d.difficulty)))
 			.append("'>").append(String.format(Locale.ROOT, "%.1f", rating)).append(" / 10</span>");
 		if (d.bossDifficulty > 0)
 		{
-			diff.append("<br><span style='color:" + metaHex() + "'>").append(escape(d.monster)).append(" (boss ")
+			diff.append("<br><span style='color:" + CardKit.metaHex() + "'>").append(CardKit.escape(d.monster)).append(" (boss ")
 				.append(d.bossDifficulty).append(")");
 			if (d.bump != 0 && !d.difficultyReason.isEmpty())
 			{
-				diff.append(" + ").append(escape(d.difficultyReason))
+				diff.append(" + ").append(CardKit.escape(d.difficultyReason))
 					.append(String.format(Locale.ROOT, " (+%.1f)", d.bump));
 			}
 			diff.append("</span>");
 		}
-		content.add(fullWidth(wrappedHtmlLabel(diff.toString(), CARD_TEXT_WIDTH)));
-		content.add(spacer());
+		content.add(CardKit.fullWidth(CardKit.wrappedHtmlLabel(diff.toString(), CARD_TEXT_WIDTH)));
+		content.add(CardKit.spacer());
 
 
 		// Curated how-to (stats/setup/items/strategy) behind a collapsible arrow so the detail stays lean;
@@ -2336,16 +2261,16 @@ public class CombatAchievementsPanel extends PluginPanel
 				() -> { howToExpanded = !howToExpanded; rebuild(); }));
 			if (howToExpanded)
 			{
-				content.add(spacer());
+				content.add(CardKit.spacer());
 				addDetailText("Recommended stats", d.stats);
 				addDetailText("Recommended setup", d.setup);
 				addDetailText("Items", d.items);
 				addDetailText("Strategy", d.strategy);
 			}
-			content.add(spacer());
+			content.add(CardKit.spacer());
 		}
 
-		content.add(fullWidth(linkRow(d.wikiUrl, d.guideUrl, d.curatedVideo, feedbackUrl(d))));
+		content.add(CardKit.fullWidth(linkRow(d.wikiUrl, d.guideUrl, d.curatedVideo, feedbackUrl(d))));
 	}
 
 	private void addDetailText(String header, String text)
@@ -2376,7 +2301,7 @@ public class CombatAchievementsPanel extends PluginPanel
 		body.setPreferredSize(new Dimension(DETAIL_TEXT_WIDTH, wrappedHeight));
 		body.setMaximumSize(new Dimension(DETAIL_TEXT_WIDTH, wrappedHeight));
 		content.add(body);
-		content.add(spacer());
+		content.add(CardKit.spacer());
 	}
 
 	private JLabel reqRow(SidePanelViewModel.CaReq r)
@@ -2385,13 +2310,13 @@ public class CombatAchievementsPanel extends PluginPanel
 		String mark = r.met ? "&#10003;" : "&#10007;"; // check / cross
 		StringBuilder sb = new StringBuilder("<span style='color:")
 			.append(CombatAchievementsTheme.hex(colour)).append("'>").append(mark).append(" ")
-			.append(escape(r.label)).append("</span>");
+			.append(CardKit.escape(r.label)).append("</span>");
 		if (!r.note.isEmpty())
 		{
 			sb.append(" <span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.NEGATIVE))
-				.append("'>— ").append(escape(r.note)).append("</span>");
+				.append("'>— ").append(CardKit.escape(r.note)).append("</span>");
 		}
-		return fullWidth(wrappedHtmlLabel(sb.toString(), CARD_TEXT_WIDTH));
+		return CardKit.fullWidth(CardKit.wrappedHtmlLabel(sb.toString(), CARD_TEXT_WIDTH));
 	}
 
 	/** True when the boss directory has a page for this monster (so a "View boss" jump can't dead-end). */
@@ -2413,7 +2338,7 @@ public class CombatAchievementsPanel extends PluginPanel
 			selectedBoss = null;
 			rebuild();
 		}));
-		content.add(spacer());
+		content.add(CardKit.spacer());
 
 		SidePanelViewModel.BossRow boss = null;
 		for (SidePanelViewModel.BossRow b : model.bosses())
@@ -2432,7 +2357,7 @@ public class CombatAchievementsPanel extends PluginPanel
 
 		StringBuilder head = new StringBuilder("<span style='color:")
 			.append(CombatAchievementsTheme.hex(CombatAchievementsTheme.NAME))
-			.append("'><b style='font-size:11px'>").append(escape(boss.monster)).append("</b></span>");
+			.append("'><b style='font-size:11px'>").append(CardKit.escape(boss.monster)).append("</b></span>");
 		if (boss.locked)
 		{
 			head.append("<br><span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.NEGATIVE))
@@ -2442,17 +2367,17 @@ public class CombatAchievementsPanel extends PluginPanel
 		{
 			head.append("<br><span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.POINTS))
 				.append("'>").append(boss.projectedPoints).append(" pts available</span>")
-				.append(" <span style='color:" + metaHex() + "'>· ").append(boss.doableCount)
+				.append(" <span style='color:" + CardKit.metaHex() + "'>· ").append(boss.doableCount)
 				.append(boss.doableCount == 1 ? " CA</span>" : " CAs</span>");
 		}
 		if (!boss.completedCas.isEmpty())
 		{
-			head.append("<br><span style='color:" + metaHex() + "'>")
+			head.append("<br><span style='color:" + CardKit.metaHex() + "'>")
 				.append(boss.completedCas.size()).append(" of ").append(boss.totalCas())
 				.append(" done</span>");
 		}
-		content.add(fullWidth(wrappedHtmlLabel(head.toString(), CARD_TEXT_WIDTH)));
-		content.add(spacer());
+		content.add(CardKit.fullWidth(CardKit.wrappedHtmlLabel(head.toString(), CARD_TEXT_WIDTH)));
+		content.add(CardKit.spacer());
 
 		if (!boss.recommendedStats.isEmpty())
 		{
@@ -2480,11 +2405,11 @@ public class CombatAchievementsPanel extends PluginPanel
 				() -> { doableCollapsed = !doableCollapsed; rebuild(); }));
 			if (!doableCollapsed)
 			{
-				content.add(spacer());
+				content.add(CardKit.spacer());
 				for (SidePanelViewModel.CaDetail d : reachable)
 				{
 					content.add(caCard(d));
-					content.add(spacer());
+					content.add(CardKit.spacer());
 				}
 			}
 		}
@@ -2494,11 +2419,11 @@ public class CombatAchievementsPanel extends PluginPanel
 				() -> { trainFirstCollapsed = !trainFirstCollapsed; rebuild(); }));
 			if (!trainFirstCollapsed)
 			{
-				content.add(spacer());
+				content.add(CardKit.spacer());
 				for (SidePanelViewModel.CaDetail d : notYet)
 				{
 					content.add(caCard(d));
-					content.add(spacer());
+					content.add(CardKit.spacer());
 				}
 			}
 		}
@@ -2508,11 +2433,11 @@ public class CombatAchievementsPanel extends PluginPanel
 				() -> { lockedCollapsed = !lockedCollapsed; rebuild(); }));
 			if (!lockedCollapsed)
 			{
-				content.add(spacer());
+				content.add(CardKit.spacer());
 				for (SidePanelViewModel.CaDetail d : boss.lockedCas)
 				{
 					content.add(caCard(d));
-					content.add(spacer());
+					content.add(CardKit.spacer());
 				}
 			}
 		}
@@ -2520,16 +2445,16 @@ public class CombatAchievementsPanel extends PluginPanel
 		// What you have already done here, collapsed by default so the boss page stays forward-looking.
 		if (!boss.completedCas.isEmpty())
 		{
-			content.add(spacer());
+			content.add(CardKit.spacer());
 			content.add(collapseHeader("Completed (" + boss.completedCas.size() + ")", completedCollapsed,
 				() -> { completedCollapsed = !completedCollapsed; rebuild(); }));
 			if (!completedCollapsed)
 			{
-				content.add(spacer());
+				content.add(CardKit.spacer());
 				for (SidePanelViewModel.CaDetail d : boss.completedCas)
 				{
 					content.add(completedCard(d));
-					content.add(spacer());
+					content.add(CardKit.spacer());
 				}
 			}
 		}
@@ -2551,18 +2476,18 @@ public class CombatAchievementsPanel extends PluginPanel
 		sb.append("<span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.POSITIVE))
 			.append("'>&#10003; </span>");
 		sb.append("<span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.LOCKED))
-			.append("'><b>").append(escape(d.name)).append("</b></span>");
-		sb.append("<br><span style='color:" + metaHex() + "'>").append(d.points)
-			.append(d.points == 1 ? " pt" : " pts").append(" · ").append(escape(d.tierName))
+			.append("'><b>").append(CardKit.escape(d.name)).append("</b></span>");
+		sb.append("<br><span style='color:" + CardKit.metaHex() + "'>").append(d.points)
+			.append(d.points == 1 ? " pt" : " pts").append(" · ").append(CardKit.escape(d.tierName))
 			.append("</span>");
 		sb.append("</body></html>");
 		card.add(new JLabel(sb.toString()), BorderLayout.CENTER);
-		addHover(card, ColorScheme.DARK_GRAY_COLOR, ColorScheme.DARK_GRAY_HOVER_COLOR);
-		onClick(card, () -> {
+		CardKit.addHover(card, ColorScheme.DARK_GRAY_COLOR, ColorScheme.DARK_GRAY_HOVER_COLOR);
+		CardKit.onClick(card, () -> {
 			selectedCa = d;
 			rebuild();
 		});
-		return fullWidth(card);
+		return CardKit.fullWidth(card);
 	}
 
 	/** A clickable CA row from a CaDetail — orange (doable) or red (locked) — opening the CA detail. */
@@ -2580,25 +2505,25 @@ public class CombatAchievementsPanel extends PluginPanel
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("<span style='color:").append(CombatAchievementsTheme.hex(accent))
-			.append("'><b>").append(escape(d.name)).append("</b></span>");
+			.append("'><b>").append(CardKit.escape(d.name)).append("</b></span>");
 		if (!d.doableNow)
 		{
 			String lock = d.lockReason == null || d.lockReason.isEmpty() ? "locked" : d.lockReason;
 			sb.append(" <span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.LOCKED))
-				.append("'>(").append(escape(lock)).append(")</span>");
+				.append("'>(").append(CardKit.escape(lock)).append(")</span>");
 		}
 		sb.append("<br><span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.DESC))
-			.append("'>").append(escape(d.description)).append("</span>");
+			.append("'>").append(CardKit.escape(d.description)).append("</span>");
 		sb.append("<br><span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.POINTS))
 			.append("'>").append(d.points).append(" pts</span>")
-			.append(" <span style='color:" + metaHex() + "'>· ").append(escape(d.tierName)).append("</span>");
+			.append(" <span style='color:" + CardKit.metaHex() + "'>· ").append(CardKit.escape(d.tierName)).append("</span>");
 		if (d.difficulty > 0)
 		{
-			sb.append(" <span style='color:" + metaHex() + "'>· </span><span style='color:")
-				.append(CombatAchievementsTheme.hex(difficultyColor(d.difficulty)))
+			sb.append(" <span style='color:" + CardKit.metaHex() + "'>· </span><span style='color:")
+				.append(CombatAchievementsTheme.hex(CardKit.difficultyColor(d.difficulty)))
 				.append("'>difficulty ").append(d.difficulty).append("</span>");
 		}
-		JLabel label = wrappedHtmlLabel(sb.toString(), textWidth);
+		JLabel label = CardKit.wrappedHtmlLabel(sb.toString(), textWidth);
 		label.setBorder(BorderFactory.createEmptyBorder(0, 0, 3, 0));
 		// The border sits inside the pinned size, so grow the pin or it eats the text's height.
 		Dimension pinned = label.getPreferredSize();
@@ -2614,12 +2539,12 @@ public class CombatAchievementsPanel extends PluginPanel
 		{
 			card.add(routeToggle(d), BorderLayout.EAST);
 		}
-		addHover(card, ColorScheme.DARK_GRAY_COLOR, ColorScheme.DARK_GRAY_HOVER_COLOR);
-		onClick(card, () -> {
+		CardKit.addHover(card, ColorScheme.DARK_GRAY_COLOR, ColorScheme.DARK_GRAY_HOVER_COLOR);
+		CardKit.onClick(card, () -> {
 			selectedCa = d;
 			rebuild();
 		});
-		fullWidth(card);
+		CardKit.fullWidth(card);
 		card.setMaximumSize(new Dimension(ROUTE_CARD_MAX_WIDTH, card.getPreferredSize().height));
 		return card;
 	}
@@ -2658,7 +2583,7 @@ public class CombatAchievementsPanel extends PluginPanel
 			? blend(CombatAchievementsTheme.NEUTRAL_META, CombatAchievementsTheme.NEGATIVE, 0.72)
 			: blend(CombatAchievementsTheme.NEUTRAL_META, CombatAchievementsTheme.POSITIVE, 0.72);
 		b.setForeground(idle);
-		addForegroundHover(b, idle,
+		CardKit.addForegroundHover(b, idle,
 			routed ? CombatAchievementsTheme.NEGATIVE : CombatAchievementsTheme.POSITIVE);
 		b.setBorder(BorderFactory.createEmptyBorder(0, 4, 0, 0));
 		b.setPreferredSize(new Dimension(BAR_BUTTON_WIDTH, 18));
@@ -2687,11 +2612,11 @@ public class CombatAchievementsPanel extends PluginPanel
 
 	private JLabel sectionHeader(String text)
 	{
-		JLabel label = new JLabel(escape(text));
+		JLabel label = new JLabel(CardKit.escape(text));
 		label.setFont(FontManager.getRunescapeBoldFont());
 		label.setForeground(CombatAchievementsTheme.HEADER_GOLD);
 		label.setBorder(BorderFactory.createEmptyBorder(4, 0, 3, 0));
-		return fullWidth(label);
+		return CardKit.fullWidth(label);
 	}
 
 	private JPanel linkRow(String wikiUrl, String guideUrl, boolean curatedVideo)
@@ -2705,15 +2630,15 @@ public class CombatAchievementsPanel extends PluginPanel
 		row.setOpaque(false);
 		if (wikiUrl != null && !wikiUrl.isEmpty())
 		{
-			row.add(linkButton("Wiki", wikiUrl));
+			row.add(CardKit.linkButton("Wiki", wikiUrl));
 		}
 		if (guideUrl != null && !guideUrl.isEmpty())
 		{
-			row.add(linkButton(curatedVideo ? "Watch guide" : "Search guide", guideUrl));
+			row.add(CardKit.linkButton(curatedVideo ? "Watch guide" : "Search guide", guideUrl));
 		}
 		if (feedbackUrl != null && !feedbackUrl.isEmpty())
 		{
-			row.add(linkButton("Suggest fix", feedbackUrl));
+			row.add(CardKit.linkButton("Suggest fix", feedbackUrl));
 		}
 		return row;
 	}
@@ -2734,104 +2659,15 @@ public class CombatAchievementsPanel extends PluginPanel
 		return FeedbackLink.isConfigured() ? FeedbackLink.taskUrl(d.id) : "";
 	}
 
-	private JButton linkButton(String text, String url)
-	{
-		return actionButton(text, () -> LinkBrowser.browse(url));
-	}
-
-	private JButton actionButton(String text, Runnable action)
-	{
-		JButton button = new JButton(text);
-		button.setFont(FontManager.getRunescapeSmallFont());
-		button.setFocusPainted(false);
-		button.setBorderPainted(false);
-		button.setOpaque(true);
-		button.setBackground(ColorScheme.DARKER_GRAY_COLOR);
-		button.setForeground(CombatAchievementsTheme.HEADER_GOLD);
-		button.setBorder(BorderFactory.createEmptyBorder(2, 7, 2, 7));
-		button.addActionListener(e -> action.run());
-		addHover(button, ColorScheme.DARKER_GRAY_COLOR, ColorScheme.DARK_GRAY_HOVER_COLOR);
-		return button;
-	}
-
 	private JLabel messageLabel(String text)
 	{
-		JLabel label = wrappedHtmlLabel(escape(text), CARD_TEXT_WIDTH);
+		JLabel label = CardKit.wrappedHtmlLabel(CardKit.escape(text), CARD_TEXT_WIDTH);
 		label.setBorder(BorderFactory.createEmptyBorder(8, 0, 8, 0));
 		// The border sits inside the pinned size, so grow the pin or it eats the text's height.
 		Dimension pinned = label.getPreferredSize();
 		Dimension withBorder = new Dimension(pinned.width, pinned.height + 16);
 		label.setPreferredSize(withBorder);
 		label.setMaximumSize(withBorder);
-		return fullWidth(label);
-	}
-
-	private static JPanel spacer()
-	{
-		JPanel p = new JPanel();
-		p.setOpaque(false);
-		p.setPreferredSize(new Dimension(1, 6));
-		p.setMaximumSize(new Dimension(Integer.MAX_VALUE, 6));
-		return p;
-	}
-
-	private static <T extends JPanel> T fullWidth(T panel)
-	{
-		panel.setAlignmentX(Component.LEFT_ALIGNMENT);
-		panel.setMaximumSize(new Dimension(Integer.MAX_VALUE, panel.getPreferredSize().height));
-		return panel;
-	}
-
-	private static JLabel fullWidth(JLabel label)
-	{
-		label.setAlignmentX(Component.LEFT_ALIGNMENT);
-		return label;
-	}
-
-	/**
-	 * An html JLabel that truly wraps at {@code width} real pixels. Swing's CSS treats px as scaled
-	 * units (~1.3x with this look-and-feel), so a hard-coded {@code body width} style lays out wider
-	 * than asked and the text clips at the panel edge — the Route's unlock cards lost their last
-	 * prerequisite this way, invisibly, for as long as they have existed. This measures the html view's
-	 * actual span and re-asks for a proportionally smaller CSS width, so the real span lands on
-	 * {@code width} whatever the scale factor is, then pins the label to the wrapped height.
-	 */
-	private static JLabel wrappedHtmlLabel(String innerHtml, int width)
-	{
-		JLabel label = new JLabel(htmlAt(innerHtml, width));
-		javax.swing.text.View view = htmlView(label);
-		if (view != null)
-		{
-			float natural = view.getPreferredSpan(javax.swing.text.View.X_AXIS);
-			if (natural > width)
-			{
-				label.setText(htmlAt(innerHtml, Math.max(50, (int) (width * (width / natural)))));
-				view = htmlView(label);
-			}
-			view.setSize(width, 0);
-			int height = (int) Math.ceil(view.getPreferredSpan(javax.swing.text.View.Y_AXIS));
-			label.setPreferredSize(new Dimension(width, height));
-			label.setMaximumSize(new Dimension(width, height));
-		}
-		return label;
-	}
-
-	private static String htmlAt(String innerHtml, int cssWidth)
-	{
-		return "<html><body style='width:" + cssWidth + "px'>" + innerHtml + "</body></html>";
-	}
-
-	private static javax.swing.text.View htmlView(JLabel label)
-	{
-		return (javax.swing.text.View) label.getClientProperty(javax.swing.plaf.basic.BasicHTML.propertyKey);
-	}
-
-	private static String escape(String s)
-	{
-		if (s == null)
-		{
-			return "";
-		}
-		return s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
+		return CardKit.fullWidth(label);
 	}
 }
