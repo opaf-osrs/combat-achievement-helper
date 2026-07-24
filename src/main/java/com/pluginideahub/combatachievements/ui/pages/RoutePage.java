@@ -460,11 +460,8 @@ public class RoutePage
 			.append("'>").append(t.toward ? "toward " : "opens ").append(t.unlockedTaskCount)
 			.append(t.unlockedTaskCount == 1 ? " CA (" : " CAs (")
 			.append(t.unlockedPoints).append(t.unlockedPoints == 1 ? " pt)</span>" : " pts)</span>");
-		if (t.unlocksHint != null && !t.unlocksHint.isEmpty())
-		{
-			sb.append("<br><span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.DESC))
-				.append("'>mostly ").append(CardKit.escape(t.unlocksHint)).append("</span>");
-		}
+		// Just the stat and the prize; naming a boss here read oddly when the nearest rec happened
+		// to be some niche monster.
 		card.add(CardKit.wrappedHtmlLabel(sb.toString(), CombatAchievementsPanel.CARD_TEXT_WIDTH), BorderLayout.CENTER);
 		CardKit.addHover(card, ColorScheme.DARK_GRAY_COLOR, ColorScheme.DARK_GRAY_HOVER_COLOR);
 		return CardKit.fullWidth(card);
