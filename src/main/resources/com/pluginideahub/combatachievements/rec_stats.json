@@ -19010,7 +19010,7 @@
       "Ranged",
       "Magic"
      ],
-     "level": 40,
+     "level": 20,
      "mode": "primary"
     }
    ]
@@ -19024,7 +19024,7 @@
       "Ranged",
       "Magic"
      ],
-     "level": 45,
+     "level": 20,
      "mode": "primary"
     },
     {
@@ -19077,7 +19077,7 @@
       "Ranged",
       "Magic"
      ],
-     "level": 70,
+     "level": 40,
      "mode": "primary"
     },
     {
