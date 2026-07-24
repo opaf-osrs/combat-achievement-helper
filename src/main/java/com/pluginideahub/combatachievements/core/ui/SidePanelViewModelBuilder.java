@@ -39,6 +39,7 @@ import com.pluginideahub.combatachievements.core.ranking.EffortModel;
 import com.pluginideahub.combatachievements.core.ranking.LowHangingFruitRanker;
 import com.pluginideahub.combatachievements.core.ranking.RankedTask;
 import com.pluginideahub.combatachievements.core.ranking.SignalsProvider;
+import com.pluginideahub.combatachievements.core.ranking.Tuning;
 import com.pluginideahub.combatachievements.core.tier.TierMath;
 import com.pluginideahub.combatachievements.core.tier.TierProgress;
 import com.pluginideahub.combatachievements.core.video.VideoGuideLibrary;
@@ -97,11 +98,7 @@ public final class SidePanelViewModelBuilder
 	private static final int UNLOCKS_LIMIT = 6;
 	private static final int LOCKED_ROUTE_CAS_LIMIT = 30;
 	private static final int TRAININGS_LIMIT = 4;
-	/**
-	 * Combat level at which the beginner rule stops applying regardless of CA points. An established player
-	 * who has simply never touched Combat Achievements starts at 0 points, and must not be treated as new.
-	 */
-	private static final int BEGINNER_COMBAT_LEVEL = 70;
+	private static final int BEGINNER_COMBAT_LEVEL = Tuning.BEGINNER_COMBAT_LEVEL;
 
 	public SidePanelViewModelBuilder(CombatAchievementLibrary lib, EffortDataLibrary effortLib,
 		VideoGuideLibrary videoLib, GuideLibrary guideLib, EffortModel model)

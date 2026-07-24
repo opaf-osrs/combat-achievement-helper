@@ -16,8 +16,8 @@ import com.pluginideahub.combatachievements.core.achievement.TaskEffortData;
  */
 public final class EffortModel
 {
-	/** Effort assigned to a blocked task so it sinks below everything doable. */
-	public static final double BLOCKING_PENALTY = 100.0;
+	/** See {@link Tuning#BLOCKING_PENALTY}. */
+	public static final double BLOCKING_PENALTY = Tuning.BLOCKING_PENALTY;
 
 	private final double sensitivity;
 	private final double gearWeight;

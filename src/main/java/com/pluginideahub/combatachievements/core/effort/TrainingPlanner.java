@@ -7,6 +7,7 @@ import com.pluginideahub.combatachievements.core.achievement.StatRequirement;
 import com.pluginideahub.combatachievements.core.ranking.PlayerProfile;
 import com.pluginideahub.combatachievements.core.ranking.ProfileSignalsProvider;
 import com.pluginideahub.combatachievements.core.ranking.TaskLiveSignals;
+import com.pluginideahub.combatachievements.core.ranking.Tuning;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -31,15 +32,8 @@ import java.util.TreeSet;
  */
 public final class TrainingPlanner
 {
-	/**
-	 * How many levels short you may be on the WORST single stat and still count as able to attempt a task.
-	 * Deliberately the worst gap rather than the summed one: summing let a level-1 who trained only Prayer
-	 * to 43 count Bryophyta as viable, because its 49-level combat gap still summed under the old limit.
-	 *
-	 * <p>Shared with the Route, which builds its path from the same "ready" set — so what the Route sends you
-	 * to do and what "Train next" counts as opened up are one definition, not two that can drift.</p>
-	 */
-	public static final int VIABLE_WORST_GAP = 15;
+	/** See {@link Tuning#VIABLE_WORST_GAP}. */
+	public static final int VIABLE_WORST_GAP = Tuning.VIABLE_WORST_GAP;
 
 	/** Combat recommendations almost always want the whole kit, so raise these together. */
 	private static final String[] COMBAT_KIT = {

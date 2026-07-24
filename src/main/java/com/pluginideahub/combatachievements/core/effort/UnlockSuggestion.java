@@ -41,22 +41,146 @@ public final class UnlockSuggestion
 		List<String> remainingPrerequisites, List<String> unmetSkills, List<Integer> unlockedTaskIds,
 		int worstSkillShortfall)
 	{
-		this.worstSkillShortfall = Math.max(0, worstSkillShortfall);
-		this.questName = questName == null ? "" : questName;
-		this.difficulty = difficulty == null ? "" : difficulty;
-		this.unlockedTaskCount = unlockedTaskCount;
-		this.unlockedPoints = unlockedPoints;
-		this.reachableTaskCount = reachableTaskCount;
-		this.reachablePoints = reachablePoints;
-		this.achievablePoints = Math.max(0, achievablePoints);
-		this.questMinutes = Math.max(0, questMinutes);
-		this.trainingMinutes = Math.max(0, trainingMinutes);
+		this(builder()
+			.questName(questName)
+			.difficulty(difficulty)
+			.unlockedTaskCount(unlockedTaskCount)
+			.unlockedPoints(unlockedPoints)
+			.reachableTaskCount(reachableTaskCount)
+			.reachablePoints(reachablePoints)
+			.achievablePoints(achievablePoints)
+			.questMinutes(questMinutes)
+			.trainingMinutes(trainingMinutes)
+			.remainingPrerequisites(remainingPrerequisites)
+			.unmetSkills(unmetSkills)
+			.unlockedTaskIds(unlockedTaskIds)
+			.worstSkillShortfall(worstSkillShortfall));
+	}
+
+	private UnlockSuggestion(Builder builder)
+	{
+		this.worstSkillShortfall = Math.max(0, builder.worstSkillShortfall);
+		this.questName = builder.questName == null ? "" : builder.questName;
+		this.difficulty = builder.difficulty == null ? "" : builder.difficulty;
+		this.unlockedTaskCount = builder.unlockedTaskCount;
+		this.unlockedPoints = builder.unlockedPoints;
+		this.reachableTaskCount = builder.reachableTaskCount;
+		this.reachablePoints = builder.reachablePoints;
+		this.achievablePoints = Math.max(0, builder.achievablePoints);
+		this.questMinutes = Math.max(0, builder.questMinutes);
+		this.trainingMinutes = Math.max(0, builder.trainingMinutes);
 		this.remainingPrerequisites = Collections.unmodifiableList(
-			remainingPrerequisites == null ? Collections.emptyList() : remainingPrerequisites);
+			builder.remainingPrerequisites == null ? Collections.emptyList() : builder.remainingPrerequisites);
 		this.unmetSkills = Collections.unmodifiableList(
-			unmetSkills == null ? Collections.emptyList() : unmetSkills);
+			builder.unmetSkills == null ? Collections.emptyList() : builder.unmetSkills);
 		this.unlockedTaskIds = Collections.unmodifiableList(
-			unlockedTaskIds == null ? Collections.emptyList() : unlockedTaskIds);
+			builder.unlockedTaskIds == null ? Collections.emptyList() : builder.unlockedTaskIds);
+	}
+
+	public static Builder builder()
+	{
+		return new Builder();
+	}
+
+	/** Names each of the thirteen fields at the call site; unset fields keep their neutral defaults. */
+	public static final class Builder
+	{
+		private String questName = "";
+		private String difficulty = "";
+		private int unlockedTaskCount;
+		private int unlockedPoints;
+		private int reachableTaskCount;
+		private int reachablePoints;
+		private int achievablePoints;
+		private int questMinutes;
+		private int trainingMinutes;
+		private List<String> remainingPrerequisites;
+		private List<String> unmetSkills;
+		private List<Integer> unlockedTaskIds;
+		private int worstSkillShortfall;
+
+		public Builder questName(String questName)
+		{
+			this.questName = questName;
+			return this;
+		}
+
+		public Builder difficulty(String difficulty)
+		{
+			this.difficulty = difficulty;
+			return this;
+		}
+
+		public Builder unlockedTaskCount(int unlockedTaskCount)
+		{
+			this.unlockedTaskCount = unlockedTaskCount;
+			return this;
+		}
+
+		public Builder unlockedPoints(int unlockedPoints)
+		{
+			this.unlockedPoints = unlockedPoints;
+			return this;
+		}
+
+		public Builder reachableTaskCount(int reachableTaskCount)
+		{
+			this.reachableTaskCount = reachableTaskCount;
+			return this;
+		}
+
+		public Builder reachablePoints(int reachablePoints)
+		{
+			this.reachablePoints = reachablePoints;
+			return this;
+		}
+
+		public Builder achievablePoints(int achievablePoints)
+		{
+			this.achievablePoints = achievablePoints;
+			return this;
+		}
+
+		public Builder questMinutes(int questMinutes)
+		{
+			this.questMinutes = questMinutes;
+			return this;
+		}
+
+		public Builder trainingMinutes(int trainingMinutes)
+		{
+			this.trainingMinutes = trainingMinutes;
+			return this;
+		}
+
+		public Builder remainingPrerequisites(List<String> remainingPrerequisites)
+		{
+			this.remainingPrerequisites = remainingPrerequisites;
+			return this;
+		}
+
+		public Builder unmetSkills(List<String> unmetSkills)
+		{
+			this.unmetSkills = unmetSkills;
+			return this;
+		}
+
+		public Builder unlockedTaskIds(List<Integer> unlockedTaskIds)
+		{
+			this.unlockedTaskIds = unlockedTaskIds;
+			return this;
+		}
+
+		public Builder worstSkillShortfall(int worstSkillShortfall)
+		{
+			this.worstSkillShortfall = worstSkillShortfall;
+			return this;
+		}
+
+		public UnlockSuggestion build()
+		{
+			return new UnlockSuggestion(this);
+		}
 	}
 
 	public String questName()

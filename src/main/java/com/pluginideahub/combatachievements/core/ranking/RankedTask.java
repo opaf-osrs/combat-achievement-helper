@@ -12,16 +12,9 @@ import com.pluginideahub.combatachievements.core.effort.TaskTimeModel;
  */
 public final class RankedTask
 {
-	/**
-	 * Soft "below recommended stats" sink. The penalty grows with the SQUARE of how far below a task's
-	 * recommended combat stats you are, so distance outruns points: a linear penalty let a 4-point task
-	 * 4× further away still come out cheaper per point (Death to the Archer King, distance 311, only cost
-	 * ×7.2 vs an Easy task's ×2.6 at distance 78 — so a level-3's route picked Dagannoth Kings). Squared,
-	 * being 4× further costs ~16×, so it can never be "good value" to send an under-levelled account at
-	 * harder content. At the scale below, 40 summed levels short = ×2, 80 = ×5, 160 = ×17.
-	 */
-	public static final double REC_STATS_SINK_SCALE = 40.0;
-	public static final double REC_STATS_SINK_MAX = 100.0;
+	/** See {@link Tuning#REC_STATS_SINK_SCALE}. */
+	public static final double REC_STATS_SINK_SCALE = Tuning.REC_STATS_SINK_SCALE;
+	public static final double REC_STATS_SINK_MAX = Tuning.REC_STATS_SINK_MAX;
 
 	private final CombatAchievement achievement;
 	private final double effort;
@@ -43,15 +36,122 @@ public final class RankedTask
 		String lockReason, boolean doableNow, boolean curated, TaskDifficulty difficulty,
 		int recStatsShortfall)
 	{
-		this.achievement = achievement;
-		this.effort = effort;
-		this.score = score;
-		this.rationale = rationale;
-		this.lockReason = lockReason == null ? "" : lockReason;
-		this.doableNow = doableNow;
-		this.curated = curated;
-		this.difficulty = difficulty == null ? TaskDifficulty.UNKNOWN : difficulty;
-		this.recStatsShortfall = Math.max(0, recStatsShortfall);
+		this(builder()
+			.achievement(achievement)
+			.effort(effort)
+			.score(score)
+			.rationale(rationale)
+			.lockReason(lockReason)
+			.doableNow(doableNow)
+			.curated(curated)
+			.difficulty(difficulty)
+			.recStatsShortfall(recStatsShortfall));
+	}
+
+	private RankedTask(Builder builder)
+	{
+		this.achievement = builder.achievement;
+		this.effort = builder.effort;
+		this.score = builder.score;
+		this.rationale = builder.rationale;
+		this.lockReason = builder.lockReason == null ? "" : builder.lockReason;
+		this.doableNow = builder.doableNow;
+		this.curated = builder.curated;
+		this.difficulty = builder.difficulty == null ? TaskDifficulty.UNKNOWN : builder.difficulty;
+		this.recStatsShortfall = Math.max(0, builder.recStatsShortfall);
+	}
+
+	public static Builder builder()
+	{
+		return new Builder();
+	}
+
+	/** A builder pre-filled with every field of this task, for copies that change just one of them. */
+	public Builder copy()
+	{
+		return builder()
+			.achievement(achievement)
+			.effort(effort)
+			.score(score)
+			.rationale(rationale)
+			.lockReason(lockReason)
+			.doableNow(doableNow)
+			.curated(curated)
+			.difficulty(difficulty)
+			.recStatsShortfall(recStatsShortfall);
+	}
+
+	/** Names each field at the call site; unset fields keep their neutral defaults. */
+	public static final class Builder
+	{
+		private CombatAchievement achievement;
+		private double effort;
+		private double score;
+		private String rationale;
+		private String lockReason = "";
+		private boolean doableNow;
+		private boolean curated;
+		private TaskDifficulty difficulty = TaskDifficulty.UNKNOWN;
+		private int recStatsShortfall;
+
+		public Builder achievement(CombatAchievement achievement)
+		{
+			this.achievement = achievement;
+			return this;
+		}
+
+		public Builder effort(double effort)
+		{
+			this.effort = effort;
+			return this;
+		}
+
+		public Builder score(double score)
+		{
+			this.score = score;
+			return this;
+		}
+
+		public Builder rationale(String rationale)
+		{
+			this.rationale = rationale;
+			return this;
+		}
+
+		public Builder lockReason(String lockReason)
+		{
+			this.lockReason = lockReason;
+			return this;
+		}
+
+		public Builder doableNow(boolean doableNow)
+		{
+			this.doableNow = doableNow;
+			return this;
+		}
+
+		public Builder curated(boolean curated)
+		{
+			this.curated = curated;
+			return this;
+		}
+
+		public Builder difficulty(TaskDifficulty difficulty)
+		{
+			this.difficulty = difficulty;
+			return this;
+		}
+
+		public Builder recStatsShortfall(int recStatsShortfall)
+		{
+			this.recStatsShortfall = recStatsShortfall;
+			return this;
+		}
+
+		public RankedTask build()
+		{
+			return new RankedTask(this);
+		}
 	}
 
 	public CombatAchievement achievement()
@@ -88,8 +188,7 @@ public final class RankedTask
 	 */
 	public RankedTask withScore(double newScore)
 	{
-		return new RankedTask(achievement, effort, Math.max(score, newScore), rationale, lockReason,
-			doableNow, curated, difficulty, recStatsShortfall);
+		return copy().score(Math.max(score, newScore)).build();
 	}
 
 	public String rationale()

@@ -7,6 +7,7 @@ import com.pluginideahub.combatachievements.core.achievement.RecStatsLibrary;
 import com.pluginideahub.combatachievements.core.achievement.TaskDifficultyLibrary;
 import com.pluginideahub.combatachievements.core.achievement.TaskEffortData;
 import com.pluginideahub.combatachievements.core.ranking.PlayerProfile;
+import com.pluginideahub.combatachievements.core.ranking.Tuning;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -25,13 +26,7 @@ import java.util.Set;
  */
 public final class UnlockPlanner
 {
-	/**
-	 * What a CA counts for when the player is not yet within reach of it. Small but non-zero: a quest is
-	 * permanent progress, so opening content you cannot use today is still worth something. Zero made
-	 * every quest tie at nothing for a brand-new account, and the ordering fell through to alphabetical —
-	 * which put a 21-hour grandmaster questline above an 8-minute novice one.
-	 */
-	private static final double OUT_OF_REACH_WEIGHT = 0.15;
+	private static final double OUT_OF_REACH_WEIGHT = Tuning.OUT_OF_REACH_WEIGHT;
 
 	private final QuestEffortLibrary questLib;
 	private final SkillXpLibrary skillLib;
@@ -42,10 +37,79 @@ public final class UnlockPlanner
 		this.skillLib = skillLib == null ? SkillXpLibrary.empty() : skillLib;
 	}
 
+	/**
+	 * Everything a plan needs beyond the task list and the completed set. Every field defaults to
+	 * neutral (empty library, weight 1.0), so a caller sets only what it actually has.
+	 */
+	public static final class Request
+	{
+		private EffortDataLibrary effortLib = EffortDataLibrary.empty();
+		private PlayerProfile profile = PlayerProfile.empty();
+		private TaskDifficultyLibrary difficultyLib = TaskDifficultyLibrary.empty();
+		private double unlockBias = 1.0;
+		private double unlockDifficultyWeight = 1.0;
+		private RecStatsLibrary recStatsLib = RecStatsLibrary.empty();
+
+		public Request effortLib(EffortDataLibrary effortLib)
+		{
+			this.effortLib = effortLib == null ? EffortDataLibrary.empty() : effortLib;
+			return this;
+		}
+
+		public Request profile(PlayerProfile profile)
+		{
+			this.profile = profile == null ? PlayerProfile.empty() : profile;
+			return this;
+		}
+
+		/**
+		 * Per-task pure-skill Difficulty, used to weight the unlocked points so a quest that opens easy
+		 * CAs out-ranks one opening equally many hard CAs at the same time cost (empty ⇒ neutral, every
+		 * unlock counts its full points).
+		 */
+		public Request difficultyLib(TaskDifficultyLibrary difficultyLib)
+		{
+			this.difficultyLib = difficultyLib == null ? TaskDifficultyLibrary.empty() : difficultyLib;
+			return this;
+		}
+
+		/**
+		 * Exponent on a quest's achievable points in its score (1.0 = neutral; &gt;1 favours big-unlock
+		 * quests, &lt;1 favours quick ones).
+		 */
+		public Request unlockBias(double unlockBias)
+		{
+			this.unlockBias = unlockBias;
+			return this;
+		}
+
+		/**
+		 * How strongly a hard CA's points are discounted (1.0 = the 3/difficulty curve; 0 = count every
+		 * unlocked CA's points in full).
+		 */
+		public Request unlockDifficultyWeight(double unlockDifficultyWeight)
+		{
+			this.unlockDifficultyWeight = unlockDifficultyWeight;
+			return this;
+		}
+
+		/**
+		 * Curated recommended stats, used to judge which of a quest's unlocked CAs the player could
+		 * actually do afterwards. A quest that opens nothing they are ready for is not a suggestion and
+		 * is dropped. Empty ⇒ every unlocked CA counts, i.e. exactly the behaviour before readiness was
+		 * considered.
+		 */
+		public Request recStatsLib(RecStatsLibrary recStatsLib)
+		{
+			this.recStatsLib = recStatsLib == null ? RecStatsLibrary.empty() : recStatsLib;
+			return this;
+		}
+	}
+
 	public List<UnlockSuggestion> plan(List<CombatAchievement> allTasks, Set<Integer> completedTaskIds,
 		EffortDataLibrary effortLib, PlayerProfile profile)
 	{
-		return plan(allTasks, completedTaskIds, effortLib, profile, TaskDifficultyLibrary.empty());
+		return plan(allTasks, completedTaskIds, new Request().effortLib(effortLib).profile(profile));
 	}
 
 	/**
@@ -56,7 +120,8 @@ public final class UnlockPlanner
 	public List<UnlockSuggestion> plan(List<CombatAchievement> allTasks, Set<Integer> completedTaskIds,
 		EffortDataLibrary effortLib, PlayerProfile profile, TaskDifficultyLibrary difficultyLib)
 	{
-		return plan(allTasks, completedTaskIds, effortLib, profile, difficultyLib, 1.0, 1.0);
+		return plan(allTasks, completedTaskIds,
+			new Request().effortLib(effortLib).profile(profile).difficultyLib(difficultyLib));
 	}
 
 	/**
@@ -69,8 +134,9 @@ public final class UnlockPlanner
 		EffortDataLibrary effortLib, PlayerProfile profile, TaskDifficultyLibrary difficultyLib,
 		double unlockBias, double unlockDifficultyWeight)
 	{
-		return plan(allTasks, completedTaskIds, effortLib, profile, difficultyLib, unlockBias,
-			unlockDifficultyWeight, RecStatsLibrary.empty());
+		return plan(allTasks, completedTaskIds,
+			new Request().effortLib(effortLib).profile(profile).difficultyLib(difficultyLib)
+				.unlockBias(unlockBias).unlockDifficultyWeight(unlockDifficultyWeight));
 	}
 
 	/**
@@ -83,15 +149,27 @@ public final class UnlockPlanner
 		EffortDataLibrary effortLib, PlayerProfile profile, TaskDifficultyLibrary difficultyLib,
 		double unlockBias, double unlockDifficultyWeight, RecStatsLibrary recStatsLib)
 	{
+		return plan(allTasks, completedTaskIds,
+			new Request().effortLib(effortLib).profile(profile).difficultyLib(difficultyLib)
+				.unlockBias(unlockBias).unlockDifficultyWeight(unlockDifficultyWeight)
+				.recStatsLib(recStatsLib));
+	}
+
+	public List<UnlockSuggestion> plan(List<CombatAchievement> allTasks, Set<Integer> completedTaskIds,
+		Request request)
+	{
 		if (allTasks == null)
 		{
 			return new ArrayList<>();
 		}
+		Request r = request == null ? new Request() : request;
 		Set<Integer> doneTaskIds = completedTaskIds == null ? java.util.Collections.emptySet() : completedTaskIds;
-		EffortDataLibrary el = effortLib == null ? EffortDataLibrary.empty() : effortLib;
-		PlayerProfile p = profile == null ? PlayerProfile.empty() : profile;
-		TaskDifficultyLibrary diffs = difficultyLib == null ? TaskDifficultyLibrary.empty() : difficultyLib;
-		RecStatsLibrary rec = recStatsLib == null ? RecStatsLibrary.empty() : recStatsLib;
+		EffortDataLibrary el = r.effortLib;
+		PlayerProfile p = r.profile;
+		TaskDifficultyLibrary diffs = r.difficultyLib;
+		RecStatsLibrary rec = r.recStatsLib;
+		double unlockBias = r.unlockBias;
+		double unlockDifficultyWeight = r.unlockDifficultyWeight;
 
 		// quest name -> incomplete tasks it would unlock (skills + other gates already met)
 		Map<String, List<CombatAchievement>> unlockedByQuest = new LinkedHashMap<>();
@@ -205,9 +283,21 @@ public final class UnlockPlanner
 			{
 				taskIds.add(t.id());
 			}
-			out.add(new UnlockSuggestion(quest, questLib.questFor(quest).difficulty(), tasks.size(),
-				points, reachableCount, reachablePoints, (int) Math.round(achievable), questMinutes,
-				(int) Math.round(trainingHours * 60), remainingPrereqs, unmet, taskIds, worstShortfall));
+			out.add(UnlockSuggestion.builder()
+				.questName(quest)
+				.difficulty(questLib.questFor(quest).difficulty())
+				.unlockedTaskCount(tasks.size())
+				.unlockedPoints(points)
+				.reachableTaskCount(reachableCount)
+				.reachablePoints(reachablePoints)
+				.achievablePoints((int) Math.round(achievable))
+				.questMinutes(questMinutes)
+				.trainingMinutes((int) Math.round(trainingHours * 60))
+				.remainingPrerequisites(remainingPrereqs)
+				.unmetSkills(unmet)
+				.unlockedTaskIds(taskIds)
+				.worstSkillShortfall(worstShortfall)
+				.build());
 		}
 
 		out.sort(Comparator.comparingDouble(UnlockSuggestion::score).reversed()

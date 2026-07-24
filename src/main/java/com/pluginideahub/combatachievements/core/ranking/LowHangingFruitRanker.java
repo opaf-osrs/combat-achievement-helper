@@ -21,8 +21,7 @@ import java.util.Set;
  */
 public final class LowHangingFruitRanker
 {
-	/** Neutral difficulty: the UNKNOWN fallback (3) scores ×1, so no-data behaviour is unchanged. */
-	private static final double NEUTRAL_DIFFICULTY = 3.0;
+	private static final double NEUTRAL_DIFFICULTY = Tuning.NEUTRAL_DIFFICULTY;
 
 	private final EffortDataLibrary effortLib;
 	private final EffortModel model;
@@ -37,15 +36,10 @@ public final class LowHangingFruitRanker
 	 * multiply required kills by time-to-kill, which is the thing the proxy was standing in for.
 	 */
 	private java.util.function.ToIntFunction<CombatAchievement> minutesFn;
-	/** Nominal minutes for a "normal" task; only sets the scale of the effort numbers. */
-	private static final double TIME_BASELINE_MINUTES = 10.0;
-	// Speed-tier cost multipliers. Applied directly rather than through the difficulty term: curated
-	// difficulty is already inside the minutes estimate, which is why that term is square-rooted, but the
-	// gear/RNG gate on a speed CA is a separate signal that is in neither — halving it made it near
-	// invisible (only 4 of 21 speed CAs moved at all).
-	private static final double SPEED_TRIALIST_COST = 1.15;
-	private static final double SPEED_CHASER_COST = 1.40;
-	private static final double SPEED_RUNNER_COST = 1.80;
+	private static final double TIME_BASELINE_MINUTES = Tuning.TIME_BASELINE_MINUTES;
+	private static final double SPEED_TRIALIST_COST = Tuning.SPEED_TRIALIST_COST;
+	private static final double SPEED_CHASER_COST = Tuning.SPEED_CHASER_COST;
+	private static final double SPEED_RUNNER_COST = Tuning.SPEED_RUNNER_COST;
 
 	/** Supplies real per-task minutes, so cost tracks time rather than a repeat count. */
 	public LowHangingFruitRanker withMinutes(java.util.function.ToIntFunction<CombatAchievement> fn)
@@ -161,8 +155,17 @@ public final class LowHangingFruitRanker
 			TaskDifficulty difficulty = difficultyLib.difficultyFor(task.id());
 			double effortValue = costOf(task, effort, sig, difficulty);
 			double score = effortValue <= 0 ? 0 : Math.pow(task.points(), pointsWeight) / effortValue;
-			ranked.add(new RankedTask(task, effortValue, score, rationale(task, effort, sig),
-				lockReason(effort, sig), doableNow, effort.curated(), difficulty, sig.recStatsShortfall()));
+			ranked.add(RankedTask.builder()
+				.achievement(task)
+				.effort(effortValue)
+				.score(score)
+				.rationale(rationale(task, effort, sig))
+				.lockReason(lockReason(effort, sig))
+				.doableNow(doableNow)
+				.curated(effort.curated())
+				.difficulty(difficulty)
+				.recStatsShortfall(sig.recStatsShortfall())
+				.build());
 		}
 
 		// An "entry" kill (kill the boss once) is completed for free by ANY other task at that boss — you

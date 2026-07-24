@@ -3,6 +3,7 @@ package com.pluginideahub.combatachievements.core.effort;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.pluginideahub.combatachievements.core.data.BundledJson;
+import com.pluginideahub.combatachievements.core.ranking.Tuning;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -23,8 +24,7 @@ public final class SkillXpLibrary
 	/** Total experience required to reach each level (index = level, 1..99). OSRS standard table. */
 	private static final int[] XP_AT_LEVEL = buildXpTable();
 
-	/** Rate assumed for a skill with no bracket covering the level being trained. */
-	private static final int FALLBACK_XP_PER_HOUR = 30000;
+	private static final int FALLBACK_XP_PER_HOUR = Tuning.FALLBACK_XP_PER_HOUR;
 	private static final double HOURS_PER_DAY = 24.0;
 
 	/** One rate over a level range for a skill: either per hour played, or per calendar day. */
