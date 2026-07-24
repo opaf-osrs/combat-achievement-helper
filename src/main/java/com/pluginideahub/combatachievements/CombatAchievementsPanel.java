@@ -162,6 +162,8 @@ public class CombatAchievementsPanel extends PluginPanel
 	private final Set<String> expandedUnlockBosses = new HashSet<>();
 	/** Whether the quest page's "Quests first" chain is unfolded; starts closed, reset per quest. */
 	private boolean unlockPrereqsExpanded;
+	/** Whether the quest page's "Stats first" list is unfolded; starts closed, reset per quest. */
+	private boolean unlockStatsExpanded;
 	/** When non-null, quest pages offer an "open in Quest Helper" button routed through this. */
 	private transient Consumer<String> onOpenQuestHelper;
 
@@ -895,6 +897,7 @@ public class CombatAchievementsPanel extends PluginPanel
 			route = PanelRoute.of(PanelMode.ROUTE).withUnlock(model.unlocks().get(0));
 			expandedUnlockBosses.clear();
 			unlockPrereqsExpanded = false;
+			unlockStatsExpanded = false;
 			buildModeBar();
 			rebuild();
 		}
@@ -1953,12 +1956,30 @@ public class CombatAchievementsPanel extends PluginPanel
 			sb.append("<br><span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.DESC))
 				.append("'>").append(CardKit.escape(first)).append("</span>");
 		}
-		if (u.unmetSkills != null && !u.unmetSkills.isEmpty())
+		// Same rule as the quest chain: one stat gets named, several become a count.
+		if (!u.unmetSkillList.isEmpty())
 		{
+			String train = u.unmetSkillList.size() == 1
+				? "train: " + trainGoal(u.unmetSkillList.get(0))
+				: u.unmetSkillList.size() + " stats to train";
 			sb.append("<br><span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.LOCKED))
-				.append("'>train: ").append(CardKit.escape(u.unmetSkills)).append("</span>");
+				.append("'>").append(CardKit.escape(train)).append("</span>");
 		}
 		return sb.toString();
+	}
+
+	/** "Magic 3→75" → "Magic 75": on a card only the goal matters, the drill-in shows the journey. */
+	private static String trainGoal(String raw)
+	{
+		int arrow = raw.indexOf('→');
+		if (arrow < 0)
+		{
+			return raw;
+		}
+		String head = raw.substring(0, arrow).trim();
+		int lastSpace = head.lastIndexOf(' ');
+		String skill = lastSpace > 0 ? head.substring(0, lastSpace) : head;
+		return skill + " " + raw.substring(arrow + 1).trim();
 	}
 
 	private JPanel unlockCard(SidePanelViewModel.UnlockView u)
@@ -1976,6 +1997,7 @@ public class CombatAchievementsPanel extends PluginPanel
 				route = route.withUnlock(u);
 				expandedUnlockBosses.clear();
 				unlockPrereqsExpanded = false;
+				unlockStatsExpanded = false;
 				rebuild();
 			});
 		}
@@ -2025,6 +2047,26 @@ public class CombatAchievementsPanel extends PluginPanel
 				for (String quest : u.prerequisiteList)
 				{
 					JLabel row = new JLabel(CardKit.escape(quest));
+					row.setFont(FontManager.getRunescapeSmallFont());
+					row.setForeground(ColorScheme.LIGHT_GRAY_COLOR);
+					row.setBorder(BorderFactory.createEmptyBorder(1, 10, 1, 0));
+					content.add(CardKit.fullWidth(row));
+				}
+			}
+			content.add(CardKit.spacer());
+		}
+
+		// The chain's unmet stats, same shape as the quest list: a count on the card, the detail here.
+		if (!u.unmetSkillList.isEmpty())
+		{
+			content.add(collapseHeader("Stats first · " + u.unmetSkillList.size(),
+				!unlockStatsExpanded, () -> { unlockStatsExpanded = !unlockStatsExpanded; rebuild(); }));
+			if (unlockStatsExpanded)
+			{
+				content.add(CardKit.spacer());
+				for (String stat : u.unmetSkillList)
+				{
+					JLabel row = new JLabel(CardKit.escape(stat.replace("→", " → ")));
 					row.setFont(FontManager.getRunescapeSmallFont());
 					row.setForeground(ColorScheme.LIGHT_GRAY_COLOR);
 					row.setBorder(BorderFactory.createEmptyBorder(1, 10, 1, 0));

@@ -980,7 +980,7 @@ public final class SidePanelViewModelBuilder
 			views.add(new SidePanelViewModel.UnlockView(s.questName(), s.difficulty(),
 				s.unlockedTaskCount(), s.unlockedPoints(), s.totalMinutes(),
 				String.join(", ", s.remainingPrerequisites()), String.join(", ", s.unmetSkills()),
-				unlockedCas, s.worstSkillShortfall(), s.remainingPrerequisites()));
+				unlockedCas, s.worstSkillShortfall(), s.remainingPrerequisites(), s.unmetSkills()));
 		}
 		return views;
 	}
