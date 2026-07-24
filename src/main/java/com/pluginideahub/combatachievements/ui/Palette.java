@@ -4,10 +4,10 @@ import java.awt.Color;
 
 /**
  * An immutable colour palette for the side panel. The user picks one in the config; the chosen palette is
- * pushed into {@link CombatAchievementsTheme} (which the panel and pop-out window read). The presets were
- * generated and adversarially judged for hierarchy, difficulty/points colour separation, and WCAG AA
- * contrast on the RuneLite dark card background (#282828); see docs. Backgrounds stay on RuneLite's
- * ColorScheme greys — only the text/accent roles vary between palettes.
+ * pushed into {@link CombatAchievementsTheme}, which the panel reads. The presets were checked for
+ * hierarchy, difficulty/points colour separation, and WCAG AA contrast on the RuneLite dark card
+ * background (#282828). Backgrounds stay on RuneLite's ColorScheme greys — only the text/accent roles
+ * vary between palettes.
  */
 public final class Palette
 {

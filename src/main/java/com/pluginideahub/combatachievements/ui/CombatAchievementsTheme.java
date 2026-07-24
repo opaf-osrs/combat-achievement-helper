@@ -4,8 +4,8 @@ import com.pluginideahub.combatachievements.core.achievement.AchievementTier;
 import java.awt.Color;
 
 /**
- * The panel's ACTIVE colours. These are read (by name) across the Swing panel and the pop-out window; the
- * plugin swaps the whole set at runtime via {@link #apply(Palette)} when the user picks a theme in config.
+ * The panel's ACTIVE colours. These are read (by name) across the Swing panel; the plugin swaps the
+ * whole set at runtime via {@link #apply(Palette)} when the user picks a theme in config.
  * Backgrounds stay on RuneLite's ColorScheme greys — only these text/accent roles are themed. Mutated only
  * on the Swing EDT, so plain (non-volatile) statics are fine for this single-threaded UI.
  */
@@ -19,7 +19,7 @@ public final class CombatAchievementsTheme
 	public static Color LOCKED;
 	public static Color ACCENT;
 
-	/** Brand identity (shared with the in-game window): names, points, headers, descriptions. */
+	/** Brand identity: names, points, headers, descriptions. */
 	public static Color NAME;
 	public static Color POINTS;
 	public static Color HEADER_GOLD;
