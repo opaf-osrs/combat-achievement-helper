@@ -935,8 +935,23 @@ public final class SidePanelViewModelBuilder
 	private List<SidePanelViewModel.UnlockView> buildUnlocks(List<UnlockSuggestion> suggestions,
 		Map<Integer, CombatAchievement> byId)
 	{
-		List<SidePanelViewModel.UnlockView> views = new ArrayList<>();
+		// A quest the player is nowhere near ABLE to do is not a recommendation, however many points it
+		// would open — a level-3 was being offered Master questlines needing 70s purely on prize size.
+		// Judged on the quest chain's OWN skill requirements (the same ready line the Route uses), and
+		// only applied while at least one within-reach quest survives, so the section never empties out
+		// (the standing ruling: this is the one place that answers "what quest next").
+		List<UnlockSuggestion> withinReach = new ArrayList<>();
 		for (UnlockSuggestion s : suggestions)
+		{
+			if (s.worstSkillShortfall() <= TrainingPlanner.VIABLE_WORST_GAP)
+			{
+				withinReach.add(s);
+			}
+		}
+		List<UnlockSuggestion> shown = withinReach.isEmpty() ? suggestions : withinReach;
+
+		List<SidePanelViewModel.UnlockView> views = new ArrayList<>();
+		for (UnlockSuggestion s : shown)
 		{
 			if (views.size() >= UNLOCKS_LIMIT)
 			{
@@ -962,7 +977,7 @@ public final class SidePanelViewModelBuilder
 			views.add(new SidePanelViewModel.UnlockView(s.questName(), s.difficulty(),
 				s.unlockedTaskCount(), s.unlockedPoints(), s.totalMinutes(),
 				String.join(", ", s.remainingPrerequisites()), String.join(", ", s.unmetSkills()),
-				unlockedCas));
+				unlockedCas, s.worstSkillShortfall()));
 		}
 		return views;
 	}

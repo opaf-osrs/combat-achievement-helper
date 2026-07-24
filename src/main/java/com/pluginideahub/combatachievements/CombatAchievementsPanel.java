@@ -2065,16 +2065,90 @@ public class CombatAchievementsPanel extends PluginPanel
 		content.add(fullWidth(header));
 		content.add(spacer());
 
+		JPanel links = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 1));
+		links.setOpaque(false);
+		links.add(linkButton("Wiki", questWikiUrl(u.questName)));
+		content.add(fullWidth(links));
+		content.add(spacer());
+
+		// Grouped by boss, same as the Route: each boss header is a way in to its page, with the
+		// prize at that boss beside it. Group order follows the quickest-first CA order.
 		content.add(sectionHeader("Unlocks"));
 		content.add(spacer());
+		LinkedHashMap<String, List<SidePanelViewModel.CaDetail>> byBoss = new LinkedHashMap<>();
 		for (SidePanelViewModel.CaDetail c : u.unlockedCas)
 		{
-			content.add(unlockCaCard(c));
+			byBoss.computeIfAbsent(c.monster.isEmpty() ? "Other" : c.monster,
+				k -> new ArrayList<>()).add(c);
+		}
+		for (Map.Entry<String, List<SidePanelViewModel.CaDetail>> e : byBoss.entrySet())
+		{
+			int pts = 0;
+			for (SidePanelViewModel.CaDetail c : e.getValue())
+			{
+				pts += c.points;
+			}
+			content.add(unlockBossHeader(e.getKey(), e.getValue().size(), pts));
 			content.add(spacer());
+			for (SidePanelViewModel.CaDetail c : e.getValue())
+			{
+				content.add(unlockCaCard(c));
+				content.add(spacer());
+			}
 		}
 	}
 
-	/** A CA the quest would open, on the quest's own page — so no per-card "needs <quest>" line. */
+	/** The wiki page for a quest, derived from its name the same way task wiki urls are built. */
+	private static String questWikiUrl(String questName)
+	{
+		return "https://oldschool.runescape.wiki/w/" + questName.replace(' ', '_');
+	}
+
+	/**
+	 * A boss group header on the quest page: the boss name with its share of the prize, clickable
+	 * through to the boss page when it has one (same behaviour as the Route's group headers).
+	 */
+	private JPanel unlockBossHeader(String boss, int count, int points)
+	{
+		JLabel label = new JLabel(escape(boss));
+		label.setFont(FontManager.getRunescapeBoldFont());
+		label.setForeground(CombatAchievementsTheme.HEADER_GOLD);
+
+		JLabel meta = new JLabel(count + (count == 1 ? " CA · " : " CAs · ") + points + " pts");
+		meta.setFont(FontManager.getRunescapeSmallFont());
+		meta.setForeground(ColorScheme.LIGHT_GRAY_COLOR);
+
+		JPanel row = new JPanel(new BorderLayout(4, 0));
+		row.setOpaque(false);
+		row.setBorder(BorderFactory.createEmptyBorder(6, 0, 2, 0));
+		// Name in CENTER so a long boss name ellipsizes; the prize in EAST stays visible either way.
+		row.add(label, BorderLayout.CENTER);
+		row.add(meta, BorderLayout.EAST);
+		// Cap the row's preferred width or a long name widens the whole content column past the panel
+		// and the EAST meta lands off-screen (the widest-child trap; same cap as the route cards).
+		row.setPreferredSize(new Dimension(ROUTE_TEXT_WIDTH, row.getPreferredSize().height));
+
+		if (bossExists(boss))
+		{
+			Runnable openBoss = () -> {
+				currentMode = PanelMode.BOSSES;
+				selectedCa = null;
+				selectedUnlock = null;
+				selectedBoss = boss;
+				buildModeBar();
+				rebuild();
+			};
+			addForegroundHover(label, CombatAchievementsTheme.HEADER_GOLD, CombatAchievementsTheme.NAME);
+			// AWT does not bubble mouse events: the hover listener on the label consumes clicks, so the
+			// handler must sit on the label AND the row (the Route's group header learned this the hard way).
+			onClick(label, openBoss);
+			onClick(row, openBoss);
+		}
+		return fullWidth(row);
+	}
+
+	/** A CA the quest would open, on the quest's own page — grouped under its boss header, so no
+	 *  per-card monster or "needs <quest>" line. */
 	private JPanel unlockCaCard(SidePanelViewModel.CaDetail c)
 	{
 		JPanel card = new JPanel(new BorderLayout());
@@ -2093,10 +2167,6 @@ public class CombatAchievementsPanel extends PluginPanel
 			sb.append(" <span style='color:" + metaHex() + "'>· </span><span style='color:")
 				.append(CombatAchievementsTheme.hex(difficultyColor(c.difficulty)))
 				.append("'>difficulty ").append(c.difficulty).append("</span>");
-		}
-		if (!c.monster.isEmpty())
-		{
-			sb.append("<br><span style='color:" + metaHex() + "'>").append(escape(c.monster)).append("</span>");
 		}
 		card.add(wrappedHtmlLabel(sb.toString(), CARD_TEXT_WIDTH), BorderLayout.CENTER);
 		addHover(card, ColorScheme.DARK_GRAY_COLOR, ColorScheme.DARK_GRAY_HOVER_COLOR);

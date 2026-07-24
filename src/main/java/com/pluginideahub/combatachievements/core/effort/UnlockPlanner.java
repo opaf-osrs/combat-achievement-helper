@@ -156,6 +156,7 @@ public final class UnlockPlanner
 				}
 			}
 			double trainingHours = 0.0;
+			int worstShortfall = 0;
 			List<String> unmet = new ArrayList<>();
 			Map<String, Integer> raised = new LinkedHashMap<>();
 			for (Map.Entry<String, Integer> s : needed.entrySet())
@@ -164,6 +165,7 @@ public final class UnlockPlanner
 				if (have < s.getValue())
 				{
 					trainingHours += skillLib.hoursToTrain(s.getKey(), have, s.getValue());
+					worstShortfall = Math.max(worstShortfall, s.getValue() - have);
 					unmet.add(s.getKey() + " " + have + "→" + s.getValue());
 					raised.put(s.getKey(), s.getValue()); // only ever upward — never lower a met skill
 				}
@@ -205,7 +207,7 @@ public final class UnlockPlanner
 			}
 			out.add(new UnlockSuggestion(quest, questLib.questFor(quest).difficulty(), tasks.size(),
 				points, reachableCount, reachablePoints, (int) Math.round(achievable), questMinutes,
-				(int) Math.round(trainingHours * 60), remainingPrereqs, unmet, taskIds));
+				(int) Math.round(trainingHours * 60), remainingPrereqs, unmet, taskIds, worstShortfall));
 		}
 
 		out.sort(Comparator.comparingDouble(UnlockSuggestion::score).reversed()

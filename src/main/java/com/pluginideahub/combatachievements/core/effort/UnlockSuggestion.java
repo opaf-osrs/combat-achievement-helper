@@ -23,12 +23,25 @@ public final class UnlockSuggestion
 	private final List<String> remainingPrerequisites;
 	private final List<String> unmetSkills;
 	private final List<Integer> unlockedTaskIds;
+	private final int worstSkillShortfall;
 
 	public UnlockSuggestion(String questName, String difficulty, int unlockedTaskCount,
 		int unlockedPoints, int reachableTaskCount, int reachablePoints, int achievablePoints,
 		int questMinutes, int trainingMinutes,
 		List<String> remainingPrerequisites, List<String> unmetSkills, List<Integer> unlockedTaskIds)
 	{
+		this(questName, difficulty, unlockedTaskCount, unlockedPoints, reachableTaskCount,
+			reachablePoints, achievablePoints, questMinutes, trainingMinutes, remainingPrerequisites,
+			unmetSkills, unlockedTaskIds, 0);
+	}
+
+	public UnlockSuggestion(String questName, String difficulty, int unlockedTaskCount,
+		int unlockedPoints, int reachableTaskCount, int reachablePoints, int achievablePoints,
+		int questMinutes, int trainingMinutes,
+		List<String> remainingPrerequisites, List<String> unmetSkills, List<Integer> unlockedTaskIds,
+		int worstSkillShortfall)
+	{
+		this.worstSkillShortfall = Math.max(0, worstSkillShortfall);
 		this.questName = questName == null ? "" : questName;
 		this.difficulty = difficulty == null ? "" : difficulty;
 		this.unlockedTaskCount = unlockedTaskCount;
@@ -121,6 +134,17 @@ public final class UnlockSuggestion
 	public List<Integer> unlockedTaskIds()
 	{
 		return unlockedTaskIds;
+	}
+
+	/**
+	 * The single worst level gap across the quest chain's own skill requirements — how far the player is
+	 * from being ABLE to do this quest, in levels. 0 when every requirement is met. This is the "is this
+	 * quest anywhere near me?" number: a level-3 shown a Master questline needing 70s has a shortfall in
+	 * the 60s, however many points it would open.
+	 */
+	public int worstSkillShortfall()
+	{
+		return worstSkillShortfall;
 	}
 
 	/**

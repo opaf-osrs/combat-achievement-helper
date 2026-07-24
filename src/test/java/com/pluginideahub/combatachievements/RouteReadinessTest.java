@@ -290,10 +290,14 @@ public class RouteReadinessTest
 		assertTrue("every route step is doable now",
 			vm.path().steps.stream().allMatch(s -> s.detail.doableNow && s.detail.withinReach));
 
-		// Order still respects reach: the short novice quest leads, not a 25-hour questline.
-		assertTrue("a quick quest leads the list, not a grandmaster one (" + vm.unlocks().get(0).questName
-				+ ")",
-			vm.unlocks().get(0).totalMinutes < vm.unlocks().get(vm.unlocks().size() - 1).totalMinutes);
+		// Stronger than the old "a quick quest leads" ordering check: with the ready-line gate, a
+		// level-3 (who has novice quests with no skill reqs within reach) sees ONLY quests it could
+		// actually go and do — the 25-hour Master questlines are gone entirely, not just sunk.
+		for (SidePanelViewModel.UnlockView u : vm.unlocks())
+		{
+			assertTrue(u.questName + " is " + u.worstShortfall + " levels out of reach",
+				u.worstShortfall <= TrainingPlanner.VIABLE_WORST_GAP);
+		}
 	}
 
 	@Test
@@ -301,6 +305,21 @@ public class RouteReadinessTest
 	{
 		SidePanelViewModel vm = viewModelFor(account(80));
 		assertFalse("an all-80s account still gets unlock suggestions", vm.unlocks().isEmpty());
+	}
+
+	@Test
+	public void unlockSuggestionsStayWithinTheReadyLineWhenAnyQuestIsWithinIt()
+	{
+		// A quest the player is nowhere near able to do is not a recommendation, however big its prize.
+		// The all-40s account has within-reach quests available, so nothing past the ready line may show
+		// — previously a Master questline needing 70s led the list purely on points opened.
+		SidePanelViewModel vm = viewModelFor(account(40));
+		assertFalse("an all-40s account still gets suggestions", vm.unlocks().isEmpty());
+		for (SidePanelViewModel.UnlockView u : vm.unlocks())
+		{
+			assertTrue(u.questName + " is " + u.worstShortfall + " levels out of reach",
+				u.worstShortfall <= TrainingPlanner.VIABLE_WORST_GAP);
+		}
 	}
 
 	@Test

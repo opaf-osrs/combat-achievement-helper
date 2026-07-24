@@ -490,17 +490,19 @@ public final class SidePanelViewModel
 		public final String unmetSkills;
 		/** The CAs this quest would unlock, quickest first — the card's drill-in page lists these. */
 		public final List<CaDetail> unlockedCas;
+		/** Worst level gap on the quest chain's own skill requirements; 0 = the quest is doable now. */
+		public final int worstShortfall;
 
 		public UnlockView(String questName, String difficulty, int unlockedTaskCount,
 			int unlockedPoints, int totalMinutes, String prerequisites, String unmetSkills)
 		{
 			this(questName, difficulty, unlockedTaskCount, unlockedPoints, totalMinutes,
-				prerequisites, unmetSkills, Collections.emptyList());
+				prerequisites, unmetSkills, Collections.emptyList(), 0);
 		}
 
 		public UnlockView(String questName, String difficulty, int unlockedTaskCount,
 			int unlockedPoints, int totalMinutes, String prerequisites, String unmetSkills,
-			List<CaDetail> unlockedCas)
+			List<CaDetail> unlockedCas, int worstShortfall)
 		{
 			this.questName = questName;
 			this.difficulty = difficulty;
@@ -511,6 +513,7 @@ public final class SidePanelViewModel
 			this.unmetSkills = unmetSkills == null ? "" : unmetSkills;
 			this.unlockedCas = Collections.unmodifiableList(
 				unlockedCas == null ? Collections.emptyList() : unlockedCas);
+			this.worstShortfall = worstShortfall;
 		}
 	}
 
