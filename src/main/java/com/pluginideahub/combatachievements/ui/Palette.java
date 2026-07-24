@@ -125,7 +125,8 @@ public final class Palette
 
 	/**
 	 * Cool and airy: one blue family (OKLCH hue 240–245) with analogous cyan/teal carrying value, and a
-	 * pale lilac where a green would normally sit, and a complementary rose for the negatives. Lightness
+	 * pale lilac on the requirement ticks, a light green for the easy end of the difficulty ramp (hue 148,
+	 * kept clear of the cyan next to it), and a complementary rose for the negatives. Lightness
 	 * stays high and chroma stays low throughout,
 	 * so the colours read as tinted white rather than as colour.
 	 */
@@ -133,7 +134,7 @@ public final class Palette
 		.name("#D0D9E1").points("#84DCE0").headerAccent("#A4D8FE").desc("#95A0AA")
 		.positive("#D1B7F1").negative("#E1938C").locked("#798189").neutralMeta("#89949D")
 		.accent("#68B2EF").modeSelected("#3E80B4").modeSelectedText("#FFFFFF")
-		.diffEasy("#D1B7F1").diffMid("#E0C88E").diffHard("#E3928B")
+		.diffEasy("#86D391").diffMid("#E0C88E").diffHard("#E3928B")
 		.tierEasy("#92D5B7").tierMedium("#9BD2FA").tierHard("#E0C88E")
 		.tierElite("#C6B1F0").tierMaster("#ECA19A").tierGrandmaster("#E1D195").build();
 
