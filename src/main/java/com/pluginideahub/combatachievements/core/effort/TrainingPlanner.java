@@ -244,6 +244,10 @@ public final class TrainingPlanner
 			{
 				continue;
 			}
+			// Stepping stone: nothing in the game recommends below 40 for the melee/ranged stats, and
+			// "Attack 40" is a big ask from level 3. A skill still under 20 gets a 20 rung first —
+			// toward the same content — and the real rec level becomes the next rung after it.
+			int rung = have < 20 && target > 20 ? 20 : target;
 
 			// The prize this rung works toward: every CA whose ask on this skill is answered by it.
 			int count = 0;
@@ -282,9 +286,9 @@ public final class TrainingPlanner
 				.map(Map.Entry::getKey)
 				.orElse("");
 			int minutes = (int) Math.round(
-				Math.max(0, skillXp.hoursToTrain(skill, have, target)) * 60);
-			rungs.add(new TrainingSuggestion(skill + " " + target,
-				new ArrayList<>(java.util.Collections.singletonList(skill)), target, count, points,
+				Math.max(0, skillXp.hoursToTrain(skill, have, rung)) * 60);
+			rungs.add(new TrainingSuggestion(skill + " " + rung,
+				new ArrayList<>(java.util.Collections.singletonList(skill)), rung, count, points,
 				minutes, hint, false, true));
 		}
 		rungs.sort(Comparator.comparingInt(TrainingSuggestion::targetLevel)
