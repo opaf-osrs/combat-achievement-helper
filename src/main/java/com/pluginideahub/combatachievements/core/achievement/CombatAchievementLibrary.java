@@ -72,7 +72,9 @@ public final class CombatAchievementLibrary
 	{
 		try (Reader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8)))
 		{
-			JsonElement parsed = JsonParser.parseReader(reader);
+			// The instance form, not the newer static parseReader: the plugin hub compiles against the
+			// gson the client actually ships, which predates it.
+			JsonElement parsed = new JsonParser().parse(reader);
 			if (parsed == null || !parsed.isJsonObject())
 			{
 				throw new CombatAchievementDataException("Dataset root is not a JSON object");

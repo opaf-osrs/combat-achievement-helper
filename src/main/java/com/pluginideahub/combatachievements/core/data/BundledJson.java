@@ -45,7 +45,9 @@ public final class BundledJson
 	{
 		try (Reader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8)))
 		{
-			JsonElement parsed = JsonParser.parseReader(reader);
+			// The instance form, not the newer static parseReader: the plugin hub compiles against the
+			// gson the client actually ships, which predates it.
+			JsonElement parsed = new JsonParser().parse(reader);
 			return parsed != null && parsed.isJsonObject() ? parsed.getAsJsonObject() : null;
 		}
 		catch (RuntimeException | IOException ex)
