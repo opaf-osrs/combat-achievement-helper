@@ -501,17 +501,19 @@ public final class SidePanelViewModel
 		public final List<CaDetail> unlockedCas;
 		/** Worst level gap on the quest chain's own skill requirements; 0 = the quest is doable now. */
 		public final int worstShortfall;
+		/** Remaining prerequisite quests in chain order — the drill-in's "Quests first" section. */
+		public final List<String> prerequisiteList;
 
 		public UnlockView(String questName, String difficulty, int unlockedTaskCount,
 			int unlockedPoints, int totalMinutes, String prerequisites, String unmetSkills)
 		{
 			this(questName, difficulty, unlockedTaskCount, unlockedPoints, totalMinutes,
-				prerequisites, unmetSkills, Collections.emptyList(), 0);
+				prerequisites, unmetSkills, Collections.emptyList(), 0, Collections.emptyList());
 		}
 
 		public UnlockView(String questName, String difficulty, int unlockedTaskCount,
 			int unlockedPoints, int totalMinutes, String prerequisites, String unmetSkills,
-			List<CaDetail> unlockedCas, int worstShortfall)
+			List<CaDetail> unlockedCas, int worstShortfall, List<String> prerequisiteList)
 		{
 			this.questName = questName;
 			this.difficulty = difficulty;
@@ -523,6 +525,8 @@ public final class SidePanelViewModel
 			this.unlockedCas = Collections.unmodifiableList(
 				unlockedCas == null ? Collections.emptyList() : unlockedCas);
 			this.worstShortfall = worstShortfall;
+			this.prerequisiteList = Collections.unmodifiableList(
+				prerequisiteList == null ? Collections.emptyList() : prerequisiteList);
 		}
 	}
 

@@ -164,6 +164,8 @@ public class CombatAchievementsPanel extends PluginPanel
 	private transient SidePanelViewModel.UnlockView selectedUnlock;
 	/** Boss groups the user has opened on the quest page; all start closed, reset per quest. */
 	private final Set<String> expandedUnlockBosses = new HashSet<>();
+	/** Whether the quest page's "Quests first" chain is unfolded; starts closed, reset per quest. */
+	private boolean unlockPrereqsExpanded;
 	/** When non-null, quest pages offer an "open in Quest Helper" button routed through this. */
 	private transient Consumer<String> onOpenQuestHelper;
 
@@ -907,6 +909,7 @@ public class CombatAchievementsPanel extends PluginPanel
 			selectedBoss = null;
 			selectedUnlock = model.unlocks().get(0);
 			expandedUnlockBosses.clear();
+			unlockPrereqsExpanded = false;
 			buildModeBar();
 			rebuild();
 		}
@@ -1962,10 +1965,15 @@ public class CombatAchievementsPanel extends PluginPanel
 		sb.append("<br><span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.POSITIVE))
 			.append("'>unlocks ").append(u.unlockedTaskCount).append(" CAs (").append(u.unlockedPoints)
 			.append(" pts)</span>");
-		if (u.prerequisites != null && !u.prerequisites.isEmpty())
+		// One prerequisite gets named; a chain becomes a count — A Kingdom Divided's seven-quest
+		// comma wall made the card unreadable. The drill-in page lists the chain properly.
+		if (!u.prerequisiteList.isEmpty())
 		{
+			String first = u.prerequisiteList.size() == 1
+				? "first: " + u.prerequisiteList.get(0)
+				: u.prerequisiteList.size() + " quests first";
 			sb.append("<br><span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.DESC))
-				.append("'>first: ").append(CardKit.escape(u.prerequisites)).append("</span>");
+				.append("'>").append(CardKit.escape(first)).append("</span>");
 		}
 		if (u.unmetSkills != null && !u.unmetSkills.isEmpty())
 		{
@@ -1989,6 +1997,7 @@ public class CombatAchievementsPanel extends PluginPanel
 			CardKit.onClick(card, () -> {
 				selectedUnlock = u;
 				expandedUnlockBosses.clear();
+				unlockPrereqsExpanded = false;
 				rebuild();
 			});
 		}
@@ -2025,6 +2034,27 @@ public class CombatAchievementsPanel extends PluginPanel
 		}
 		content.add(CardKit.fullWidth(links));
 		content.add(CardKit.spacer());
+
+		// The prerequisite chain as its own foldable section, one quest per line in chain order —
+		// prose on the card turned into a wall for the long questlines.
+		if (!u.prerequisiteList.isEmpty())
+		{
+			content.add(collapseHeader("Quests first · " + u.prerequisiteList.size(),
+				!unlockPrereqsExpanded, () -> { unlockPrereqsExpanded = !unlockPrereqsExpanded; rebuild(); }));
+			if (unlockPrereqsExpanded)
+			{
+				content.add(CardKit.spacer());
+				for (String quest : u.prerequisiteList)
+				{
+					JLabel row = new JLabel(CardKit.escape(quest));
+					row.setFont(FontManager.getRunescapeSmallFont());
+					row.setForeground(ColorScheme.LIGHT_GRAY_COLOR);
+					row.setBorder(BorderFactory.createEmptyBorder(1, 10, 1, 0));
+					content.add(CardKit.fullWidth(row));
+				}
+			}
+			content.add(CardKit.spacer());
+		}
 
 		// Grouped by boss, same as the Route: each boss header is a way in to its page, with the
 		// prize at that boss beside it. Group order follows the quickest-first CA order.
