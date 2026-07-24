@@ -17,6 +17,7 @@ public final class TrainingSuggestion
 	private final int trainingMinutes;
 	private final String unlocksHint;
 	private final boolean calendarTime;
+	private final boolean toward;
 
 	public TrainingSuggestion(String label, List<String> skills, int targetLevel, int unlockedTaskCount,
 		int unlockedPoints, int trainingMinutes, String unlocksHint)
@@ -28,6 +29,14 @@ public final class TrainingSuggestion
 	public TrainingSuggestion(String label, List<String> skills, int targetLevel, int unlockedTaskCount,
 		int unlockedPoints, int trainingMinutes, String unlocksHint, boolean calendarTime)
 	{
+		this(label, skills, targetLevel, unlockedTaskCount, unlockedPoints, trainingMinutes, unlocksHint,
+			calendarTime, false);
+	}
+
+	public TrainingSuggestion(String label, List<String> skills, int targetLevel, int unlockedTaskCount,
+		int unlockedPoints, int trainingMinutes, String unlocksHint, boolean calendarTime, boolean toward)
+	{
+		this.toward = toward;
 		this.calendarTime = calendarTime;
 		this.label = label == null ? "" : label;
 		this.skills = Collections.unmodifiableList(
@@ -85,6 +94,16 @@ public final class TrainingSuggestion
 	public String unlocksHint()
 	{
 		return unlocksHint;
+	}
+
+	/**
+	 * True for a beginner ladder rung — a single combat stat raised TOWARD content whose recommended
+	 * stats also need its sibling skills, so the prize is what this rung works toward, not what it
+	 * opens by itself. The panel words those "toward", never "opens".
+	 */
+	public boolean isToward()
+	{
+		return toward;
 	}
 
 	/** Points opened per hour of training — the ranking metric, comparable with the quest unlocks. */

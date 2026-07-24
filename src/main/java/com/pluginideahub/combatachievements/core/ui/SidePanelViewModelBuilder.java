@@ -924,11 +924,12 @@ public final class SidePanelViewModelBuilder
 		java.util.Set<Integer> completedIds)
 	{
 		List<SidePanelViewModel.TrainingView> views = new ArrayList<>();
-		for (TrainingSuggestion s : new TrainingPlanner(skillXpLib)
+		for (TrainingSuggestion s : new TrainingPlanner(skillXpLib, bossDifficultyLib)
 			.plan(all, completedIds, effortLib, recStatsLib, profile, TRAININGS_LIMIT))
 		{
 			views.add(new SidePanelViewModel.TrainingView(s.label(), s.unlockedTaskCount(),
-				s.unlockedPoints(), s.trainingMinutes(), s.unlocksHint(), s.isCalendarTime()));
+				s.unlockedPoints(), s.trainingMinutes(), s.unlocksHint(), s.isCalendarTime(),
+				s.isToward()));
 		}
 		return views;
 	}

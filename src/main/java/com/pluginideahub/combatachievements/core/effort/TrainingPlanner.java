@@ -48,11 +48,29 @@ public final class TrainingPlanner
 	private static final Set<String> COMBAT_KIT_SET = new HashSet<>(java.util.Arrays.asList(COMBAT_KIT));
 	private static final int[] COMBAT_MILESTONES = {20, 30, 40, 50, 60, 70, 80, 90};
 
+	/**
+	 * Below this level a combat skill gets beginner-ladder treatment: one small rung per skill at the
+	 * lowest level any content recommends, ascending, appended after the skilling goals. From 50 the
+	 * skill graduates to the normal points-per-training-hour ranking — by then the account has a base
+	 * and progression follows the same shape naturally, without being forced.
+	 */
+	private static final int LADDER_CUTOFF = 50;
+
+	/** Ladder rungs are goals you train AT something; Hitpoints rises on its own and is never one. */
+	private static final String[] LADDER_SKILLS = {"Attack", "Strength", "Defence", "Ranged", "Magic"};
+
 	private final SkillXpLibrary skillXp;
+	private final BossDifficultyLibrary bossDifficulty;
 
 	public TrainingPlanner(SkillXpLibrary skillXp)
 	{
+		this(skillXp, null);
+	}
+
+	public TrainingPlanner(SkillXpLibrary skillXp, BossDifficultyLibrary bossDifficulty)
+	{
 		this.skillXp = skillXp == null ? SkillXpLibrary.empty() : skillXp;
+		this.bossDifficulty = bossDifficulty == null ? BossDifficultyLibrary.empty() : bossDifficulty;
 	}
 
 	/**
@@ -128,19 +146,24 @@ public final class TrainingPlanner
 				add(out, e.getKey() + " " + target, raise, all, done, effort, rec, profile, baseViable);
 			}
 		}
-		for (int target : COMBAT_MILESTONES)
+		// "All combat" milestones only once every kit skill has graduated past the ladder — for a
+		// beginner they are one big blob goal, and the per-skill rungs below replace them.
+		if (kitGraduated(profile))
 		{
-			Map<String, Integer> raise = new HashMap<>();
-			for (String c : COMBAT_KIT)
+			for (int target : COMBAT_MILESTONES)
 			{
-				if (profile.levelOf(c) < target)
+				Map<String, Integer> raise = new HashMap<>();
+				for (String c : COMBAT_KIT)
 				{
-					raise.put(c, target);
+					if (profile.levelOf(c) < target)
+					{
+						raise.put(c, target);
+					}
 				}
-			}
-			if (!raise.isEmpty())
-			{
-				add(out, "All combat " + target, raise, all, done, effort, rec, profile, baseViable);
+				if (!raise.isEmpty())
+				{
+					add(out, "All combat " + target, raise, all, done, effort, rec, profile, baseViable);
+				}
 			}
 		}
 
@@ -159,7 +182,126 @@ public final class TrainingPlanner
 		List<TrainingSuggestion> ranked = new ArrayList<>(best.values());
 		ranked.sort(Comparator.comparingDouble(TrainingSuggestion::score).reversed()
 			.thenComparing(TrainingSuggestion::label));
-		return ranked.size() > limit ? new ArrayList<>(ranked.subList(0, limit)) : ranked;
+		List<TrainingSuggestion> shown = ranked.size() > limit
+			? new ArrayList<>(ranked.subList(0, limit)) : ranked;
+
+		// The beginner combat ladder rides AFTER the skilling goals (which every account should just
+		// do — Tempoross, Wintertodt, Prayer 43): one small rung per combat skill still under the
+		// cutoff, at the lowest level any reachable content recommends, lowest first.
+		shown.addAll(ladderRungs(all, done, effort, rec, profile));
+		return shown;
+	}
+
+	private boolean kitGraduated(PlayerProfile profile)
+	{
+		for (String c : LADDER_SKILLS)
+		{
+			if (profile.levelOf(c) < LADDER_CUTOFF)
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * One rung per under-cutoff combat skill: "Attack 40", aimed at the lowest level any non-endgame
+	 * content recommends or gates on, with the CAs that threshold serves as the prize it works toward.
+	 * Endgame-access content never sets a rung — a raid's "Magic 13" puzzle room is not the reason a
+	 * fresh account trains Magic.
+	 */
+	private List<TrainingSuggestion> ladderRungs(List<CombatAchievement> all, Set<Integer> done,
+		EffortDataLibrary effort, RecStatsLibrary rec, PlayerProfile profile)
+	{
+		List<TrainingSuggestion> rungs = new ArrayList<>();
+		for (String skill : LADDER_SKILLS)
+		{
+			int have = profile.levelOf(skill);
+			if (have >= LADDER_CUTOFF)
+			{
+				continue;
+			}
+			// Rung targets come from the curated RECOMMENDED stats only. The hard levelReqs carry
+			// quest-chain artifacts (a "Ranged 25" buried in Zulrah's access chain), which made a
+			// level-3's first ranged goal read "Ranged 25 — toward Zulrah". The recs are what the
+			// content actually wants; quest chains are the Unlock section's business.
+			int target = Integer.MAX_VALUE;
+			for (CombatAchievement a : all)
+			{
+				if (done.contains(a.id()) || bossDifficulty.isEndgameAccess(a.monster()))
+				{
+					continue;
+				}
+				for (StatRequirement req : rec.softFor(a.id()))
+				{
+					if (req.skills().contains(skill) && req.level() > have && req.level() < target)
+					{
+						target = req.level();
+					}
+				}
+			}
+			if (target == Integer.MAX_VALUE || target > 99)
+			{
+				continue;
+			}
+
+			// The prize this rung works toward: every CA whose ask on this skill is answered by it.
+			int count = 0;
+			int points = 0;
+			Map<String, Integer> byMonster = new HashMap<>();
+			for (CombatAchievement a : all)
+			{
+				if (done.contains(a.id()) || bossDifficulty.isEndgameAccess(a.monster()))
+				{
+					continue;
+				}
+				boolean answered = false;
+				for (StatRequirement req : rec.softFor(a.id()))
+				{
+					if (req.skills().contains(skill) && req.level() > have && req.level() <= target)
+					{
+						answered = true;
+					}
+				}
+				if (answered)
+				{
+					count++;
+					points += a.points();
+					if (a.hasMonster())
+					{
+						byMonster.merge(a.monster(), 1, Integer::sum);
+					}
+				}
+			}
+			if (count == 0)
+			{
+				continue;
+			}
+			String hint = byMonster.entrySet().stream()
+				.max(Map.Entry.comparingByValue())
+				.map(Map.Entry::getKey)
+				.orElse("");
+			int minutes = (int) Math.round(
+				Math.max(0, skillXp.hoursToTrain(skill, have, target)) * 60);
+			rungs.add(new TrainingSuggestion(skill + " " + target,
+				new ArrayList<>(java.util.Collections.singletonList(skill)), target, count, points,
+				minutes, hint, false, true));
+		}
+		rungs.sort(Comparator.comparingInt(TrainingSuggestion::targetLevel)
+			.thenComparingInt(r -> kitOrder(r.skills().get(0))));
+		return rungs;
+	}
+
+	private static int kitOrder(String skill)
+	{
+		for (int i = 0; i < LADDER_SKILLS.length; i++)
+		{
+			if (LADDER_SKILLS[i].equals(skill))
+			{
+				return i;
+			}
+		}
+		return LADDER_SKILLS.length;
 	}
 
 	private void add(List<TrainingSuggestion> out, String label, Map<String, Integer> raise,

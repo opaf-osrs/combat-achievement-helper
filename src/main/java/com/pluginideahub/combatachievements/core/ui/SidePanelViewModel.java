@@ -458,17 +458,26 @@ public final class SidePanelViewModel
 		 * not time spent playing — those read in days, everything else in hours.
 		 */
 		public final boolean calendarTime;
+		/** True for a beginner ladder rung: the prize is what the rung works TOWARD, not what it opens alone. */
+		public final boolean toward;
 
 		public TrainingView(String label, int unlockedTaskCount, int unlockedPoints, int trainingMinutes,
 			String unlocksHint)
 		{
-			this(label, unlockedTaskCount, unlockedPoints, trainingMinutes, unlocksHint, false);
+			this(label, unlockedTaskCount, unlockedPoints, trainingMinutes, unlocksHint, false, false);
 		}
 
 		public TrainingView(String label, int unlockedTaskCount, int unlockedPoints, int trainingMinutes,
 			String unlocksHint, boolean calendarTime)
 		{
+			this(label, unlockedTaskCount, unlockedPoints, trainingMinutes, unlocksHint, calendarTime, false);
+		}
+
+		public TrainingView(String label, int unlockedTaskCount, int unlockedPoints, int trainingMinutes,
+			String unlocksHint, boolean calendarTime, boolean toward)
+		{
 			this.calendarTime = calendarTime;
+			this.toward = toward;
 			this.label = label == null ? "" : label;
 			this.unlockedTaskCount = unlockedTaskCount;
 			this.unlockedPoints = unlockedPoints;

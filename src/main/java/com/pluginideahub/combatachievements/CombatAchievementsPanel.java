@@ -1999,8 +1999,9 @@ public class CombatAchievementsPanel extends PluginPanel
 		sb.append("<span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.HEADER_GOLD))
 			.append("'><b>").append(escape(t.label)).append("</b></span>");
 		sb.append("<br><span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.POSITIVE))
-			.append("'>opens ").append(t.unlockedTaskCount).append(" CAs (").append(t.unlockedPoints)
-			.append(" pts)</span>");
+			.append("'>").append(t.toward ? "toward " : "opens ").append(t.unlockedTaskCount)
+			.append(t.unlockedTaskCount == 1 ? " CA (" : " CAs (")
+			.append(t.unlockedPoints).append(t.unlockedPoints == 1 ? " pt)</span>" : " pts)</span>");
 		if (t.unlocksHint != null && !t.unlocksHint.isEmpty())
 		{
 			sb.append("<br><span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.DESC))

@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.junit.Test;
@@ -308,17 +309,40 @@ public class RouteReadinessTest
 	}
 
 	@Test
-	public void trainNextNeverSetsASingleCombatSkillAsAGoal()
+	public void trainNextGivesBeginnersALadderAndEstablishedAccountsTheNormalRanking()
 	{
-		// Combat stats train together and are covered by the "All combat N" milestones; a recommended
-		// stat must not become a personal goal ("Strength 56", pointed at Greater Demons, for a level-3).
-		for (int lvl : new int[]{1, 40})
+		// Under the ladder cutoff, single combat skills appear ONLY as "toward" rungs (small goals at
+		// the lowest level content recommends), after the skilling goals. At 50+ they never appear
+		// bare — "Strength 56", pointed at Greater Demons, must not come back as a scored goal.
+		List<SidePanelViewModel.TrainingView> beginner = viewModelFor(account(1)).trainings();
+		boolean sawRung = false;
+		boolean sawNormal = false;
+		int lastNormalIndex = -1;
+		int firstRungIndex = Integer.MAX_VALUE;
+		for (int i = 0; i < beginner.size(); i++)
 		{
-			for (SidePanelViewModel.TrainingView t : viewModelFor(account(lvl)).trainings())
+			SidePanelViewModel.TrainingView t = beginner.get(i);
+			boolean bareCombat = t.label.matches("^(Attack|Strength|Defence|Ranged|Magic|Hitpoints) \\d+$");
+			if (bareCombat)
 			{
-				assertFalse("a bare combat-skill goal was suggested: " + t.label,
-					t.label.matches("^(Attack|Strength|Defence|Ranged|Magic|Hitpoints) \\d+$"));
+				assertTrue("a bare combat goal must be a ladder rung: " + t.label, t.toward);
+				sawRung = true;
+				firstRungIndex = Math.min(firstRungIndex, i);
 			}
+			else
+			{
+				sawNormal = true;
+				lastNormalIndex = Math.max(lastNormalIndex, i);
+			}
+		}
+		assertTrue("a level-3 gets combat rungs", sawRung);
+		assertTrue("and keeps the skilling goals", sawNormal);
+		assertTrue("skilling goals stay on top, rungs after", lastNormalIndex < firstRungIndex);
+
+		for (SidePanelViewModel.TrainingView t : viewModelFor(account(60)).trainings())
+		{
+			assertFalse("a 50+ account got a bare combat goal: " + t.label,
+				t.label.matches("^(Attack|Strength|Defence|Ranged|Magic|Hitpoints) \\d+$"));
 		}
 	}
 

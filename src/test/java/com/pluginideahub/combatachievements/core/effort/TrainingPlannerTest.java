@@ -67,13 +67,34 @@ public class TrainingPlannerTest
 	}
 
 	@Test
-	public void rankedByPointsOpenedPerHourOfTraining()
+	public void rankedByRateFirstThenTheBeginnerLadderAscending()
 	{
+		// The scored goals (skilling, and for graduated accounts the combat milestones) lead in
+		// best-rate order; a beginner's combat rungs ride after them, lowest level first.
 		List<TrainingSuggestion> out = plan(account(1));
-		for (int i = 1; i < out.size(); i++)
+		int firstRung = out.size();
+		for (int i = 0; i < out.size(); i++)
 		{
-			assertTrue("suggestions must be ordered best-rate first",
+			if (out.get(i).isToward())
+			{
+				firstRung = i;
+				break;
+			}
+		}
+		for (int i = 1; i < firstRung; i++)
+		{
+			assertTrue("scored suggestions must be ordered best-rate first",
 				out.get(i - 1).score() >= out.get(i).score() - 1e-9);
+		}
+		for (int i = firstRung; i < out.size(); i++)
+		{
+			assertTrue("everything after the first rung is a rung", out.get(i).isToward());
+			assertTrue("each rung raises one skill", out.get(i).skills().size() == 1);
+			if (i > firstRung)
+			{
+				assertTrue("rungs climb, lowest first",
+					out.get(i - 1).targetLevel() <= out.get(i).targetLevel());
+			}
 		}
 	}
 
