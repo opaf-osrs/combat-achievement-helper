@@ -9,6 +9,12 @@ import com.pluginideahub.combatachievements.ui.CardKit;
 import com.pluginideahub.combatachievements.ui.CombatAchievementsTheme;
 import com.pluginideahub.combatachievements.ui.Palette;
 import com.pluginideahub.combatachievements.ui.PanelRoute;
+import com.pluginideahub.combatachievements.ui.pages.BossDetailPage;
+import com.pluginideahub.combatachievements.ui.pages.BossesPage;
+import com.pluginideahub.combatachievements.ui.pages.CaDetailPage;
+import com.pluginideahub.combatachievements.ui.pages.RecommendedPage;
+import com.pluginideahub.combatachievements.ui.pages.RoutePage;
+import com.pluginideahub.combatachievements.ui.pages.UnlockDetailPage;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -23,12 +29,9 @@ import java.awt.image.BufferedImage;
 import java.awt.Insets;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -46,7 +49,6 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SpinnerNumberModel;
@@ -68,7 +70,7 @@ import net.runelite.client.util.LinkBrowser;
 public class CombatAchievementsPanel extends PluginPanel
 {
 	/** List orderings offered in the CAs and Bosses modes (one shared Order control). */
-	enum Sort
+	public enum Sort
 	{
 		RECOMMENDED("Recommended"),
 		MOST_POINTS("Most points"),
@@ -94,30 +96,23 @@ public class CombatAchievementsPanel extends PluginPanel
 	private static final String PATREON_URL = "https://www.patreon.com/c/CAHelper";
 	/** Discord invite for the footer icon. Empty = the icon is hidden, so a blank never ships a dead link. */
 	private static final String DISCORD_URL = "https://discord.gg/N7HUvV92a";
-	/** Cap on cards rendered at once in the (now full) CAs list; refine the search to see more. */
-	private static final int RENDER_CAP = 60;
-	/** Max rank positions a CA can move when the CAs list is shuffled — big enough to surface a different
-	 *  set, small enough to keep good CAs near the top. */
-	private static final double SHUFFLE_JITTER = 12.0;
 	/** Default per-visit overhead (minutes) amortised into the Bosses "Recommended" sort; matches the
 	 *  {@code tripOverheadMinutes} config default so the two agree until the plugin seeds the live value. */
 	private static final int DEFAULT_TRIP_OVERHEAD = 6;
 	/** Pinned size of a developer-mode level spinner — see {@link #devSkillCell(String)}. */
 	private static final int SPINNER_WIDTH = 46;
 	private static final int SPINNER_HEIGHT = 18;
-	/** Wrap width for the CA-detail how-to prose, kept clear of the scrollbar the tall view brings in. */
-	private static final int DETAIL_TEXT_WIDTH = 170;
 	/** Wrap width for card text: the panel minus the card's left bar and padding. */
-	private static final int CARD_TEXT_WIDTH = 182;
+	public static final int CARD_TEXT_WIDTH = 182;
 	/** Route card text width, and the slice the per-CA "-" (bar) control takes on the right. */
-	private static final int ROUTE_TEXT_WIDTH = 182;
-	private static final int BAR_BUTTON_WIDTH = 20;
+	public static final int ROUTE_TEXT_WIDTH = 182;
+	public static final int BAR_BUTTON_WIDTH = 20;
 	/**
 	 * Hard cap on a route card's width. The content column sizes itself to its widest child, and a
 	 * long unlock card can push that past the ~225px panel; a full-width route card would then put
 	 * its right-hand "-" outside the visible area. Capping keeps the control on screen.
 	 */
-	private static final int ROUTE_CARD_MAX_WIDTH = 211;
+	public static final int ROUTE_CARD_MAX_WIDTH = 211;
 
 	private final transient Consumer<PanelAction> onAction;
 	/** Bar a task from the Route (the "−" on a route card); the plugin persists it and re-solves. */
@@ -203,10 +198,24 @@ public class CombatAchievementsPanel extends PluginPanel
 	private final JPanel orderRow = new JPanel(new BorderLayout());
 	private final JPanel content = new JPanel();
 
+	// One renderer per page, all drawing into `content`; rebuild() dispatches to whichever the route says.
+	private final transient RecommendedPage recommendedPage;
+	private final transient BossesPage bossesPage;
+	private final transient BossDetailPage bossDetailPage;
+	private final transient RoutePage routePage;
+	private final transient UnlockDetailPage unlockDetailPage;
+	private final transient CaDetailPage caDetailPage;
+
 	public CombatAchievementsPanel(Consumer<PanelAction> onAction)
 	{
 		super(false);
 		this.onAction = onAction;
+		caDetailPage = new CaDetailPage(this);
+		recommendedPage = new RecommendedPage(this);
+		bossesPage = new BossesPage(this);
+		bossDetailPage = new BossDetailPage(this, caDetailPage);
+		routePage = new RoutePage(this);
+		unlockDetailPage = new UnlockDetailPage(this, routePage);
 
 		setLayout(new BorderLayout());
 		setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
@@ -709,7 +718,7 @@ public class CombatAchievementsPanel extends PluginPanel
 	}
 
 	/** Mixes two colours, {@code t} of the way from {@code a} to {@code b}. */
-	private static Color blend(Color a, Color b, double t)
+	public static Color blend(Color a, Color b, double t)
 	{
 		double k = Math.max(0.0, Math.min(1.0, t));
 		return new Color(
@@ -761,7 +770,7 @@ public class CombatAchievementsPanel extends PluginPanel
 		}
 	}
 
-	private void buildModeBar()
+	public void buildModeBar()
 	{
 		modeBar.removeAll();
 		GridBagConstraints gc = new GridBagConstraints();
@@ -1049,7 +1058,7 @@ public class CombatAchievementsPanel extends PluginPanel
 		}
 	}
 
-	private void rebuild()
+	public void rebuild()
 	{
 		boolean ready = model.state() == SidePanelViewModel.State.READY;
 		boolean detailOpen = route.detailOpen();
@@ -1067,7 +1076,7 @@ public class CombatAchievementsPanel extends PluginPanel
 
 		if (route.ca() != null)
 		{
-			renderCaDetail(route.ca()); // the drill-in overrides whatever mode is active
+			caDetailPage.renderCaDetail(route.ca()); // the drill-in overrides whatever mode is active
 		}
 		else if (!ready)
 		{
@@ -1078,26 +1087,26 @@ public class CombatAchievementsPanel extends PluginPanel
 			switch (route.mode())
 			{
 				case RECOMMENDED:
-					buildRecommended();
+					recommendedPage.buildRecommended();
 					break;
 				case BOSSES:
 					if (route.boss() != null)
 					{
-						buildBossDetail(route.boss());
+						bossDetailPage.buildBossDetail(route.boss());
 					}
 					else
 					{
-						buildBosses();
+						bossesPage.buildBosses();
 					}
 					break;
 				case ROUTE:
 					if (route.unlock() != null)
 					{
-						renderUnlockDetail(route.unlock());
+						unlockDetailPage.renderUnlockDetail(route.unlock());
 					}
 					else
 					{
-						buildRoute();
+						routePage.buildRoute();
 					}
 					break;
 				default:
@@ -1109,7 +1118,7 @@ public class CombatAchievementsPanel extends PluginPanel
 		content.repaint();
 	}
 
-	// ---- Recommended -------------------------------------------------------------------------------
+	// ---- Search & order ----------------------------------------------------------------------------
 
 	private void buildControlBar()
 	{
@@ -1149,743 +1158,227 @@ public class CombatAchievementsPanel extends PluginPanel
 	}
 
 	/** The active search query (lower-cased), or "" when the box is empty / showing its placeholder. */
-	private String searchText()
+	public String searchText()
 	{
 		String t = searchField.getText();
 		return t == null || SEARCH_HINT.equals(t) ? "" : t.trim().toLowerCase(Locale.ROOT);
 	}
 
-	private static boolean matches(SidePanelViewModel.TaskRow r, String q)
+	// ---- Page context ------------------------------------------------------------------------------
+
+	/** The boss-list ordering; {@link BossesPage#bossComparator} is the real thing, this is the tests' seam. */
+	public static Comparator<SidePanelViewModel.BossRow> bossComparator(Sort sort, int tripOverheadMinutes)
 	{
-		return q.isEmpty()
-			|| r.name.toLowerCase(Locale.ROOT).contains(q)
-			|| r.monster.toLowerCase(Locale.ROOT).contains(q);
+		return BossesPage.bossComparator(sort, tripOverheadMinutes);
 	}
 
-	private void buildRecommended()
-	{
-		String q = searchText();
-		List<SidePanelViewModel.TaskRow> rows = new ArrayList<>();
-		for (SidePanelViewModel.TaskRow r : model.quickWins())
-		{
-			if (r.doableNow && matches(r, q)) // Recommended is strictly doable-now
-			{
-				rows.add(r);
-			}
-		}
-		sortRows(rows);
-		if (shuffleSeed != 0)
-		{
-			applyShuffle(rows);
-		}
-
-		if (rows.isEmpty())
-		{
-			content.add(messageLabel(q.isEmpty()
-				? "No doable Combat Achievements right now."
-				: "No CAs match your search."));
-			return;
-		}
-		int shown = 0;
-		for (SidePanelViewModel.TaskRow r : rows)
-		{
-			if (shown >= RENDER_CAP)
-			{
-				content.add(messageLabel("+" + (rows.size() - shown) + " more — refine your search."));
-				break;
-			}
-			content.add(taskCard(r));
-			content.add(CardKit.spacer());
-			shown++;
-		}
-	}
-
-	private void sortRows(List<SidePanelViewModel.TaskRow> rows)
-	{
-		switch (sort)
-		{
-			case MOST_POINTS:
-				rows.sort(Comparator.comparingInt((SidePanelViewModel.TaskRow r) -> r.points).reversed()
-					.thenComparingInt(r -> r.id));
-				break;
-			case EASIEST:
-				rows.sort(Comparator.comparingInt((SidePanelViewModel.TaskRow r) -> r.difficulty)
-					.thenComparing(Comparator.comparingInt((SidePanelViewModel.TaskRow r) -> r.points).reversed())
-					.thenComparingInt(r -> r.id));
-				break;
-			default: // RECOMMENDED: keep the model's ranked order
-				break;
-		}
-	}
-
-	/**
-	 * Reorders the doable CAs with a bounded random rank jitter so each reshuffle surfaces a different but
-	 * still-sensible set. Deterministic per {@link #shuffleSeed}, so per-tick refreshes don't re-scramble
-	 * the list — only pressing the shuffle button (which bumps the seed) changes it.
-	 */
-	private void applyShuffle(List<SidePanelViewModel.TaskRow> rows)
-	{
-		Map<Integer, Double> key = new HashMap<>();
-		for (int i = 0; i < rows.size(); i++)
-		{
-			SidePanelViewModel.TaskRow r = rows.get(i);
-			key.put(r.id, jitteredKey(i, r.id, shuffleSeed));
-		}
-		rows.sort(Comparator.comparingDouble(r -> key.get(r.id)));
-	}
-
-	/**
-	 * A task's jittered sort key: its rank plus a bounded, deterministic offset. Uses a splitmix64 hash of
-	 * (seed, id) rather than {@link java.util.Random} — Random's first output is correlated across nearby
-	 * seeds, which would make consecutive reshuffles produce almost the same order.
-	 */
-	static double jitteredKey(int rank, int id, long seed)
-	{
-		long h = seed * 0x9E3779B97F4A7C15L + (id + 1L) * 0xD1B54A32D192ED03L;
-		h ^= h >>> 30;
-		h *= 0xBF58476D1CE4E5B9L;
-		h ^= h >>> 27;
-		h *= 0x94D049BB133111EBL;
-		h ^= h >>> 31;
-		double u = (h >>> 11) * 0x1.0p-53; // uniform in [0, 1)
-		return rank + (u * 2.0 - 1.0) * SHUFFLE_JITTER;
-	}
-
-	private JPanel taskCard(SidePanelViewModel.TaskRow row)
-	{
-		JPanel card = new JPanel(new BorderLayout());
-		card.setBackground(ColorScheme.DARK_GRAY_COLOR);
-		Color accent = row.doableNow ? CombatAchievementsTheme.NAME : CombatAchievementsTheme.LOCKED;
-		card.setBorder(BorderFactory.createCompoundBorder(
-			BorderFactory.createMatteBorder(0, 3, 0, 0, accent),
-			BorderFactory.createEmptyBorder(5, 7, 5, 7)));
-
-		String name = CombatAchievementsTheme.hex(row.doableNow
-			? CombatAchievementsTheme.NAME : CombatAchievementsTheme.LOCKED);
-		StringBuilder sb = new StringBuilder("<html><body style='width:166px'>");
-		sb.append("<span style='color:").append(name).append("'><b>").append(CardKit.escape(row.name)).append("</b></span>");
-		if (!row.doableNow)
-		{
-			String lock = (row.lockReason == null || row.lockReason.isEmpty()) ? "locked" : row.lockReason;
-			sb.append(" <span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.LOCKED))
-				.append("'>(").append(CardKit.escape(lock)).append(")</span>");
-		}
-		if (!row.curated)
-		{
-			sb.append(" <span style='color:#6f6f6f'>&#9679;</span>");
-		}
-		sb.append("<br><span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.DESC))
-			.append("'>").append(CardKit.escape(row.description)).append("</span>");
-		sb.append("<br><span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.POINTS))
-			.append("'>").append(row.points).append(" pts</span>")
-			.append(" <span style='color:" + CardKit.metaHex() + "'>· ").append(CardKit.escape(row.tierName)).append("</span>");
-		if (row.difficulty > 0)
-		{
-			sb.append(" <span style='color:" + CardKit.metaHex() + "'>· </span><span style='color:")
-				.append(CombatAchievementsTheme.hex(CardKit.difficultyColor(row.difficulty)))
-				.append("'>difficulty ").append(row.difficulty).append("</span>");
-		}
-		sb.append("</body></html>");
-		JLabel label = new JLabel(sb.toString());
-		label.setBorder(BorderFactory.createEmptyBorder(0, 0, 3, 0));
-		card.add(label, BorderLayout.CENTER);
-
-		card.add(linkRow(row.wikiUrl, row.guideUrl, row.curatedVideo), BorderLayout.SOUTH);
-		CardKit.addHover(card, ColorScheme.DARK_GRAY_COLOR, ColorScheme.DARK_GRAY_HOVER_COLOR);
-		CardKit.onClick(card, () -> {
-			route = route.withCa(row.detail);
-			rebuild();
-		});
-		return CardKit.fullWidth(card);
-	}
-
-	// ---- Bosses ------------------------------------------------------------------------------------
-
-	private void buildBosses()
-	{
-		String q = searchText();
-		List<SidePanelViewModel.BossRow> all = model.bosses();
-		if (all == null || all.isEmpty())
-		{
-			content.add(messageLabel("No bosses with incomplete CAs."));
-			return;
-		}
-		List<SidePanelViewModel.BossRow> bosses = new ArrayList<>();
-		for (SidePanelViewModel.BossRow b : all)
-		{
-			if (q.isEmpty() || b.monster.toLowerCase(Locale.ROOT).contains(q))
-			{
-				bosses.add(b);
-			}
-		}
-		if (bosses.isEmpty())
-		{
-			content.add(messageLabel("No bosses match your search."));
-			return;
-		}
-		bosses.sort(bossComparator(sort, tripOverheadMinutes, bossTimeWeight));
-		for (SidePanelViewModel.BossRow b : bosses)
-		{
-			content.add(bossRowCard(b));
-			content.add(CardKit.spacer());
-		}
-	}
-
-	/**
-	 * The boss-list ordering for a given {@link Sort}. Locked bosses (no doable CAs) always sink to the
-	 * bottom. The metrics are derived from each boss's doable CAs:
-	 * <ul>
-	 *   <li>{@code RECOMMENDED} — points per hour with the per-trip overhead amortised in
-	 *       ({@link #bossPointsPerHour}); because a CA's estimated minutes already scale with its
-	 *       Difficulty and the fixed {@code tripOverheadMinutes} is spread across the whole visit, this is
-	 *       the "points / time / ease" value blend that also rewards clustering (staying at one boss).</li>
-	 *   <li>{@code MOST_POINTS} — projected (doable-now) points, highest first.</li>
-	 *   <li>{@code EASIEST} — lowest average doable-CA Difficulty, tie-broken by quickest then most points.</li>
-	 * </ul>
-	 */
-	static Comparator<SidePanelViewModel.BossRow> bossComparator(Sort sort, int tripOverheadMinutes)
-	{
-		return bossComparator(sort, tripOverheadMinutes, 1.0);
-	}
-
-	static Comparator<SidePanelViewModel.BossRow> bossComparator(Sort sort, int tripOverheadMinutes,
+	public static Comparator<SidePanelViewModel.BossRow> bossComparator(Sort sort, int tripOverheadMinutes,
 		double timeWeight)
 	{
-		Comparator<SidePanelViewModel.BossRow> lockedLast =
-			Comparator.comparing((SidePanelViewModel.BossRow b) -> b.locked); // false (doable) first
-		switch (sort)
-		{
-			case MOST_POINTS:
-				return lockedLast
-					.thenComparing(Comparator.comparingInt((SidePanelViewModel.BossRow b) -> b.projectedPoints).reversed())
-					.thenComparing(b -> b.monster);
-			case EASIEST:
-				return lockedLast
-					.thenComparing(Comparator.comparingDouble(CombatAchievementsPanel::bossAvgDifficulty))
-					.thenComparing(Comparator.comparingInt(CombatAchievementsPanel::bossDoableMinutes))
-					.thenComparing(Comparator.comparingInt((SidePanelViewModel.BossRow b) -> b.projectedPoints).reversed())
-					.thenComparing(b -> b.monster);
-			default: // RECOMMENDED
-				return lockedLast
-					.thenComparing(Comparator.comparingDouble(
-						(SidePanelViewModel.BossRow b) -> bossPointsPerHour(b, tripOverheadMinutes, timeWeight)).reversed())
-					.thenComparing(b -> b.monster);
-		}
+		return BossesPage.bossComparator(sort, tripOverheadMinutes, timeWeight);
 	}
 
-	/** Total estimated minutes across a boss's doable CAs. */
-	private static int bossDoableMinutes(SidePanelViewModel.BossRow b)
+	/** A task's jittered shuffle key; {@link RecommendedPage#jitteredKey} is the real thing, this is the tests' seam. */
+	public static double jitteredKey(int rank, int id, long seed)
 	{
-		int minutes = 0;
-		for (SidePanelViewModel.CaDetail d : b.doable)
-		{
-			minutes += d.estMinutes;
-		}
-		return minutes;
+		return RecommendedPage.jitteredKey(rank, id, seed);
 	}
 
-	/**
-	 * Points per hour for a boss's doable CAs, with the fixed per-trip overhead amortised into the time.
-	 * Spreading {@code tripOverheadMinutes} across the whole visit rewards bosses with several doable CAs
-	 * (clustering) over trivial single-CA hops. Nothing-to-gain bosses score 0; a free (zero-time,
-	 * zero-overhead) prize ranks top.
-	 */
-	private static double bossPointsPerHour(SidePanelViewModel.BossRow b, int tripOverheadMinutes,
-		double timeWeight)
+	/** The scrolled column the pages render into. */
+	public JPanel content()
 	{
-		if (b.projectedPoints <= 0)
-		{
-			return 0.0;
-		}
-		// Readiness rides on the row: a boss whose doable CAs sit far above the player's recommended stats
-		// is worth less per hour to THEM, however good its points-per-hour looks in the abstract. Without
-		// this the list was account-blind — a level-3 and a combat-89 account both led with Dagannoth Kings.
-		double sink = Math.max(1.0, b.readinessSink);
-		double denominator = sink
-			* (Math.max(0, tripOverheadMinutes) + Math.max(0.0, timeWeight) * bossDoableMinutes(b));
-		// No time cost at all (both dials off, or a zero-minute boss) → rank on points: a large sentinel keeps
-		// such bosses above any real points-per-hour figure, and adding the points breaks their ties by points
-		// (not alphabetically), so "Time vs points = 0" genuinely ranks on available points.
-		return denominator <= 0 ? 1.0e12 + b.projectedPoints : b.projectedPoints * 60.0 / denominator;
+		return content;
 	}
 
-	/** Average Difficulty of a boss's doable CAs; MAX when none are rated (sinks below rated bosses). */
-	private static double bossAvgDifficulty(SidePanelViewModel.BossRow b)
+	/** The model currently on screen. */
+	public SidePanelViewModel model()
 	{
-		int sum = 0;
-		int rated = 0;
-		for (SidePanelViewModel.CaDetail d : b.doable)
-		{
-			if (d.difficulty > 0)
-			{
-				sum += d.difficulty;
-				rated++;
-			}
-		}
-		return rated == 0 ? Double.MAX_VALUE : (double) sum / rated;
+		return model;
 	}
 
-	private JPanel bossRowCard(SidePanelViewModel.BossRow b)
+	public PanelRoute route()
 	{
-		JPanel card = new JPanel(new BorderLayout());
-		card.setBackground(ColorScheme.DARK_GRAY_COLOR);
-		Color accent = b.locked ? CombatAchievementsTheme.LOCKED : CombatAchievementsTheme.NAME;
-		card.setBorder(BorderFactory.createCompoundBorder(
-			BorderFactory.createMatteBorder(0, 3, 0, 0, accent),
-			BorderFactory.createEmptyBorder(6, 7, 6, 7)));
-
-		StringBuilder sb = new StringBuilder("<html><body style='width:182px'>");
-		sb.append("<span style='color:").append(CombatAchievementsTheme.hex(accent))
-			.append("'><b>").append(CardKit.escape(b.monster)).append("</b></span>");
-		if (b.locked)
-		{
-			String reason = "needs access";
-			for (SidePanelViewModel.CaDetail lc : b.lockedCas)
-			{
-				if (!lc.lockReason.isEmpty())
-				{
-					reason = lc.lockReason; // usually "needs <quest>" — name the specific gate
-					break;
-				}
-			}
-			sb.append(" <span style='color:" + CardKit.metaHex() + "'>(locked)</span>");
-			sb.append("<br><span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.NEGATIVE))
-				.append("'>").append(CardKit.escape(reason)).append("</span>")
-				.append(" <span style='color:" + CardKit.metaHex() + "'>· ").append(b.lockedCount)
-				.append(b.lockedCount == 1 ? " CA</span>" : " CAs</span>");
-		}
-		else
-		{
-			sb.append("<br><span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.POINTS))
-				.append("'>").append(b.projectedPoints).append(" pts available</span>")
-				.append(" <span style='color:" + CardKit.metaHex() + "'>· ").append(b.doableCount)
-				.append(b.doableCount == 1 ? " CA" : " CAs");
-			if (b.lockedCount > 0)
-			{
-				sb.append(" (+").append(b.lockedCount).append(" locked)");
-			}
-			sb.append("</span>");
-		}
-		sb.append("</body></html>");
-		card.add(new JLabel(sb.toString()), BorderLayout.CENTER);
-		CardKit.addHover(card, ColorScheme.DARK_GRAY_COLOR, ColorScheme.DARK_GRAY_HOVER_COLOR);
-		CardKit.onClick(card, () -> {
-			route = route.withBoss(b.monster);
-			rebuild();
-		});
-		return CardKit.fullWidth(card);
+		return route;
 	}
 
-	// ---- Route -------------------------------------------------------------------------------------
-
-	/** The route to the next tier: unlock shortcuts first (a quest can open points faster than grinding),
-	 *  then the CA steps. The unlock section is collapsible. */
-	private void buildRoute()
+	public void setRoute(PanelRoute route)
 	{
-		SidePanelViewModel.PathView path = model.path();
-		List<SidePanelViewModel.UnlockView> unlocks = model.unlocks();
-		boolean haveUnlocks = unlocks != null && !unlocks.isEmpty();
-
-		if (path == null && !haveUnlocks)
-		{
-			content.add(messageLabel("Log in to see your route."));
-			return;
-		}
-
-		// Unlocks on top: doing a quest can open a chunk of points faster than grinding CAs. Hideable.
-		if (haveUnlocks)
-		{
-			content.add(collapseHeader("Unlock next", unlocksCollapsed,
-				() -> { unlocksCollapsed = !unlocksCollapsed; rebuild(); }));
-			if (!unlocksCollapsed)
-			{
-				content.add(CardKit.spacer());
-				for (SidePanelViewModel.UnlockView u : unlocks)
-				{
-					content.add(unlockCard(u));
-					content.add(CardKit.spacer());
-				}
-			}
-			content.add(CardKit.spacer());
-		}
-
-		// "Train next": only present when the account is actually held back by levels, so it quietly
-		// disappears once you can attempt things — no empty section for an established player.
-		List<SidePanelViewModel.TrainingView> trainings = model.trainings();
-		if (trainings != null && !trainings.isEmpty())
-		{
-			content.add(collapseHeader("Train next", trainingsCollapsed,
-				() -> { trainingsCollapsed = !trainingsCollapsed; rebuild(); }));
-			if (!trainingsCollapsed)
-			{
-				content.add(CardKit.spacer());
-				for (SidePanelViewModel.TrainingView t : trainings)
-				{
-					content.add(trainingCard(t));
-					content.add(CardKit.spacer());
-				}
-			}
-			content.add(CardKit.spacer());
-		}
-
-		if (path != null)
-		{
-			StringBuilder sb = new StringBuilder();
-			sb.append("Goal: <b>").append(CardKit.escape(path.targetTierName)).append("</b>");
-			if (path.alreadyUnlocked)
-			{
-				sb.append("<br><span style='color:")
-					.append(CombatAchievementsTheme.hex(CombatAchievementsTheme.POSITIVE))
-					.append("'>Already unlocked.</span>");
-			}
-			else
-			{
-				sb.append("<br>").append(path.pointsGap).append(" pts to go");
-				if (path.trainFirst)
-				{
-					// The route stopped at what the account is ready for rather than padding it out with
-					// content 40+ levels away. "Train next" sits directly above with the way forward.
-					// Kept to two short lines: a long line clips mid-word at this panel width rather than
-					// wrapping (a JLabel sizes itself from its own preferred width, so the body width style
-					// does not rescue it).
-					int within = path.steps.size();
-					sb.append("<br><span style='color:")
-						.append(CombatAchievementsTheme.hex(CombatAchievementsTheme.ACCENT))
-						.append("'>").append(within).append(within == 1 ? " CA" : " CAs")
-						.append(" within reach.<br>Train for the rest.</span>");
-				}
-				else if (!path.reachable)
-				{
-					sb.append("<br><span style='color:")
-						.append(CombatAchievementsTheme.hex(CombatAchievementsTheme.ACCENT))
-						.append("'>Not enough doable tasks yet —<br>shows the closest set.</span>");
-				}
-			}
-			content.add(CardKit.fullWidth(CardKit.wrappedHtmlLabel(sb.toString(), CARD_TEXT_WIDTH)));
-			content.add(CardKit.spacer());
-
-			// Only CAs the player can go and do right now, grouped by boss so one trip clears several.
-			// Nothing out of reach and nothing behind a quest: the Route is a plan to follow, and listing
-			// content that cannot be attempted made the whole thing read as if it were all available. The
-			// quest that would open more is recommended above, in Unlock next, where it can be acted on.
-			List<SidePanelViewModel.CaDetail> route = new ArrayList<>();
-			for (SidePanelViewModel.PathRow step : path.steps)
-			{
-				if (step.detail != null)
-				{
-					route.add(step.detail);
-				}
-			}
-
-			// What the whole visible list is worth, so the total is readable without adding the cards up.
-			if (!route.isEmpty())
-			{
-				StringBuilder tot = new StringBuilder();
-				tot.append("<span style='color:" + CardKit.metaHex() + "'>").append(route.size())
-					.append(route.size() == 1 ? " CA · " : " CAs · ")
-					.append("</span><span style='color:")
-					.append(CombatAchievementsTheme.hex(CombatAchievementsTheme.POINTS))
-					.append("'>").append(path.shownPoints()).append(" pts</span>");
-				content.add(CardKit.fullWidth(CardKit.wrappedHtmlLabel(tot.toString(), CARD_TEXT_WIDTH)));
-				content.add(CardKit.spacer());
-			}
-			// Sits with the route it affects rather than in the control bar, and only exists once something
-			// is actually pinned or barred.
-			if (routeCustomised && onResetCustom != null)
-			{
-				content.add(backButton("Reset custom CAs", () -> {
-					if (onResetCustom != null)
-					{
-						onResetCustom.run();
-					}
-				}));
-				content.add(CardKit.spacer());
-			}
-			renderRouteGroups(route);
-
-			// "Not doing these": the CAs barred out of the route, collapsible like Unlock/Train next, each
-			// restorable on its own. Absent entirely when nothing is barred, so it costs nothing normally.
-			List<SidePanelViewModel.CaDetail> barred = path.barredCas;
-			if (barred != null && !barred.isEmpty())
-			{
-				content.add(CardKit.spacer());
-				content.add(collapseHeader("Not doing these", barredCollapsed,
-					() -> { barredCollapsed = !barredCollapsed; rebuild(); }));
-				if (!barredCollapsed)
-				{
-					content.add(CardKit.spacer());
-					for (SidePanelViewModel.CaDetail c : barred)
-					{
-						content.add(barredCard(c));
-						content.add(CardKit.spacer());
-					}
-					if (barred.size() > 1 && onClearBarred != null)
-					{
-						content.add(backButton("Restore all " + barred.size(), () -> {
-							if (onClearBarred != null)
-							{
-								onClearBarred.run();
-							}
-						}));
-					}
-				}
-				content.add(CardKit.spacer());
-			}
-		}
+		this.route = route;
 	}
 
-	/**
-	 * Renders the route clustered by boss so the same boss's tasks sit together (one trip), with the groups
-	 * ordered by their quickest task. A boss with two or more tasks gets a header.
-	 */
-	private void renderRouteGroups(List<SidePanelViewModel.CaDetail> route)
+	public Sort sort()
 	{
-		LinkedHashMap<String, List<SidePanelViewModel.CaDetail>> byBoss = new LinkedHashMap<>();
-		Set<Integer> seen = new HashSet<>();
-		for (SidePanelViewModel.CaDetail c : route)
-		{
-			// A Grandmaster (complete-all) route can list a CA as both a step and a locked CA — dedupe
-			// by id (keep the first, the doable step) so it is not rendered twice or double-counted.
-			if (!seen.add(c.id))
-			{
-				continue;
-			}
-			// No-boss tasks stay solo (unique key); real bosses cluster (case-insensitive).
-			String key = c.monster.isEmpty() ? ("solo:" + c.id) : c.monster.toLowerCase(Locale.ROOT);
-			byBoss.computeIfAbsent(key, k -> new ArrayList<>()).add(c);
-		}
-		// Groups keep the order the solver put their first task in, which already accounts for how ready the
-		// player is. Sorting groups by raw time instead let one quick outlier drag a whole boss forward —
-		// Bryophyta led the route off the back of "Quick Cutter" (kill a growthling with an axe) while its
-		// other six tasks want 50 combat.
-		Map<String, Integer> firstSeen = new LinkedHashMap<>();
-		int order = 0;
-		for (SidePanelViewModel.CaDetail c : route)
-		{
-			String key = c.monster.isEmpty() ? ("solo:" + c.id) : c.monster.toLowerCase(Locale.ROOT);
-			firstSeen.putIfAbsent(key, order++);
-		}
-		List<Map.Entry<String, List<SidePanelViewModel.CaDetail>>> entries =
-			new ArrayList<>(byBoss.entrySet());
-		for (Map.Entry<String, List<SidePanelViewModel.CaDetail>> e : entries)
-		{
-			e.getValue().sort(Comparator.comparingInt(SidePanelViewModel.CaDetail::totalMinutes)
-				.thenComparingInt(c -> -c.points));
-		}
-		entries.sort(Comparator.comparingInt(e -> firstSeen.getOrDefault(e.getKey(), Integer.MAX_VALUE)));
-		List<List<SidePanelViewModel.CaDetail>> groups = new ArrayList<>();
-		for (Map.Entry<String, List<SidePanelViewModel.CaDetail>> e : entries)
-		{
-			groups.add(e.getValue());
-		}
-		for (List<SidePanelViewModel.CaDetail> g : groups)
-		{
-			SidePanelViewModel.CaDetail first = g.get(0);
-			// Every real boss gets a header, even a single-task one: a lone card sandwiched between two
-			// headed clusters used to read as if it belonged to the cluster above it.
-			boolean grouped = !first.monster.isEmpty();
-			if (grouped)
-			{
-				content.add(routeGroupHeader(first.monster, g.size()));
-			}
-			for (SidePanelViewModel.CaDetail c : g)
-			{
-				content.add(routeCaCard(c, grouped));
-				content.add(CardKit.spacer());
-			}
-		}
+		return sort;
 	}
 
-	/** A small boss header for a route cluster: "General Graardor · 3 tasks". */
-	private JPanel routeGroupHeader(String boss, int count)
+	public long shuffleSeed()
 	{
-		// Just the boss name: the cards beneath it already show how many there are, and keeping it short
-		// avoids the clipping a longer label hit ("Deranged Archaeologist · 2 tasks" cut off mid-word —
-		// Swing sizes an HTML label from its own preferred width, so a body-width wrap doesn't rescue it).
-		JLabel label = new JLabel(CardKit.escape(boss));
-		label.setFont(FontManager.getRunescapeBoldFont());
-		label.setForeground(CombatAchievementsTheme.HEADER_GOLD);
-
-		JPanel row = new JPanel(new BorderLayout());
-		row.setOpaque(false);
-		row.setBorder(BorderFactory.createEmptyBorder(6, 0, 2, 0));
-		row.add(label, BorderLayout.CENTER);
-
-		// Clicking the boss name opens that boss, so a route group is a way in to everything else there.
-		// Formatting is untouched — only a hand cursor and a hover tint mark it as clickable — and it is
-		// only wired up when the boss actually has a page, so it can never be a dead click.
-		if (bossExists(boss))
-		{
-			Runnable openBoss = () -> {
-				route = route.toBoss(boss);
-				buildModeBar();
-				rebuild();
-			};
-			CardKit.addForegroundHover(label, CombatAchievementsTheme.HEADER_GOLD, CombatAchievementsTheme.NAME);
-			// The listener has to go on the LABEL as well as the row. AWT does not bubble mouse events the
-			// way the DOM does: a component with any listener of its own consumes them, and the hover tint
-			// above gives the label one — so a click on the name never reached a row-only handler.
-			CardKit.onClick(label, openBoss);
-			CardKit.onClick(row, openBoss);
-		}
-		return CardKit.fullWidth(row);
+		return shuffleSeed;
 	}
 
-	private JPanel routeCaCard(SidePanelViewModel.CaDetail c, boolean grouped)
+	public int tripOverheadMinutes()
 	{
-		final int textWidth = onBarTask != null ? ROUTE_TEXT_WIDTH - BAR_BUTTON_WIDTH : ROUTE_TEXT_WIDTH;
-		JPanel card = new JPanel(new BorderLayout());
-		card.setBackground(ColorScheme.DARK_GRAY_COLOR);
-		Color accent = c.doableNow ? CombatAchievementsTheme.NAME : CombatAchievementsTheme.NEGATIVE;
-		card.setBorder(BorderFactory.createCompoundBorder(
-			BorderFactory.createMatteBorder(0, 3, 0, 0, accent),
-			BorderFactory.createEmptyBorder(5, 7, 5, 7)));
-		StringBuilder sb = new StringBuilder("<html><body style='width:" + textWidth + "px'>");
-		sb.append("<span style='color:").append(CombatAchievementsTheme.hex(accent))
-			.append("'><b>").append(CardKit.escape(c.name)).append("</b></span>");
-		sb.append("<br><span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.POINTS))
-			.append("'>").append(c.points).append(" pts</span>");
-		if (c.difficulty > 0)
-		{
-			sb.append(" <span style='color:" + CardKit.metaHex() + "'>· </span><span style='color:")
-				.append(CombatAchievementsTheme.hex(CardKit.difficultyColor(c.difficulty)))
-				.append("'>difficulty ").append(c.difficulty).append("</span>");
-		}
-		// Time estimates are intentionally not shown — the engine still uses them for ordering.
-		// When not under a boss header, name the boss so a solo route step still tells you where to go.
-		if (!grouped && !c.monster.isEmpty())
-		{
-			sb.append("<br><span style='color:" + CardKit.metaHex() + "'>").append(CardKit.escape(c.monster)).append("</span>");
-		}
-		if (!c.doableNow && !c.lockReason.isEmpty())
-		{
-			sb.append("<br><span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.NEGATIVE))
-				.append("'>").append(CardKit.escape(c.lockReason)).append("</span>");
-		}
-		sb.append("</body></html>");
-		JLabel routeLabel = new JLabel(sb.toString());
-		// The HTML body width only drives WRAPPING; the label still reports a wider preferred size,
-		// which pushed the card past the panel and clipped the "-" clean off the right edge.
-		Dimension routePref = routeLabel.getPreferredSize();
-		Dimension capped = new Dimension(Math.min(routePref.width, textWidth), routePref.height);
-		routeLabel.setPreferredSize(capped);
-		routeLabel.setMaximumSize(capped);
-		card.add(routeLabel, BorderLayout.CENTER);
-		// "Not doing that one" — bars the task so the solver closes the gap with the next best instead.
-		if (onBarTask != null)
-		{
-			card.add(barButton(c), BorderLayout.EAST);
-		}
-		CardKit.addHover(card, ColorScheme.DARK_GRAY_COLOR, ColorScheme.DARK_GRAY_HOVER_COLOR);
-		CardKit.onClick(card, () -> {
-			route = route.withCa(c);
-			rebuild();
-		});
-		CardKit.fullWidth(card);
-		card.setMaximumSize(new Dimension(ROUTE_CARD_MAX_WIDTH, card.getPreferredSize().height));
-		return card;
+		return tripOverheadMinutes;
 	}
 
-	/**
-	 * A barred CA, listed under "Not doing these". Same card shape as the route, with a "+" that puts this
-	 * one back in the running instead of the "-" that took it out.
-	 */
-	private JPanel barredCard(SidePanelViewModel.CaDetail c)
+	public double bossTimeWeight()
 	{
-		JPanel card = new JPanel(new BorderLayout());
-		card.setBackground(ColorScheme.DARK_GRAY_COLOR);
-		card.setBorder(BorderFactory.createCompoundBorder(
-			BorderFactory.createMatteBorder(0, 3, 0, 0, CombatAchievementsTheme.LOCKED),
-			BorderFactory.createEmptyBorder(5, 7, 5, 7)));
-
-		int textWidth = ROUTE_TEXT_WIDTH - BAR_BUTTON_WIDTH;
-		StringBuilder sb = new StringBuilder("<html><body style='width:" + textWidth + "px'>");
-		sb.append("<span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.LOCKED))
-			.append("'><b>").append(CardKit.escape(c.name)).append("</b></span>");
-		sb.append("<br><span style='color:" + CardKit.metaHex() + "'>").append(c.points)
-			.append(c.points == 1 ? " pt" : " pts");
-		if (!c.monster.isEmpty())
-		{
-			sb.append(" · ").append(CardKit.escape(c.monster));
-		}
-		sb.append("</span></body></html>");
-		JLabel label = new JLabel(sb.toString());
-		Dimension pref = label.getPreferredSize();
-		Dimension capped = new Dimension(Math.min(pref.width, textWidth), pref.height);
-		label.setPreferredSize(capped);
-		label.setMaximumSize(capped);
-		card.add(label, BorderLayout.CENTER);
-
-		if (onUnbarTask != null)
-		{
-			JButton restore = new JButton("+");
-			// Matches the route card's "-" in weight and size: they are a pair, and a small "+" against a
-			// bold "-" reads as two unrelated controls.
-			restore.setFont(FontManager.getRunescapeBoldFont());
-			restore.setToolTipText("Put " + c.name + " back in the route");
-			restore.setFocusPainted(false);
-			restore.setBorderPainted(false);
-			restore.setContentAreaFilled(false);
-			restore.setOpaque(false);
-			restore.setForeground(CombatAchievementsTheme.POSITIVE);
-			CardKit.addForegroundHover(restore, CombatAchievementsTheme.POSITIVE,
-				CombatAchievementsTheme.NAME);
-			restore.setBorder(BorderFactory.createEmptyBorder(0, 4, 0, 0));
-			restore.setPreferredSize(new Dimension(BAR_BUTTON_WIDTH, 18));
-			restore.setCursor(java.awt.Cursor.getPredefinedCursor(java.awt.Cursor.HAND_CURSOR));
-			restore.addActionListener(e -> {
-				if (onUnbarTask != null)
-				{
-					onUnbarTask.accept(c.id);
-				}
-			});
-			card.add(restore, BorderLayout.EAST);
-		}
-		CardKit.addHover(card, ColorScheme.DARK_GRAY_COLOR, ColorScheme.DARK_GRAY_HOVER_COLOR);
-		CardKit.onClick(card, () -> {
-			route = route.withCa(c);
-			rebuild();
-		});
-		CardKit.fullWidth(card);
-		card.setMaximumSize(new Dimension(ROUTE_CARD_MAX_WIDTH, card.getPreferredSize().height));
-		return card;
+		return bossTimeWeight;
 	}
 
-	/**
-	 * The small "−" on a route card. Kept visually quiet so it never competes with the task name, and it
-	 * consumes its own click so barring a task cannot also open its detail.
-	 */
-	private JButton barButton(SidePanelViewModel.CaDetail c)
+	public boolean routeCustomised()
 	{
-		// Plain ASCII "-": the RuneScape font does not carry U+2212, which rendered as nothing.
-		JButton bar = new JButton("-");
-		// Bigger than the card text and tinted toward the theme's negative, so it reads as a remove
-		// control at a glance. Muted rather than full red at rest - it is an option, not a warning - and
-		// it comes up to the full negative on hover.
-		bar.setFont(FontManager.getRunescapeBoldFont());
-		bar.setToolTipText("Don't show " + c.name + " in the route");
-		bar.setFocusPainted(false);
-		bar.setBorderPainted(false);
-		bar.setContentAreaFilled(false);
-		bar.setOpaque(false);
-		Color barIdle = blend(CombatAchievementsTheme.NEUTRAL_META, CombatAchievementsTheme.NEGATIVE, 0.72);
-		bar.setForeground(barIdle);
-		CardKit.addForegroundHover(bar, barIdle, CombatAchievementsTheme.NEGATIVE);
-		bar.setPreferredSize(new Dimension(BAR_BUTTON_WIDTH, 18));
-		bar.setMargin(new Insets(0, 4, 0, 0));
-		bar.setBorder(BorderFactory.createEmptyBorder(0, 4, 0, 0));
-		bar.setCursor(java.awt.Cursor.getPredefinedCursor(java.awt.Cursor.HAND_CURSOR));
-		bar.addActionListener(e -> {
-			if (onBarTask != null)
-			{
-				onBarTask.accept(c.id);
-			}
-		});
-		return bar;
+		return routeCustomised;
+	}
+
+	// The collapse/expand flags stay owned here (they must survive a page being torn down and re-rendered
+	// every rebuild); the pages read and write them through these.
+
+	public boolean unlocksCollapsed()
+	{
+		return unlocksCollapsed;
+	}
+
+	public void setUnlocksCollapsed(boolean collapsed)
+	{
+		this.unlocksCollapsed = collapsed;
+	}
+
+	public boolean trainingsCollapsed()
+	{
+		return trainingsCollapsed;
+	}
+
+	public void setTrainingsCollapsed(boolean collapsed)
+	{
+		this.trainingsCollapsed = collapsed;
+	}
+
+	public boolean barredCollapsed()
+	{
+		return barredCollapsed;
+	}
+
+	public boolean completedCollapsed()
+	{
+		return completedCollapsed;
+	}
+
+	public boolean doableCollapsed()
+	{
+		return doableCollapsed;
+	}
+
+	public void setDoableCollapsed(boolean collapsed)
+	{
+		this.doableCollapsed = collapsed;
+	}
+
+	public boolean trainFirstCollapsed()
+	{
+		return trainFirstCollapsed;
+	}
+
+	public void setTrainFirstCollapsed(boolean collapsed)
+	{
+		this.trainFirstCollapsed = collapsed;
+	}
+
+	public boolean lockedCollapsed()
+	{
+		return lockedCollapsed;
+	}
+
+	public void setLockedCollapsed(boolean collapsed)
+	{
+		this.lockedCollapsed = collapsed;
+	}
+
+	public boolean howToExpanded()
+	{
+		return howToExpanded;
+	}
+
+	public void setHowToExpanded(boolean expanded)
+	{
+		this.howToExpanded = expanded;
+	}
+
+	public boolean reqsExpanded()
+	{
+		return reqsExpanded;
+	}
+
+	public void setReqsExpanded(boolean expanded)
+	{
+		this.reqsExpanded = expanded;
+	}
+
+	public boolean unlockPrereqsExpanded()
+	{
+		return unlockPrereqsExpanded;
+	}
+
+	public void setUnlockPrereqsExpanded(boolean expanded)
+	{
+		this.unlockPrereqsExpanded = expanded;
+	}
+
+	public boolean unlockStatsExpanded()
+	{
+		return unlockStatsExpanded;
+	}
+
+	public void setUnlockStatsExpanded(boolean expanded)
+	{
+		this.unlockStatsExpanded = expanded;
+	}
+
+	/** The boss groups currently open on the quest page (mutable — the pages toggle membership). */
+	public Set<String> expandedUnlockBosses()
+	{
+		return expandedUnlockBosses;
+	}
+
+	// The click handlers the plugin wired in; null when a control should not exist.
+
+	public Consumer<Integer> onBarTask()
+	{
+		return onBarTask;
+	}
+
+	public Consumer<Integer> onUnbarTask()
+	{
+		return onUnbarTask;
+	}
+
+	public Consumer<Integer> onAddToRoute()
+	{
+		return onAddToRoute;
+	}
+
+	public Consumer<Integer> onRemoveFromRoute()
+	{
+		return onRemoveFromRoute;
+	}
+
+	public Runnable onClearBarred()
+	{
+		return onClearBarred;
+	}
+
+	public Runnable onResetCustom()
+	{
+		return onResetCustom;
+	}
+
+	public Consumer<String> onOpenQuestHelper()
+	{
+		return onOpenQuestHelper;
 	}
 
 	/** A bold gold section header that toggles a collapsed section when clicked (▸ collapsed / ▾ open). */
-	private JPanel collapseHeader(String text, boolean collapsed, Runnable onToggle)
+	public JPanel collapseHeader(String text, boolean collapsed, Runnable onToggle)
 	{
 		JPanel row = new JPanel(new BorderLayout());
 		row.setOpaque(false);
@@ -1906,466 +1399,8 @@ public class CombatAchievementsPanel extends PluginPanel
 		return CardKit.fullWidth(row);
 	}
 
-	/** A "train X to N" goal: what it opens and roughly how long, styled as a quieter sibling of unlockCard. */
-	private JPanel trainingCard(SidePanelViewModel.TrainingView t)
-	{
-		JPanel card = new JPanel(new BorderLayout());
-		card.setBackground(ColorScheme.DARK_GRAY_COLOR);
-		card.setBorder(BorderFactory.createCompoundBorder(
-			BorderFactory.createMatteBorder(0, 3, 0, 0, CombatAchievementsTheme.ACCENT),
-			BorderFactory.createEmptyBorder(5, 7, 5, 7)));
-
-		StringBuilder sb = new StringBuilder();
-		sb.append("<span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.HEADER_GOLD))
-			.append("'><b>").append(CardKit.escape(t.label)).append("</b></span>");
-		sb.append("<br><span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.POSITIVE))
-			.append("'>").append(t.toward ? "toward " : "opens ").append(t.unlockedTaskCount)
-			.append(t.unlockedTaskCount == 1 ? " CA (" : " CAs (")
-			.append(t.unlockedPoints).append(t.unlockedPoints == 1 ? " pt)</span>" : " pts)</span>");
-		if (t.unlocksHint != null && !t.unlocksHint.isEmpty())
-		{
-			sb.append("<br><span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.DESC))
-				.append("'>mostly ").append(CardKit.escape(t.unlocksHint)).append("</span>");
-		}
-		card.add(CardKit.wrappedHtmlLabel(sb.toString(), CARD_TEXT_WIDTH), BorderLayout.CENTER);
-		CardKit.addHover(card, ColorScheme.DARK_GRAY_COLOR, ColorScheme.DARK_GRAY_HOVER_COLOR);
-		return CardKit.fullWidth(card);
-	}
-
-	/** The unlock card's text (inner html, for {@link CardKit#wrappedHtmlLabel}): quest, difficulty, prize,
-	 *  prerequisites, unmet skills. Shared with the quest drill-in header so the two can never drift. */
-	private String unlockCardHtml(SidePanelViewModel.UnlockView u)
-	{
-		StringBuilder sb = new StringBuilder();
-		sb.append("<span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.HEADER_GOLD))
-			.append("'><b>").append(CardKit.escape(u.questName)).append("</b></span>");
-		if (u.difficulty != null && !u.difficulty.isEmpty())
-		{
-			sb.append(" <span style='color:" + CardKit.metaHex() + "'>· ").append(CardKit.escape(u.difficulty)).append("</span>");
-		}
-		sb.append("<br><span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.POSITIVE))
-			.append("'>unlocks ").append(u.unlockedTaskCount).append(" CAs (").append(u.unlockedPoints)
-			.append(" pts)</span>");
-		// One prerequisite gets named; a chain becomes a count — A Kingdom Divided's seven-quest
-		// comma wall made the card unreadable. The drill-in page lists the chain properly.
-		if (!u.prerequisiteList.isEmpty())
-		{
-			String first = u.prerequisiteList.size() == 1
-				? "first: " + u.prerequisiteList.get(0)
-				: u.prerequisiteList.size() + " quests first";
-			sb.append("<br><span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.DESC))
-				.append("'>").append(CardKit.escape(first)).append("</span>");
-		}
-		// Same rule as the quest chain: one stat gets named, several become a count.
-		if (!u.unmetSkillList.isEmpty())
-		{
-			String train = u.unmetSkillList.size() == 1
-				? "train: " + trainGoal(u.unmetSkillList.get(0))
-				: u.unmetSkillList.size() + " stats to train";
-			sb.append("<br><span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.LOCKED))
-				.append("'>").append(CardKit.escape(train)).append("</span>");
-		}
-		return sb.toString();
-	}
-
-	/** "Magic 3→75" → "Magic 75": on a card only the goal matters, the drill-in shows the journey. */
-	private static String trainGoal(String raw)
-	{
-		int arrow = raw.indexOf('→');
-		if (arrow < 0)
-		{
-			return raw;
-		}
-		String head = raw.substring(0, arrow).trim();
-		int lastSpace = head.lastIndexOf(' ');
-		String skill = lastSpace > 0 ? head.substring(0, lastSpace) : head;
-		return skill + " " + raw.substring(arrow + 1).trim();
-	}
-
-	private JPanel unlockCard(SidePanelViewModel.UnlockView u)
-	{
-		JPanel card = new JPanel(new BorderLayout());
-		card.setBackground(ColorScheme.DARK_GRAY_COLOR);
-		card.setBorder(BorderFactory.createCompoundBorder(
-			BorderFactory.createMatteBorder(0, 3, 0, 0, CombatAchievementsTheme.HEADER_GOLD),
-			BorderFactory.createEmptyBorder(5, 7, 5, 7)));
-		card.add(CardKit.wrappedHtmlLabel(unlockCardHtml(u), CARD_TEXT_WIDTH), BorderLayout.CENTER);
-		CardKit.addHover(card, ColorScheme.DARK_GRAY_COLOR, ColorScheme.DARK_GRAY_HOVER_COLOR);
-		if (!u.unlockedCas.isEmpty())
-		{
-			CardKit.onClick(card, () -> {
-				route = route.withUnlock(u);
-				expandedUnlockBosses.clear();
-				unlockPrereqsExpanded = false;
-				unlockStatsExpanded = false;
-				rebuild();
-			});
-		}
-		return CardKit.fullWidth(card);
-	}
-
-	/** The quest-unlock drill-in: the quest's headline, then the CAs it opens, each clickable. */
-	private void renderUnlockDetail(SidePanelViewModel.UnlockView u)
-	{
-		content.add(backButton("← Back", () -> {
-			route = route.clearUnlock();
-			rebuild();
-		}));
-		content.add(CardKit.spacer());
-
-		// The same card the Route shows, minus the click: an html JLabel added bare to the BoxLayout
-		// clips long lines at the panel edge (its CSS body width is unreliable), while the card's
-		// BorderLayout demonstrably wraps this exact content in the Route list.
-		JPanel header = new JPanel(new BorderLayout());
-		header.setBackground(ColorScheme.DARK_GRAY_COLOR);
-		header.setBorder(BorderFactory.createCompoundBorder(
-			BorderFactory.createMatteBorder(0, 3, 0, 0, CombatAchievementsTheme.HEADER_GOLD),
-			BorderFactory.createEmptyBorder(5, 7, 5, 7)));
-		header.add(CardKit.wrappedHtmlLabel(unlockCardHtml(u), CARD_TEXT_WIDTH), BorderLayout.CENTER);
-		content.add(CardKit.fullWidth(header));
-		content.add(CardKit.spacer());
-
-		JPanel links = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 1));
-		links.setOpaque(false);
-		links.add(CardKit.linkButton("Wiki", questWikiUrl(u.questName)));
-		if (onOpenQuestHelper != null)
-		{
-			links.add(CardKit.actionButton("Quest Helper", () -> onOpenQuestHelper.accept(u.questName)));
-		}
-		content.add(CardKit.fullWidth(links));
-		content.add(CardKit.spacer());
-
-		// The prerequisite chain as its own foldable section, one quest per line in chain order —
-		// prose on the card turned into a wall for the long questlines.
-		if (!u.prerequisiteList.isEmpty())
-		{
-			content.add(collapseHeader("Quests first · " + u.prerequisiteList.size(),
-				!unlockPrereqsExpanded, () -> { unlockPrereqsExpanded = !unlockPrereqsExpanded; rebuild(); }));
-			if (unlockPrereqsExpanded)
-			{
-				content.add(CardKit.spacer());
-				for (String quest : u.prerequisiteList)
-				{
-					JLabel row = new JLabel(CardKit.escape(quest));
-					row.setFont(FontManager.getRunescapeSmallFont());
-					row.setForeground(ColorScheme.LIGHT_GRAY_COLOR);
-					row.setBorder(BorderFactory.createEmptyBorder(1, 10, 1, 0));
-					content.add(CardKit.fullWidth(row));
-				}
-			}
-			content.add(CardKit.spacer());
-		}
-
-		// The chain's unmet stats, same shape as the quest list: a count on the card, the detail here.
-		if (!u.unmetSkillList.isEmpty())
-		{
-			content.add(collapseHeader("Stats first · " + u.unmetSkillList.size(),
-				!unlockStatsExpanded, () -> { unlockStatsExpanded = !unlockStatsExpanded; rebuild(); }));
-			if (unlockStatsExpanded)
-			{
-				content.add(CardKit.spacer());
-				for (String stat : u.unmetSkillList)
-				{
-					JLabel row = new JLabel(CardKit.escape(stat.replace("→", " → ")));
-					row.setFont(FontManager.getRunescapeSmallFont());
-					row.setForeground(ColorScheme.LIGHT_GRAY_COLOR);
-					row.setBorder(BorderFactory.createEmptyBorder(1, 10, 1, 0));
-					content.add(CardKit.fullWidth(row));
-				}
-			}
-			content.add(CardKit.spacer());
-		}
-
-		// Grouped by boss, same as the Route: each boss header is a way in to its page, with the
-		// prize at that boss beside it. Group order follows the quickest-first CA order.
-		content.add(sectionHeader("Unlocks"));
-		content.add(CardKit.spacer());
-		LinkedHashMap<String, List<SidePanelViewModel.CaDetail>> byBoss = new LinkedHashMap<>();
-		for (SidePanelViewModel.CaDetail c : u.unlockedCas)
-		{
-			byBoss.computeIfAbsent(c.monster.isEmpty() ? "Other" : c.monster,
-				k -> new ArrayList<>()).add(c);
-		}
-		for (Map.Entry<String, List<SidePanelViewModel.CaDetail>> e : byBoss.entrySet())
-		{
-			int pts = 0;
-			for (SidePanelViewModel.CaDetail c : e.getValue())
-			{
-				pts += c.points;
-			}
-			boolean expanded = expandedUnlockBosses.contains(e.getKey());
-			content.add(unlockBossHeader(e.getKey(), e.getValue().size(), pts, expanded));
-			content.add(CardKit.spacer());
-			if (expanded)
-			{
-				for (SidePanelViewModel.CaDetail c : e.getValue())
-				{
-					content.add(unlockCaCard(c));
-					content.add(CardKit.spacer());
-				}
-			}
-		}
-	}
-
-	/** The wiki page for a quest, derived from its name the same way task wiki urls are built. */
-	private static String questWikiUrl(String questName)
-	{
-		return "https://oldschool.runescape.wiki/w/" + questName.replace(' ', '_');
-	}
-
-	/**
-	 * A boss group header on the quest page: an arrow that shows/hides the group's CAs (all groups
-	 * start closed), the boss name — clickable through to the boss page when it has one — and the
-	 * group's share of the prize.
-	 */
-	private JPanel unlockBossHeader(String boss, int count, int points, boolean expanded)
-	{
-		JLabel arrow = new JLabel(expanded ? "▾ " : "▸ ");
-		arrow.setFont(FontManager.getRunescapeBoldFont());
-		arrow.setForeground(CombatAchievementsTheme.HEADER_GOLD);
-
-		JLabel label = new JLabel(CardKit.escape(boss));
-		label.setFont(FontManager.getRunescapeBoldFont());
-		label.setForeground(CombatAchievementsTheme.HEADER_GOLD);
-
-		JLabel meta = new JLabel(count + (count == 1 ? " CA · " : " CAs · ") + points + " pts");
-		meta.setFont(FontManager.getRunescapeSmallFont());
-		meta.setForeground(ColorScheme.LIGHT_GRAY_COLOR);
-
-		// The prize goes UNDER the name, not beside it: three "Tombs of Am…" rows squeezed against
-		// an inline count were indistinguishable, and the boss name is the part that must survive.
-		JPanel textCol = new JPanel();
-		textCol.setOpaque(false);
-		textCol.setLayout(new BoxLayout(textCol, BoxLayout.Y_AXIS));
-		label.setAlignmentX(Component.LEFT_ALIGNMENT);
-		meta.setAlignmentX(Component.LEFT_ALIGNMENT);
-		textCol.add(label);
-		textCol.add(meta);
-
-		JPanel row = new JPanel(new BorderLayout(4, 0));
-		row.setOpaque(false);
-		row.setBorder(BorderFactory.createEmptyBorder(6, 0, 2, 0));
-		row.add(arrow, BorderLayout.WEST);
-		row.add(textCol, BorderLayout.CENTER);
-		// Cap the row's preferred width or a long name widens the whole content column past the panel
-		// (the widest-child trap; same cap as the route cards). The name still ellipsizes past this.
-		row.setPreferredSize(new Dimension(ROUTE_TEXT_WIDTH, row.getPreferredSize().height));
-
-		Runnable toggle = () -> {
-			if (!expandedUnlockBosses.remove(boss))
-			{
-				expandedUnlockBosses.add(boss);
-			}
-			rebuild();
-		};
-		// The row (and the arrow) toggle the group; the boss NAME jumps to the boss page instead,
-		// when there is one. AWT does not bubble mouse events, so each part needs its own handler —
-		// the name's hover listener alone would swallow clicks meant for the row.
-		CardKit.onClick(arrow, toggle);
-		CardKit.onClick(row, toggle);
-		if (bossExists(boss))
-		{
-			Runnable openBoss = () -> {
-				route = PanelRoute.of(PanelMode.BOSSES).withBoss(boss);
-				buildModeBar();
-				rebuild();
-			};
-			CardKit.addForegroundHover(label, CombatAchievementsTheme.HEADER_GOLD, CombatAchievementsTheme.NAME);
-			CardKit.onClick(label, openBoss);
-		}
-		else
-		{
-			CardKit.onClick(label, toggle);
-		}
-		return CardKit.fullWidth(row);
-	}
-
-	/** A CA the quest would open, on the quest's own page — grouped under its boss header, so no
-	 *  per-card monster or "needs <quest>" line. */
-	private JPanel unlockCaCard(SidePanelViewModel.CaDetail c)
-	{
-		JPanel card = new JPanel(new BorderLayout());
-		card.setBackground(ColorScheme.DARK_GRAY_COLOR);
-		card.setBorder(BorderFactory.createCompoundBorder(
-			BorderFactory.createMatteBorder(0, 3, 0, 0, CombatAchievementsTheme.NAME),
-			BorderFactory.createEmptyBorder(5, 7, 5, 7)));
-
-		StringBuilder sb = new StringBuilder();
-		sb.append("<span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.NAME))
-			.append("'><b>").append(CardKit.escape(c.name)).append("</b></span>");
-		sb.append("<br><span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.POINTS))
-			.append("'>").append(c.points).append(" pts</span>");
-		if (c.difficulty > 0)
-		{
-			sb.append(" <span style='color:" + CardKit.metaHex() + "'>· </span><span style='color:")
-				.append(CombatAchievementsTheme.hex(CardKit.difficultyColor(c.difficulty)))
-				.append("'>difficulty ").append(c.difficulty).append("</span>");
-		}
-		card.add(CardKit.wrappedHtmlLabel(sb.toString(), CARD_TEXT_WIDTH), BorderLayout.CENTER);
-		CardKit.addHover(card, ColorScheme.DARK_GRAY_COLOR, ColorScheme.DARK_GRAY_HOVER_COLOR);
-		CardKit.onClick(card, () -> {
-			route = route.withCa(c);
-			rebuild();
-		});
-		return CardKit.fullWidth(card);
-	}
-
-	// ---- CA detail & Boss detail -------------------------------------------------------------------
-
-	private void renderCaDetail(SidePanelViewModel.CaDetail d)
-	{
-		content.add(backButton("← Back", () -> {
-			route = route.clearCa();
-			rebuild();
-		}));
-		content.add(CardKit.spacer());
-
-		StringBuilder crumb = new StringBuilder();
-		if (!d.monster.isEmpty())
-		{
-			crumb.append(CardKit.escape(d.monster)).append(" · ");
-		}
-		crumb.append(CardKit.escape(d.tierName)).append(" · ").append(d.points).append(" pts");
-		if (!d.type.isEmpty())
-		{
-			crumb.append(" · ").append(CardKit.escape(d.type));
-		}
-
-		StringBuilder sb = new StringBuilder();
-		sb.append("<span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.NAME))
-			.append("'><b style='font-size:11px'>").append(CardKit.escape(d.name)).append("</b></span>");
-		sb.append("<br><span style='color:" + CardKit.metaHex() + "'>").append(crumb).append("</span>");
-		if (!d.description.isEmpty())
-		{
-			sb.append("<br><span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.DESC))
-				.append("'>").append(CardKit.escape(d.description)).append("</span>");
-		}
-		if (!d.doableNow && !d.lockReason.isEmpty())
-		{
-			sb.append("<br><span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.NEGATIVE))
-				.append("'>").append(CardKit.escape(d.lockReason)).append("</span>");
-		}
-		content.add(CardKit.fullWidth(CardKit.wrappedHtmlLabel(sb.toString(), CARD_TEXT_WIDTH)));
-		content.add(CardKit.spacer());
-
-		// Jump to the boss this CA is at, to see everything else you could knock out on the same trip.
-		// Only offered when that boss actually has a page in the directory, so it can never be a dead end.
-		if (!d.monster.isEmpty() && bossExists(d.monster))
-		{
-			String label = d.monster.length() > 18 ? d.monster.substring(0, 17) + "…" : d.monster;
-			content.add(backButton("View " + label + " →", () -> {
-				route = route.toBoss(d.monster);
-				buildModeBar();
-				rebuild();
-			}));
-			content.add(CardKit.spacer());
-		}
-
-		if (!d.requirements.isEmpty())
-		{
-			content.add(collapseHeader("Requirements", !reqsExpanded,
-				() -> { reqsExpanded = !reqsExpanded; rebuild(); }));
-			if (reqsExpanded)
-			{
-				content.add(CardKit.spacer());
-				for (SidePanelViewModel.CaReq r : d.requirements)
-				{
-					content.add(reqRow(r));
-				}
-			}
-			content.add(CardKit.spacer());
-		}
-
-		content.add(sectionHeader("Difficulty"));
-		double rating = displayedDifficulty(d);
-		StringBuilder diff = new StringBuilder();
-		diff.append("<span style='color:").append(CombatAchievementsTheme.hex(CardKit.difficultyColor(d.difficulty)))
-			.append("'>").append(String.format(Locale.ROOT, "%.1f", rating)).append(" / 10</span>");
-		if (d.bossDifficulty > 0)
-		{
-			diff.append("<br><span style='color:" + CardKit.metaHex() + "'>").append(CardKit.escape(d.monster)).append(" (boss ")
-				.append(d.bossDifficulty).append(")");
-			if (d.bump != 0 && !d.difficultyReason.isEmpty())
-			{
-				diff.append(" + ").append(CardKit.escape(d.difficultyReason))
-					.append(String.format(Locale.ROOT, " (+%.1f)", d.bump));
-			}
-			diff.append("</span>");
-		}
-		content.add(CardKit.fullWidth(CardKit.wrappedHtmlLabel(diff.toString(), CARD_TEXT_WIDTH)));
-		content.add(CardKit.spacer());
-
-
-		// Curated how-to (stats/setup/items/strategy) behind a collapsible arrow so the detail stays lean;
-		// the config option seeds whether it starts expanded.
-		boolean hasHowTo = !d.stats.isEmpty() || !d.setup.isEmpty() || !d.items.isEmpty()
-			|| !d.strategy.isEmpty();
-		if (hasHowTo)
-		{
-			content.add(collapseHeader("How to do it", !howToExpanded,
-				() -> { howToExpanded = !howToExpanded; rebuild(); }));
-			if (howToExpanded)
-			{
-				content.add(CardKit.spacer());
-				addDetailText("Recommended stats", d.stats);
-				addDetailText("Recommended setup", d.setup);
-				addDetailText("Items", d.items);
-				addDetailText("Strategy", d.strategy);
-			}
-			content.add(CardKit.spacer());
-		}
-
-		content.add(CardKit.fullWidth(linkRow(d.wikiUrl, d.guideUrl, d.curatedVideo, feedbackUrl(d))));
-	}
-
-	private void addDetailText(String header, String text)
-	{
-		if (text == null || text.isEmpty())
-		{
-			return;
-		}
-		content.add(sectionHeader(header));
-		// A JTextArea rather than an HTML JLabel: the label's body-width style is unreliable here — a long
-		// word ("thrownhammer") keeps the whole line intact and it clips at the panel edge. A word-wrapping
-		// text area reflows to its actual width every time, which is the whole point.
-		JTextArea body = new JTextArea(text);
-		body.setLineWrap(true);
-		body.setWrapStyleWord(true);
-		body.setEditable(false);
-		body.setFocusable(false);
-		body.setOpaque(false);
-		body.setBorder(null);
-		body.setFont(FontManager.getRunescapeSmallFont());
-		body.setForeground(CombatAchievementsTheme.DESC);
-		body.setAlignmentX(Component.LEFT_ALIGNMENT);
-		// A word-wrapping JTextArea reports a one-line preferred height until it knows its width, so under
-		// BoxLayout it would collapse to a single line. Fix the width first, then the reported height is the
-		// wrapped height; pin both so the layout gives it exactly that.
-		body.setSize(DETAIL_TEXT_WIDTH, Short.MAX_VALUE);
-		int wrappedHeight = body.getPreferredSize().height;
-		body.setPreferredSize(new Dimension(DETAIL_TEXT_WIDTH, wrappedHeight));
-		body.setMaximumSize(new Dimension(DETAIL_TEXT_WIDTH, wrappedHeight));
-		content.add(body);
-		content.add(CardKit.spacer());
-	}
-
-	private JLabel reqRow(SidePanelViewModel.CaReq r)
-	{
-		Color colour = r.met ? CombatAchievementsTheme.POSITIVE : CombatAchievementsTheme.NEGATIVE;
-		String mark = r.met ? "&#10003;" : "&#10007;"; // check / cross
-		StringBuilder sb = new StringBuilder("<span style='color:")
-			.append(CombatAchievementsTheme.hex(colour)).append("'>").append(mark).append(" ")
-			.append(CardKit.escape(r.label)).append("</span>");
-		if (!r.note.isEmpty())
-		{
-			sb.append(" <span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.NEGATIVE))
-				.append("'>— ").append(CardKit.escape(r.note)).append("</span>");
-		}
-		return CardKit.fullWidth(CardKit.wrappedHtmlLabel(sb.toString(), CARD_TEXT_WIDTH));
-	}
-
 	/** True when the boss directory has a page for this monster (so a "View boss" jump can't dead-end). */
-	private boolean bossExists(String monster)
+	public boolean bossExists(String monster)
 	{
 		for (SidePanelViewModel.BossRow b : model.bosses())
 		{
@@ -2377,273 +1412,7 @@ public class CombatAchievementsPanel extends PluginPanel
 		return false;
 	}
 
-	private void buildBossDetail(String monster)
-	{
-		content.add(backButton("← All bosses", () -> {
-			route = route.clearBoss();
-			rebuild();
-		}));
-		content.add(CardKit.spacer());
-
-		SidePanelViewModel.BossRow boss = null;
-		for (SidePanelViewModel.BossRow b : model.bosses())
-		{
-			if (monster.equals(b.monster))
-			{
-				boss = b;
-				break;
-			}
-		}
-		if (boss == null)
-		{
-			content.add(messageLabel("Boss not found."));
-			return;
-		}
-
-		StringBuilder head = new StringBuilder("<span style='color:")
-			.append(CombatAchievementsTheme.hex(CombatAchievementsTheme.NAME))
-			.append("'><b style='font-size:11px'>").append(CardKit.escape(boss.monster)).append("</b></span>");
-		if (boss.locked)
-		{
-			head.append("<br><span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.NEGATIVE))
-				.append("'>Locked — no doable CAs yet.</span>");
-		}
-		else
-		{
-			head.append("<br><span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.POINTS))
-				.append("'>").append(boss.projectedPoints).append(" pts available</span>")
-				.append(" <span style='color:" + CardKit.metaHex() + "'>· ").append(boss.doableCount)
-				.append(boss.doableCount == 1 ? " CA</span>" : " CAs</span>");
-		}
-		if (!boss.completedCas.isEmpty())
-		{
-			head.append("<br><span style='color:" + CardKit.metaHex() + "'>")
-				.append(boss.completedCas.size()).append(" of ").append(boss.totalCas())
-				.append(" done</span>");
-		}
-		content.add(CardKit.fullWidth(CardKit.wrappedHtmlLabel(head.toString(), CARD_TEXT_WIDTH)));
-		content.add(CardKit.spacer());
-
-		if (!boss.recommendedStats.isEmpty())
-		{
-			addDetailText("Recommended stats", boss.recommendedStats);
-		}
-
-		// "Doable" only means no hard gate blocks you, so a level-3 saw seven Barrows CAs it was 49-84
-		// levels short of, all reading as available. Split on the ready line: what you could go and do
-		// now, and below it what is ungated but out of reach. Nothing is hidden either way.
-		// Headings: "Doable now" / "Train first" / "Locked". The middle group was called "Not yet", which
-		// read as "not unlocked yet" — i.e. the Locked group below, the exact opposite of what it holds.
-		// The lesson: a heading describing the CONTENT ("not yet", "out of reach") always blurs into
-		// "locked", because from the task's side both mean "you can't have it". These two groups differ in
-		// what they are ABOUT — Locked is a gate on the content, this is your stats — so the heading names
-		// the fix instead, matching the Route's "Train next".
-		List<SidePanelViewModel.CaDetail> reachable = new ArrayList<>();
-		List<SidePanelViewModel.CaDetail> notYet = new ArrayList<>();
-		for (SidePanelViewModel.CaDetail d : boss.doable)
-		{
-			(d.withinReach ? reachable : notYet).add(d);
-		}
-		if (!reachable.isEmpty())
-		{
-			content.add(collapseHeader("Doable now (" + reachable.size() + ")", doableCollapsed,
-				() -> { doableCollapsed = !doableCollapsed; rebuild(); }));
-			if (!doableCollapsed)
-			{
-				content.add(CardKit.spacer());
-				for (SidePanelViewModel.CaDetail d : reachable)
-				{
-					content.add(caCard(d));
-					content.add(CardKit.spacer());
-				}
-			}
-		}
-		if (!notYet.isEmpty())
-		{
-			content.add(collapseHeader("Train first (" + notYet.size() + ")", trainFirstCollapsed,
-				() -> { trainFirstCollapsed = !trainFirstCollapsed; rebuild(); }));
-			if (!trainFirstCollapsed)
-			{
-				content.add(CardKit.spacer());
-				for (SidePanelViewModel.CaDetail d : notYet)
-				{
-					content.add(caCard(d));
-					content.add(CardKit.spacer());
-				}
-			}
-		}
-		if (!boss.lockedCas.isEmpty())
-		{
-			content.add(collapseHeader("Locked (" + boss.lockedCas.size() + ")", lockedCollapsed,
-				() -> { lockedCollapsed = !lockedCollapsed; rebuild(); }));
-			if (!lockedCollapsed)
-			{
-				content.add(CardKit.spacer());
-				for (SidePanelViewModel.CaDetail d : boss.lockedCas)
-				{
-					content.add(caCard(d));
-					content.add(CardKit.spacer());
-				}
-			}
-		}
-
-		// What you have already done here, collapsed by default so the boss page stays forward-looking.
-		if (!boss.completedCas.isEmpty())
-		{
-			content.add(CardKit.spacer());
-			content.add(collapseHeader("Completed (" + boss.completedCas.size() + ")", completedCollapsed,
-				() -> { completedCollapsed = !completedCollapsed; rebuild(); }));
-			if (!completedCollapsed)
-			{
-				content.add(CardKit.spacer());
-				for (SidePanelViewModel.CaDetail d : boss.completedCas)
-				{
-					content.add(completedCard(d));
-					content.add(CardKit.spacer());
-				}
-			}
-		}
-	}
-
-	/**
-	 * A completed CA at a boss: same shape as the other cards but greyed with a tick, so a glance down the
-	 * boss page separates "done" from "to do" without reading the text.
-	 */
-	private JPanel completedCard(SidePanelViewModel.CaDetail d)
-	{
-		JPanel card = new JPanel(new BorderLayout());
-		card.setBackground(ColorScheme.DARK_GRAY_COLOR);
-		card.setBorder(BorderFactory.createCompoundBorder(
-			BorderFactory.createMatteBorder(0, 3, 0, 0, CombatAchievementsTheme.POSITIVE),
-			BorderFactory.createEmptyBorder(5, 7, 5, 7)));
-
-		StringBuilder sb = new StringBuilder("<html><body style='width:166px'>");
-		sb.append("<span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.POSITIVE))
-			.append("'>&#10003; </span>");
-		sb.append("<span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.LOCKED))
-			.append("'><b>").append(CardKit.escape(d.name)).append("</b></span>");
-		sb.append("<br><span style='color:" + CardKit.metaHex() + "'>").append(d.points)
-			.append(d.points == 1 ? " pt" : " pts").append(" · ").append(CardKit.escape(d.tierName))
-			.append("</span>");
-		sb.append("</body></html>");
-		card.add(new JLabel(sb.toString()), BorderLayout.CENTER);
-		CardKit.addHover(card, ColorScheme.DARK_GRAY_COLOR, ColorScheme.DARK_GRAY_HOVER_COLOR);
-		CardKit.onClick(card, () -> {
-			route = route.withCa(d);
-			rebuild();
-		});
-		return CardKit.fullWidth(card);
-	}
-
-	/** A clickable CA row from a CaDetail — orange (doable) or red (locked) — opening the CA detail. */
-	/** A CA card for the boss detail — same layout as the CAs-list {@link #taskCard} for a consistent look. */
-	private JPanel caCard(SidePanelViewModel.CaDetail d)
-	{
-		boolean toggle = d.doableNow && (onAddToRoute != null || onRemoveFromRoute != null);
-		final int textWidth = toggle ? 166 - BAR_BUTTON_WIDTH : 166;
-		JPanel card = new JPanel(new BorderLayout());
-		card.setBackground(ColorScheme.DARK_GRAY_COLOR);
-		Color accent = d.doableNow ? CombatAchievementsTheme.NAME : CombatAchievementsTheme.LOCKED;
-		card.setBorder(BorderFactory.createCompoundBorder(
-			BorderFactory.createMatteBorder(0, 3, 0, 0, accent),
-			BorderFactory.createEmptyBorder(5, 7, 5, 7)));
-
-		StringBuilder sb = new StringBuilder();
-		sb.append("<span style='color:").append(CombatAchievementsTheme.hex(accent))
-			.append("'><b>").append(CardKit.escape(d.name)).append("</b></span>");
-		if (!d.doableNow)
-		{
-			String lock = d.lockReason == null || d.lockReason.isEmpty() ? "locked" : d.lockReason;
-			sb.append(" <span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.LOCKED))
-				.append("'>(").append(CardKit.escape(lock)).append(")</span>");
-		}
-		sb.append("<br><span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.DESC))
-			.append("'>").append(CardKit.escape(d.description)).append("</span>");
-		sb.append("<br><span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.POINTS))
-			.append("'>").append(d.points).append(" pts</span>")
-			.append(" <span style='color:" + CardKit.metaHex() + "'>· ").append(CardKit.escape(d.tierName)).append("</span>");
-		if (d.difficulty > 0)
-		{
-			sb.append(" <span style='color:" + CardKit.metaHex() + "'>· </span><span style='color:")
-				.append(CombatAchievementsTheme.hex(CardKit.difficultyColor(d.difficulty)))
-				.append("'>difficulty ").append(d.difficulty).append("</span>");
-		}
-		JLabel label = CardKit.wrappedHtmlLabel(sb.toString(), textWidth);
-		label.setBorder(BorderFactory.createEmptyBorder(0, 0, 3, 0));
-		// The border sits inside the pinned size, so grow the pin or it eats the text's height.
-		Dimension pinned = label.getPreferredSize();
-		Dimension withBorder = new Dimension(pinned.width, pinned.height + 3);
-		label.setPreferredSize(withBorder);
-		label.setMaximumSize(withBorder);
-		card.add(label, BorderLayout.CENTER);
-
-		card.add(linkRow(d.wikiUrl, d.guideUrl, d.curatedVideo), BorderLayout.SOUTH);
-		// "-" when this CA is already in the route, "+" when it is not, so a boss page doubles as a way to
-		// steer the route: take more of this boss, or drop the ones you would rather skip.
-		if (toggle)
-		{
-			card.add(routeToggle(d), BorderLayout.EAST);
-		}
-		CardKit.addHover(card, ColorScheme.DARK_GRAY_COLOR, ColorScheme.DARK_GRAY_HOVER_COLOR);
-		CardKit.onClick(card, () -> {
-			route = route.withCa(d);
-			rebuild();
-		});
-		CardKit.fullWidth(card);
-		card.setMaximumSize(new Dimension(ROUTE_CARD_MAX_WIDTH, card.getPreferredSize().height));
-		return card;
-	}
-
-	/** True when this CA is one of the Route's current steps. */
-	private boolean inRoute(int id)
-	{
-		if (model.path() == null)
-		{
-			return false;
-		}
-		for (SidePanelViewModel.PathRow r : model.path().steps)
-		{
-			if (r.id == id)
-			{
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/** The boss page's route control: "-" to drop a routed CA, "+" to pull one in. */
-	private JButton routeToggle(SidePanelViewModel.CaDetail d)
-	{
-		boolean routed = inRoute(d.id);
-		JButton b = new JButton(routed ? "-" : "+");
-		b.setFont(FontManager.getRunescapeBoldFont());
-		b.setToolTipText(routed
-			? "Remove " + d.name + " from the route"
-			: "Add " + d.name + " to the route");
-		b.setFocusPainted(false);
-		b.setBorderPainted(false);
-		b.setContentAreaFilled(false);
-		b.setOpaque(false);
-		Color idle = routed
-			? blend(CombatAchievementsTheme.NEUTRAL_META, CombatAchievementsTheme.NEGATIVE, 0.72)
-			: blend(CombatAchievementsTheme.NEUTRAL_META, CombatAchievementsTheme.POSITIVE, 0.72);
-		b.setForeground(idle);
-		CardKit.addForegroundHover(b, idle,
-			routed ? CombatAchievementsTheme.NEGATIVE : CombatAchievementsTheme.POSITIVE);
-		b.setBorder(BorderFactory.createEmptyBorder(0, 4, 0, 0));
-		b.setPreferredSize(new Dimension(BAR_BUTTON_WIDTH, 18));
-		b.setCursor(new Cursor(Cursor.HAND_CURSOR));
-		b.addActionListener(e -> {
-			Consumer<Integer> handler = routed ? onRemoveFromRoute : onAddToRoute;
-			if (handler != null)
-			{
-				handler.accept(d.id);
-			}
-		});
-		return b;
-	}
-
-	private JButton backButton(String text, Runnable action)
+	public JButton backButton(String text, Runnable action)
 	{
 		JButton back = new JButton(text);
 		back.setMargin(new Insets(1, 6, 1, 6));
@@ -2655,7 +1424,7 @@ public class CombatAchievementsPanel extends PluginPanel
 
 	// ---- Shared helpers ----------------------------------------------------------------------------
 
-	private JLabel sectionHeader(String text)
+	public JLabel sectionHeader(String text)
 	{
 		JLabel label = new JLabel(CardKit.escape(text));
 		label.setFont(FontManager.getRunescapeBoldFont());
@@ -2664,12 +1433,12 @@ public class CombatAchievementsPanel extends PluginPanel
 		return CardKit.fullWidth(label);
 	}
 
-	private JPanel linkRow(String wikiUrl, String guideUrl, boolean curatedVideo)
+	public JPanel linkRow(String wikiUrl, String guideUrl, boolean curatedVideo)
 	{
 		return linkRow(wikiUrl, guideUrl, curatedVideo, "");
 	}
 
-	private JPanel linkRow(String wikiUrl, String guideUrl, boolean curatedVideo, String feedbackUrl)
+	public JPanel linkRow(String wikiUrl, String guideUrl, boolean curatedVideo, String feedbackUrl)
 	{
 		JPanel row = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 1));
 		row.setOpaque(false);
@@ -2688,23 +1457,7 @@ public class CombatAchievementsPanel extends PluginPanel
 		return row;
 	}
 
-	/** The Difficulty rating the panel shows: the boss rating plus this task's bump, else the raw value. */
-	private static double displayedDifficulty(SidePanelViewModel.CaDetail d)
-	{
-		return d.bossDifficulty > 0 ? d.bossDifficulty + d.bump : d.difficulty;
-	}
-
-	/**
-	 * The "Suggest fix" link for a task, or "" when no feedback form is configured (button hidden). Only
-	 * the task id is sent — the player is already looking at the achievement, so the form asks them for
-	 * the difficulty they'd give it and nothing they shouldn't have to type.
-	 */
-	private static String feedbackUrl(SidePanelViewModel.CaDetail d)
-	{
-		return FeedbackLink.isConfigured() ? FeedbackLink.taskUrl(d.id) : "";
-	}
-
-	private JLabel messageLabel(String text)
+	public JLabel messageLabel(String text)
 	{
 		JLabel label = CardKit.wrappedHtmlLabel(CardKit.escape(text), CARD_TEXT_WIDTH);
 		label.setBorder(BorderFactory.createEmptyBorder(8, 0, 8, 0));
