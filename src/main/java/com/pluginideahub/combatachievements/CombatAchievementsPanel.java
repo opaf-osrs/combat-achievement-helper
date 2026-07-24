@@ -2171,9 +2171,12 @@ public class CombatAchievementsPanel extends PluginPanel
 		// "Doable" only means no hard gate blocks you, so a level-3 saw seven Barrows CAs it was 49-84
 		// levels short of, all reading as available. Split on the ready line: what you could go and do
 		// now, and below it what is ungated but out of reach. Nothing is hidden either way.
-		// The headings are "Within reach" / "Out of reach" as a deliberate pair. The second group was
-		// called "Not yet", which read as "not unlocked yet" — i.e. the Locked group below, the exact
-		// opposite of what it holds: these have NO gate, you are simply under-levelled for them.
+		// Headings: "Doable now" / "Train first" / "Locked". The middle group was called "Not yet", which
+		// read as "not unlocked yet" — i.e. the Locked group below, the exact opposite of what it holds.
+		// The lesson: a heading describing the CONTENT ("not yet", "out of reach") always blurs into
+		// "locked", because from the task's side both mean "you can't have it". These two groups differ in
+		// what they are ABOUT — Locked is a gate on the content, this is your stats — so the heading names
+		// the fix instead, matching the Route's "Train next".
 		List<SidePanelViewModel.CaDetail> reachable = new ArrayList<>();
 		List<SidePanelViewModel.CaDetail> notYet = new ArrayList<>();
 		for (SidePanelViewModel.CaDetail d : boss.doable)
@@ -2182,7 +2185,7 @@ public class CombatAchievementsPanel extends PluginPanel
 		}
 		if (!reachable.isEmpty())
 		{
-			content.add(sectionHeader(notYet.isEmpty() ? "Doable CAs" : "Within reach"));
+			content.add(sectionHeader("Doable now"));
 			content.add(spacer());
 			for (SidePanelViewModel.CaDetail d : reachable)
 			{
@@ -2192,7 +2195,7 @@ public class CombatAchievementsPanel extends PluginPanel
 		}
 		if (!notYet.isEmpty())
 		{
-			content.add(sectionHeader("Out of reach (" + notYet.size() + ")"));
+			content.add(sectionHeader("Train first (" + notYet.size() + ")"));
 			content.add(spacer());
 			for (SidePanelViewModel.CaDetail d : notYet)
 			{
