@@ -132,6 +132,8 @@ public class CombatAchievementsPanel extends PluginPanel
 	private boolean trainingsCollapsed;
 	/** Whether the Route's barred ("Not doing these") section is collapsed. */
 	private boolean barredCollapsed = true;
+	/** Whether a boss page's "Completed" section is collapsed. */
+	private boolean completedCollapsed = true;
 	/** Per-visit overhead (min) amortised into the Bosses "Recommended" sort — the clustering dial: the
 	 *  higher it is, the more the sort favours bosses with several doable CAs (less boss-swapping). */
 	private int tripOverheadMinutes = DEFAULT_TRIP_OVERHEAD;
@@ -860,6 +862,23 @@ public class CombatAchievementsPanel extends PluginPanel
 	}
 
 	/** Preview/test hook: opens the boss-detail view for the first boss. */
+	/** Opens the first boss that has something completed — used by the preview to show that section. */
+	public void openFirstBossWithCompletions()
+	{
+		for (SidePanelViewModel.BossRow b : model.bosses())
+		{
+			if (!b.completedCas.isEmpty())
+			{
+				currentMode = PanelMode.BOSSES;
+				selectedCa = null;
+				selectedBoss = b.monster;
+				buildModeBar();
+				rebuild();
+				return;
+			}
+		}
+	}
+
 	public void openFirstBossDetail()
 	{
 		if (model.sessions() != null && !model.sessions().isEmpty())
@@ -935,6 +954,12 @@ public class CombatAchievementsPanel extends PluginPanel
 	}
 
 	/** Expands or collapses the Route's barred section (used by the preview renderer). */
+	/** Expands or collapses a boss page's "Completed" section (used by the preview renderer). */
+	public void setCompletedCollapsed(boolean collapsed)
+	{
+		this.completedCollapsed = collapsed;
+	}
+
 	public void setBarredCollapsed(boolean collapsed)
 	{
 		this.barredCollapsed = collapsed;
@@ -2128,6 +2153,12 @@ public class CombatAchievementsPanel extends PluginPanel
 				.append(" <span style='color:" + metaHex() + "'>· ").append(boss.doableCount)
 				.append(boss.doableCount == 1 ? " CA</span>" : " CAs</span>");
 		}
+		if (!boss.completedCas.isEmpty())
+		{
+			head.append("<br><span style='color:" + metaHex() + "'>")
+				.append(boss.completedCas.size()).append(" of ").append(boss.totalCas())
+				.append(" done</span>");
+		}
 		head.append("</body></html>");
 		content.add(fullWidth(new JLabel(head.toString())));
 		content.add(spacer());
@@ -2176,6 +2207,53 @@ public class CombatAchievementsPanel extends PluginPanel
 				content.add(spacer());
 			}
 		}
+
+		// What you have already done here, collapsed by default so the boss page stays forward-looking.
+		if (!boss.completedCas.isEmpty())
+		{
+			content.add(spacer());
+			content.add(collapseHeader("Completed (" + boss.completedCas.size() + ")", completedCollapsed,
+				() -> { completedCollapsed = !completedCollapsed; rebuild(); }));
+			if (!completedCollapsed)
+			{
+				content.add(spacer());
+				for (SidePanelViewModel.CaDetail d : boss.completedCas)
+				{
+					content.add(completedCard(d));
+					content.add(spacer());
+				}
+			}
+		}
+	}
+
+	/**
+	 * A completed CA at a boss: same shape as the other cards but greyed with a tick, so a glance down the
+	 * boss page separates "done" from "to do" without reading the text.
+	 */
+	private JPanel completedCard(SidePanelViewModel.CaDetail d)
+	{
+		JPanel card = new JPanel(new BorderLayout());
+		card.setBackground(ColorScheme.DARK_GRAY_COLOR);
+		card.setBorder(BorderFactory.createCompoundBorder(
+			BorderFactory.createMatteBorder(0, 3, 0, 0, CombatAchievementsTheme.POSITIVE),
+			BorderFactory.createEmptyBorder(5, 7, 5, 7)));
+
+		StringBuilder sb = new StringBuilder("<html><body style='width:166px'>");
+		sb.append("<span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.POSITIVE))
+			.append("'>&#10003; </span>");
+		sb.append("<span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.LOCKED))
+			.append("'><b>").append(escape(d.name)).append("</b></span>");
+		sb.append("<br><span style='color:" + metaHex() + "'>").append(d.points)
+			.append(d.points == 1 ? " pt" : " pts").append(" · ").append(escape(d.tierName))
+			.append("</span>");
+		sb.append("</body></html>");
+		card.add(new JLabel(sb.toString()), BorderLayout.CENTER);
+		addHover(card, ColorScheme.DARK_GRAY_COLOR, ColorScheme.DARK_GRAY_HOVER_COLOR);
+		onClick(card, () -> {
+			selectedCa = d;
+			rebuild();
+		});
+		return fullWidth(card);
 	}
 
 	/** A clickable CA row from a CaDetail — orange (doable) or red (locked) — opening the CA detail. */

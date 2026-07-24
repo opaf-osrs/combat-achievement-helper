@@ -399,17 +399,27 @@ public final class SidePanelViewModel
 		 * "Most points" sort stay an honest raw listing.
 		 */
 		public final double readinessSink;
+		/** CAs already completed at this boss, so the panel can show how far through it you are. */
+		public final List<CaDetail> completedCas;
 
 		public BossRow(String monster, int projectedPoints, int doableCount, int lockedCount,
 			boolean locked, String recommendedStats, List<CaDetail> doable, List<CaDetail> lockedCas)
 		{
 			this(monster, projectedPoints, doableCount, lockedCount, locked, recommendedStats, doable,
-				lockedCas, 1.0);
+				lockedCas, 1.0, Collections.emptyList());
 		}
 
 		public BossRow(String monster, int projectedPoints, int doableCount, int lockedCount,
 			boolean locked, String recommendedStats, List<CaDetail> doable, List<CaDetail> lockedCas,
 			double readinessSink)
+		{
+			this(monster, projectedPoints, doableCount, lockedCount, locked, recommendedStats, doable,
+				lockedCas, readinessSink, Collections.emptyList());
+		}
+
+		public BossRow(String monster, int projectedPoints, int doableCount, int lockedCount,
+			boolean locked, String recommendedStats, List<CaDetail> doable, List<CaDetail> lockedCas,
+			double readinessSink, List<CaDetail> completedCas)
 		{
 			this.readinessSink = Math.max(1.0, readinessSink);
 			this.monster = monster == null ? "" : monster;
@@ -421,6 +431,14 @@ public final class SidePanelViewModel
 			this.doable = Collections.unmodifiableList(doable == null ? Collections.emptyList() : doable);
 			this.lockedCas = Collections.unmodifiableList(
 				lockedCas == null ? Collections.emptyList() : lockedCas);
+			this.completedCas = Collections.unmodifiableList(
+				completedCas == null ? Collections.emptyList() : completedCas);
+		}
+
+		/** Total CAs at this boss the panel knows about — completed plus everything still outstanding. */
+		public int totalCas()
+		{
+			return completedCas.size() + doable.size() + lockedCas.size();
 		}
 	}
 

@@ -368,7 +368,8 @@ public final class SidePanelViewModelBuilder
 			beginner ? withoutGatedTasks(all) : all, snapshot.completedIds());
 		// Beginner-gated like every other surface: a brand-new account had Chambers of Xeric and Theatre of
 		// Blood sitting in its boss directory because this one list was built from the ungated ranking.
-		List<SidePanelViewModel.BossRow> bosses = buildBossDirectory(recommendable);
+		List<SidePanelViewModel.BossRow> bosses = buildBossDirectory(recommendable, all,
+			snapshot.completedIds());
 
 		return SidePanelViewModel.ready(lib.version(), gamePoints, totalAvailable,
 			snapshot.completedCount(), lib.taskCount(), currentTierName, nextTierName, nextNeeded,
@@ -636,8 +637,21 @@ public final class SidePanelViewModelBuilder
 	 * doable and locked. Bosses with no doable CA are flagged locked (greyed in the panel). Ordered
 	 * doable-first by projected (doable) points.
 	 */
-	private List<SidePanelViewModel.BossRow> buildBossDirectory(List<RankedTask> rankedIncomplete)
+	private List<SidePanelViewModel.BossRow> buildBossDirectory(List<RankedTask> rankedIncomplete,
+		List<CombatAchievement> all, java.util.Set<Integer> completedIds)
 	{
+		// Completed CAs never reach the ranker (it only ranks what is left), so they are gathered here
+		// straight from the library. A boss whose CAs are ALL done still will not appear: the directory
+		// lists bosses with something outstanding, and that is deliberate.
+		Map<String, List<SidePanelViewModel.CaDetail>> completedByBoss = new LinkedHashMap<>();
+		for (CombatAchievement a : all)
+		{
+			if (a.hasMonster() && completedIds.contains(a.id()))
+			{
+				completedByBoss.computeIfAbsent(a.monster(), k -> new ArrayList<>())
+					.add(buildCaDetail(a, true, ""));
+			}
+		}
 		Map<String, List<RankedTask>> byBoss = new LinkedHashMap<>();
 		for (RankedTask rt : rankedIncomplete)
 		{
@@ -676,7 +690,8 @@ public final class SidePanelViewModelBuilder
 				}
 			}
 			rows.add(new SidePanelViewModel.BossRow(e.getKey(), projected, doable.size(), locked.size(),
-				doable.isEmpty(), stats, doable, locked, medianSink(doableSinks)));
+				doable.isEmpty(), stats, doable, locked, medianSink(doableSinks),
+				completedByBoss.getOrDefault(e.getKey(), Collections.emptyList())));
 		}
 
 		// The Bosses tab is an honest directory: every boss with an incomplete CA, ordered doable-first by

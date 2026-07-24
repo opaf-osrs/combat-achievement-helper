@@ -139,6 +139,10 @@ public final class PanelPreview
 			panel.setHowToDefault(false);
 			panel.openFirstBossDetail();
 			snapshot(panel, new File(outDir, "09-boss-detail.png"));
+			panel.setCompletedCollapsed(false);
+			panel.openFirstBossWithCompletions();
+			snapshot(panel, new File(outDir, "19-boss-completed.png"));
+			panel.setCompletedCollapsed(true);
 			panel.openFirstLockedCaDetail();
 			snapshot(panel, new File(outDir, "15-locked-ca-detail.png"));
 
