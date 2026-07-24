@@ -105,6 +105,8 @@ public class CombatAchievementsPanel extends PluginPanel
 	private static final int SPINNER_HEIGHT = 18;
 	/** Wrap width for the CA-detail how-to prose, kept clear of the scrollbar the tall view brings in. */
 	private static final int DETAIL_TEXT_WIDTH = 170;
+	/** Wrap width for card text: the panel minus the card's left bar and padding. */
+	private static final int CARD_TEXT_WIDTH = 182;
 	/** Route card text width, and the slice the per-CA "-" (bar) control takes on the right. */
 	private static final int ROUTE_TEXT_WIDTH = 182;
 	private static final int BAR_BUTTON_WIDTH = 20;
@@ -157,6 +159,8 @@ public class CombatAchievementsPanel extends PluginPanel
 	private transient SidePanelViewModel.CaDetail selectedCa;
 	/** When non-null (Bosses mode), the boss-detail drill-in is shown. */
 	private String selectedBoss;
+	/** When non-null (Route mode), the quest-unlock drill-in is shown; a selected CA overlays it. */
+	private transient SidePanelViewModel.UnlockView selectedUnlock;
 
 	/**
 	 * Developer-mode account simulation. Volatile because it is written on the EDT (by the controls) and
@@ -776,6 +780,7 @@ public class CombatAchievementsPanel extends PluginPanel
 				currentMode = mode;
 				selectedCa = null;
 				selectedBoss = null;
+				selectedUnlock = null;
 				buildModeBar();
 				rebuild();
 			});
@@ -866,6 +871,7 @@ public class CombatAchievementsPanel extends PluginPanel
 		this.currentMode = mode;
 		this.selectedCa = null;
 		this.selectedBoss = null;
+		this.selectedUnlock = null;
 		buildModeBar();
 		rebuild();
 	}
@@ -914,6 +920,20 @@ public class CombatAchievementsPanel extends PluginPanel
 		}
 	}
 
+	/** Preview/test hook: opens the quest-unlock drill-in for the Route's first "Unlock next" card. */
+	public void openFirstUnlockDetail()
+	{
+		if (model.unlocks() != null && !model.unlocks().isEmpty())
+		{
+			currentMode = PanelMode.ROUTE;
+			selectedCa = null;
+			selectedBoss = null;
+			selectedUnlock = model.unlocks().get(0);
+			buildModeBar();
+			rebuild();
+		}
+	}
+
 	/** Preview/test hook: opens the detail for the first LOCKED route CA (shows red unmet requirements). */
 	public void openFirstLockedCaDetail()
 	{
@@ -921,6 +941,7 @@ public class CombatAchievementsPanel extends PluginPanel
 		{
 			currentMode = PanelMode.ROUTE;
 			selectedBoss = null;
+			selectedUnlock = null;
 			selectedCa = model.path().lockedCas.get(0);
 			buildModeBar();
 			rebuild();
@@ -1056,7 +1077,8 @@ public class CombatAchievementsPanel extends PluginPanel
 	{
 		boolean ready = model.state() == SidePanelViewModel.State.READY;
 		boolean detailOpen = selectedCa != null
-			|| (selectedBoss != null && currentMode == PanelMode.BOSSES);
+			|| (selectedBoss != null && currentMode == PanelMode.BOSSES)
+			|| (selectedUnlock != null && currentMode == PanelMode.ROUTE);
 		boolean caMode = currentMode == PanelMode.RECOMMENDED;
 		boolean routeMode = ready && !detailOpen && currentMode == PanelMode.ROUTE;
 		boolean searchable = ready && !detailOpen && (caMode || currentMode == PanelMode.BOSSES);
@@ -1095,7 +1117,14 @@ public class CombatAchievementsPanel extends PluginPanel
 					}
 					break;
 				case ROUTE:
-					buildRoute();
+					if (selectedUnlock != null)
+					{
+						renderUnlockDetail(selectedUnlock);
+					}
+					else
+					{
+						buildRoute();
+					}
 					break;
 				default:
 					break;
@@ -1566,7 +1595,7 @@ public class CombatAchievementsPanel extends PluginPanel
 
 		if (path != null)
 		{
-			StringBuilder sb = new StringBuilder("<html><body style='width:182px'>");
+			StringBuilder sb = new StringBuilder();
 			sb.append("Goal: <b>").append(escape(path.targetTierName)).append("</b>");
 			if (path.alreadyUnlocked)
 			{
@@ -1597,8 +1626,7 @@ public class CombatAchievementsPanel extends PluginPanel
 						.append("'>Not enough doable tasks yet —<br>shows the closest set.</span>");
 				}
 			}
-			sb.append("</body></html>");
-			content.add(fullWidth(new JLabel(sb.toString())));
+			content.add(fullWidth(wrappedHtmlLabel(sb.toString(), CARD_TEXT_WIDTH)));
 			content.add(spacer());
 
 			// Only CAs the player can go and do right now, grouped by boss so one trip clears several.
@@ -1617,14 +1645,13 @@ public class CombatAchievementsPanel extends PluginPanel
 			// What the whole visible list is worth, so the total is readable without adding the cards up.
 			if (!route.isEmpty())
 			{
-				StringBuilder tot = new StringBuilder("<html><body style='width:182px'>");
+				StringBuilder tot = new StringBuilder();
 				tot.append("<span style='color:" + metaHex() + "'>").append(route.size())
 					.append(route.size() == 1 ? " CA · " : " CAs · ")
 					.append("</span><span style='color:")
 					.append(CombatAchievementsTheme.hex(CombatAchievementsTheme.POINTS))
 					.append("'>").append(path.shownPoints()).append(" pts</span>");
-				tot.append("</body></html>");
-				content.add(fullWidth(new JLabel(tot.toString())));
+				content.add(fullWidth(wrappedHtmlLabel(tot.toString(), CARD_TEXT_WIDTH)));
 				content.add(spacer());
 			}
 			// Sits with the route it affects rather than in the control bar, and only exists once something
@@ -1955,7 +1982,7 @@ public class CombatAchievementsPanel extends PluginPanel
 			BorderFactory.createMatteBorder(0, 3, 0, 0, CombatAchievementsTheme.ACCENT),
 			BorderFactory.createEmptyBorder(5, 7, 5, 7)));
 
-		StringBuilder sb = new StringBuilder("<html><body style='width:182px'>");
+		StringBuilder sb = new StringBuilder();
 		sb.append("<span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.HEADER_GOLD))
 			.append("'><b>").append(escape(t.label)).append("</b></span>");
 		sb.append("<br><span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.POSITIVE))
@@ -1966,21 +1993,16 @@ public class CombatAchievementsPanel extends PluginPanel
 			sb.append("<br><span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.DESC))
 				.append("'>mostly ").append(escape(t.unlocksHint)).append("</span>");
 		}
-		sb.append("</body></html>");
-		card.add(new JLabel(sb.toString()), BorderLayout.CENTER);
+		card.add(wrappedHtmlLabel(sb.toString(), CARD_TEXT_WIDTH), BorderLayout.CENTER);
 		addHover(card, ColorScheme.DARK_GRAY_COLOR, ColorScheme.DARK_GRAY_HOVER_COLOR);
 		return fullWidth(card);
 	}
 
-	private JPanel unlockCard(SidePanelViewModel.UnlockView u)
+	/** The unlock card's text (inner html, for {@link #wrappedHtmlLabel}): quest, difficulty, prize,
+	 *  prerequisites, unmet skills. Shared with the quest drill-in header so the two can never drift. */
+	private String unlockCardHtml(SidePanelViewModel.UnlockView u)
 	{
-		JPanel card = new JPanel(new BorderLayout());
-		card.setBackground(ColorScheme.DARK_GRAY_COLOR);
-		card.setBorder(BorderFactory.createCompoundBorder(
-			BorderFactory.createMatteBorder(0, 3, 0, 0, CombatAchievementsTheme.HEADER_GOLD),
-			BorderFactory.createEmptyBorder(5, 7, 5, 7)));
-
-		StringBuilder sb = new StringBuilder("<html><body style='width:182px'>");
+		StringBuilder sb = new StringBuilder();
 		sb.append("<span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.HEADER_GOLD))
 			.append("'><b>").append(escape(u.questName)).append("</b></span>");
 		if (u.difficulty != null && !u.difficulty.isEmpty())
@@ -2000,9 +2022,88 @@ public class CombatAchievementsPanel extends PluginPanel
 			sb.append("<br><span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.LOCKED))
 				.append("'>train: ").append(escape(u.unmetSkills)).append("</span>");
 		}
-		sb.append("</body></html>");
-		card.add(new JLabel(sb.toString()), BorderLayout.CENTER);
+		return sb.toString();
+	}
+
+	private JPanel unlockCard(SidePanelViewModel.UnlockView u)
+	{
+		JPanel card = new JPanel(new BorderLayout());
+		card.setBackground(ColorScheme.DARK_GRAY_COLOR);
+		card.setBorder(BorderFactory.createCompoundBorder(
+			BorderFactory.createMatteBorder(0, 3, 0, 0, CombatAchievementsTheme.HEADER_GOLD),
+			BorderFactory.createEmptyBorder(5, 7, 5, 7)));
+		card.add(wrappedHtmlLabel(unlockCardHtml(u), CARD_TEXT_WIDTH), BorderLayout.CENTER);
 		addHover(card, ColorScheme.DARK_GRAY_COLOR, ColorScheme.DARK_GRAY_HOVER_COLOR);
+		if (!u.unlockedCas.isEmpty())
+		{
+			onClick(card, () -> {
+				selectedUnlock = u;
+				rebuild();
+			});
+		}
+		return fullWidth(card);
+	}
+
+	/** The quest-unlock drill-in: the quest's headline, then the CAs it opens, each clickable. */
+	private void renderUnlockDetail(SidePanelViewModel.UnlockView u)
+	{
+		content.add(backButton("← Back", () -> {
+			selectedUnlock = null;
+			rebuild();
+		}));
+		content.add(spacer());
+
+		// The same card the Route shows, minus the click: an html JLabel added bare to the BoxLayout
+		// clips long lines at the panel edge (its CSS body width is unreliable), while the card's
+		// BorderLayout demonstrably wraps this exact content in the Route list.
+		JPanel header = new JPanel(new BorderLayout());
+		header.setBackground(ColorScheme.DARK_GRAY_COLOR);
+		header.setBorder(BorderFactory.createCompoundBorder(
+			BorderFactory.createMatteBorder(0, 3, 0, 0, CombatAchievementsTheme.HEADER_GOLD),
+			BorderFactory.createEmptyBorder(5, 7, 5, 7)));
+		header.add(wrappedHtmlLabel(unlockCardHtml(u), CARD_TEXT_WIDTH), BorderLayout.CENTER);
+		content.add(fullWidth(header));
+		content.add(spacer());
+
+		content.add(sectionHeader("Unlocks"));
+		content.add(spacer());
+		for (SidePanelViewModel.CaDetail c : u.unlockedCas)
+		{
+			content.add(unlockCaCard(c));
+			content.add(spacer());
+		}
+	}
+
+	/** A CA the quest would open, on the quest's own page — so no per-card "needs <quest>" line. */
+	private JPanel unlockCaCard(SidePanelViewModel.CaDetail c)
+	{
+		JPanel card = new JPanel(new BorderLayout());
+		card.setBackground(ColorScheme.DARK_GRAY_COLOR);
+		card.setBorder(BorderFactory.createCompoundBorder(
+			BorderFactory.createMatteBorder(0, 3, 0, 0, CombatAchievementsTheme.NAME),
+			BorderFactory.createEmptyBorder(5, 7, 5, 7)));
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("<span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.NAME))
+			.append("'><b>").append(escape(c.name)).append("</b></span>");
+		sb.append("<br><span style='color:").append(CombatAchievementsTheme.hex(CombatAchievementsTheme.POINTS))
+			.append("'>").append(c.points).append(" pts</span>");
+		if (c.difficulty > 0)
+		{
+			sb.append(" <span style='color:" + metaHex() + "'>· </span><span style='color:")
+				.append(CombatAchievementsTheme.hex(difficultyColor(c.difficulty)))
+				.append("'>difficulty ").append(c.difficulty).append("</span>");
+		}
+		if (!c.monster.isEmpty())
+		{
+			sb.append("<br><span style='color:" + metaHex() + "'>").append(escape(c.monster)).append("</span>");
+		}
+		card.add(wrappedHtmlLabel(sb.toString(), CARD_TEXT_WIDTH), BorderLayout.CENTER);
+		addHover(card, ColorScheme.DARK_GRAY_COLOR, ColorScheme.DARK_GRAY_HOVER_COLOR);
+		onClick(card, () -> {
+			selectedCa = c;
+			rebuild();
+		});
 		return fullWidth(card);
 	}
 
@@ -2550,6 +2651,44 @@ public class CombatAchievementsPanel extends PluginPanel
 	{
 		label.setAlignmentX(Component.LEFT_ALIGNMENT);
 		return label;
+	}
+
+	/**
+	 * An html JLabel that truly wraps at {@code width} real pixels. Swing's CSS treats px as scaled
+	 * units (~1.3x with this look-and-feel), so a hard-coded {@code body width} style lays out wider
+	 * than asked and the text clips at the panel edge — the Route's unlock cards lost their last
+	 * prerequisite this way, invisibly, for as long as they have existed. This measures the html view's
+	 * actual span and re-asks for a proportionally smaller CSS width, so the real span lands on
+	 * {@code width} whatever the scale factor is, then pins the label to the wrapped height.
+	 */
+	private static JLabel wrappedHtmlLabel(String innerHtml, int width)
+	{
+		JLabel label = new JLabel(htmlAt(innerHtml, width));
+		javax.swing.text.View view = htmlView(label);
+		if (view != null)
+		{
+			float natural = view.getPreferredSpan(javax.swing.text.View.X_AXIS);
+			if (natural > width)
+			{
+				label.setText(htmlAt(innerHtml, Math.max(50, (int) (width * (width / natural)))));
+				view = htmlView(label);
+			}
+			view.setSize(width, 0);
+			int height = (int) Math.ceil(view.getPreferredSpan(javax.swing.text.View.Y_AXIS));
+			label.setPreferredSize(new Dimension(width, height));
+			label.setMaximumSize(new Dimension(width, height));
+		}
+		return label;
+	}
+
+	private static String htmlAt(String innerHtml, int cssWidth)
+	{
+		return "<html><body style='width:" + cssWidth + "px'>" + innerHtml + "</body></html>";
+	}
+
+	private static javax.swing.text.View htmlView(JLabel label)
+	{
+		return (javax.swing.text.View) label.getClientProperty(javax.swing.plaf.basic.BasicHTML.propertyKey);
 	}
 
 	private static String escape(String s)

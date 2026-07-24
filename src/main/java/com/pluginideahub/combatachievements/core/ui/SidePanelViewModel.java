@@ -488,9 +488,19 @@ public final class SidePanelViewModel
 		public final String prerequisites;
 		/** Skills still short for the chain, comma-joined; "" if none. */
 		public final String unmetSkills;
+		/** The CAs this quest would unlock, quickest first — the card's drill-in page lists these. */
+		public final List<CaDetail> unlockedCas;
 
 		public UnlockView(String questName, String difficulty, int unlockedTaskCount,
 			int unlockedPoints, int totalMinutes, String prerequisites, String unmetSkills)
+		{
+			this(questName, difficulty, unlockedTaskCount, unlockedPoints, totalMinutes,
+				prerequisites, unmetSkills, Collections.emptyList());
+		}
+
+		public UnlockView(String questName, String difficulty, int unlockedTaskCount,
+			int unlockedPoints, int totalMinutes, String prerequisites, String unmetSkills,
+			List<CaDetail> unlockedCas)
 		{
 			this.questName = questName;
 			this.difficulty = difficulty;
@@ -499,6 +509,8 @@ public final class SidePanelViewModel
 			this.totalMinutes = totalMinutes;
 			this.prerequisites = prerequisites == null ? "" : prerequisites;
 			this.unmetSkills = unmetSkills == null ? "" : unmetSkills;
+			this.unlockedCas = Collections.unmodifiableList(
+				unlockedCas == null ? Collections.emptyList() : unlockedCas);
 		}
 	}
 

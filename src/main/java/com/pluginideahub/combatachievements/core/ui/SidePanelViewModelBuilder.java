@@ -399,7 +399,7 @@ public final class SidePanelViewModelBuilder
 			recommendable, lockedRouteCas);
 
 		List<SidePanelViewModel.SessionView> sessions = buildSessions(recommendable);
-		List<SidePanelViewModel.UnlockView> unlocks = buildUnlocks(unlockSuggestions);
+		List<SidePanelViewModel.UnlockView> unlocks = buildUnlocks(unlockSuggestions, byId);
 		List<SidePanelViewModel.TrainingView> trainings = buildTrainings(
 			beginner ? withoutGatedTasks(all) : all, snapshot.completedIds());
 		// Beginner-gated like every other surface: a brand-new account had Chambers of Xeric and Theatre of
@@ -932,7 +932,8 @@ public final class SidePanelViewModelBuilder
 	}
 
 	/** "Unlock next" quest suggestions, best first, from the already-computed suggestions. */
-	private List<SidePanelViewModel.UnlockView> buildUnlocks(List<UnlockSuggestion> suggestions)
+	private List<SidePanelViewModel.UnlockView> buildUnlocks(List<UnlockSuggestion> suggestions,
+		Map<Integer, CombatAchievement> byId)
 	{
 		List<SidePanelViewModel.UnlockView> views = new ArrayList<>();
 		for (UnlockSuggestion s : suggestions)
@@ -941,13 +942,27 @@ public final class SidePanelViewModelBuilder
 			{
 				break;
 			}
+			// The card's drill-in page: the actual CAs behind "unlocks N CAs", quickest first, each
+			// opening its own CA detail — the same journey a CA card offers.
+			List<SidePanelViewModel.CaDetail> unlockedCas = new ArrayList<>();
+			for (int id : s.unlockedTaskIds())
+			{
+				CombatAchievement task = byId.get(id);
+				if (task != null)
+				{
+					unlockedCas.add(buildCaDetail(task, false, "needs " + s.questName()));
+				}
+			}
+			unlockedCas.sort(Comparator.comparingInt(SidePanelViewModel.CaDetail::totalMinutes)
+				.thenComparingInt(d -> d.id));
 			// Shows what the quest OPENS, not what is doable the same day — a quest is permanent progress
 			// and worth doing before you can use it. Reachability decides the ORDER (so a questline whose
 			// CAs are forty levels away sinks) but never whether the suggestion appears: hiding them left a
 			// new account with no "what quest next" advice at all, which is the one thing this answers.
 			views.add(new SidePanelViewModel.UnlockView(s.questName(), s.difficulty(),
 				s.unlockedTaskCount(), s.unlockedPoints(), s.totalMinutes(),
-				String.join(", ", s.remainingPrerequisites()), String.join(", ", s.unmetSkills())));
+				String.join(", ", s.remainingPrerequisites()), String.join(", ", s.unmetSkills()),
+				unlockedCas));
 		}
 		return views;
 	}

@@ -303,6 +303,30 @@ public class RouteReadinessTest
 		assertFalse("an all-80s account still gets unlock suggestions", vm.unlocks().isEmpty());
 	}
 
+	@Test
+	public void everyUnlockCardCarriesTheCasItOpensForItsDrillInPage()
+	{
+		SidePanelViewModel vm = viewModelFor(account(80));
+		assertFalse(vm.unlocks().isEmpty());
+		for (SidePanelViewModel.UnlockView u : vm.unlocks())
+		{
+			assertEquals("the drill-in list matches the card's 'unlocks N CAs' claim (" + u.questName + ")",
+				u.unlockedTaskCount, u.unlockedCas.size());
+			for (int i = 0; i < u.unlockedCas.size(); i++)
+			{
+				SidePanelViewModel.CaDetail c = u.unlockedCas.get(i);
+				assertFalse("each unlocked CA is a full detail view", c.name.isEmpty());
+				assertTrue("each names the quest as its lock (" + c.lockReason + ")",
+					c.lockReason.contains(u.questName));
+				if (i > 0)
+				{
+					assertTrue("quickest first within the quest page",
+						u.unlockedCas.get(i - 1).totalMinutes() <= c.totalMinutes());
+				}
+			}
+		}
+	}
+
 	private SidePanelViewModel viewModelFor(PlayerProfile profile)
 	{
 		return new SidePanelViewModelBuilder(lib, effort, VideoGuideLibrary.loadBundled(),

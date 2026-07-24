@@ -149,6 +149,8 @@ public final class PanelPreview
 			panel.setCompletedCollapsed(true);
 			panel.openFirstLockedCaDetail();
 			snapshot(panel, new File(outDir, "15-locked-ca-detail.png"));
+			panel.openFirstUnlockDetail();
+			snapshot(panel, new File(outDir, "20-unlock-detail.png"));
 
 			// Theme previews: the same CA-detail screen under each selectable palette, side by side, so
 			// the colour themes (names, points, headers, difficulty, requirements) can be compared.
