@@ -1104,7 +1104,7 @@ public class CombatAchievementsPanel extends PluginPanel
 		{
 			sb.append(" <span style='color:" + metaHex() + "'>· </span><span style='color:")
 				.append(CombatAchievementsTheme.hex(difficultyColor(row.difficulty)))
-				.append("'>diff ").append(row.difficulty).append("/10</span>");
+				.append("'>difficulty ").append(row.difficulty).append("/10</span>");
 		}
 		sb.append("</body></html>");
 		JLabel label = new JLabel(sb.toString());
@@ -1523,7 +1523,7 @@ public class CombatAchievementsPanel extends PluginPanel
 		{
 			sb.append(" <span style='color:" + metaHex() + "'>· </span><span style='color:")
 				.append(CombatAchievementsTheme.hex(difficultyColor(c.difficulty)))
-				.append("'>diff ").append(c.difficulty).append("/10</span>");
+				.append("'>difficulty ").append(c.difficulty).append("/10</span>");
 		}
 		// Time estimates are intentionally not shown — the engine still uses them for ordering.
 		// When not under a boss header, name the boss so a solo route step still tells you where to go.
@@ -1889,7 +1889,7 @@ public class CombatAchievementsPanel extends PluginPanel
 		{
 			sb.append(" <span style='color:" + metaHex() + "'>· </span><span style='color:")
 				.append(CombatAchievementsTheme.hex(difficultyColor(d.difficulty)))
-				.append("'>diff ").append(d.difficulty).append("/10</span>");
+				.append("'>difficulty ").append(d.difficulty).append("/10</span>");
 		}
 		sb.append("</body></html>");
 		JLabel label = new JLabel(sb.toString());
