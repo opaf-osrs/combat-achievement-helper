@@ -32,6 +32,21 @@ public final class LowHangingFruitRanker
 	/** How strongly pure-skill difficulty inflates effort (1.0 = the ÷3 pivot; 0 = ignore difficulty). */
 	private final double difficultyWeight;
 
+	/**
+	 * Optional per-task estimated minutes. When supplied it replaces the kill-count proxy: minutes already
+	 * multiply required kills by time-to-kill, which is the thing the proxy was standing in for.
+	 */
+	private java.util.function.ToIntFunction<CombatAchievement> minutesFn;
+	/** Nominal minutes for a "normal" task; only sets the scale of the effort numbers. */
+	private static final double TIME_BASELINE_MINUTES = 10.0;
+
+	/** Supplies real per-task minutes, so cost tracks time rather than a repeat count. */
+	public LowHangingFruitRanker withMinutes(java.util.function.ToIntFunction<CombatAchievement> fn)
+	{
+		this.minutesFn = fn;
+		return this;
+	}
+
 	public LowHangingFruitRanker(EffortDataLibrary effortLib, EffortModel model)
 	{
 		this(effortLib, model, TaskDifficultyLibrary.empty());
@@ -103,10 +118,7 @@ public final class LowHangingFruitRanker
 				continue;
 			}
 			TaskDifficulty difficulty = difficultyLib.difficultyFor(task.id());
-			double effortValue = model.effortFor(task, effort, sig)
-				* difficultyFactor(difficulty, difficultyWeight)
-				* repetitionFactor(task)
-				* RankedTask.recStatsSinkFactor(sig.recStatsShortfall());
+			double effortValue = costOf(task, effort, sig, difficulty);
 			double score = effortValue <= 0 ? 0 : Math.pow(task.points(), pointsWeight) / effortValue;
 			ranked.add(new RankedTask(task, effortValue, score, rationale(task, effort, sig),
 				lockReason(effort, sig), doableNow, effort.curated(), difficulty, sig.recStatsShortfall()));
@@ -149,8 +161,53 @@ public final class LowHangingFruitRanker
 	 * <p>The honest fix is to cost tasks by their estimated MINUTES, which already multiply kills by
 	 * time-to-kill; the ranker has no timing library, so this approximates it.</p>
 	 */
-	private static double repetitionFactor(CombatAchievement task)
+	/**
+	 * What a task costs, which drives the whole ordering.
+	 *
+	 * <p>With real minutes available this is simply TIME, plus the rec-stats sink. It deliberately does NOT
+	 * re-apply difficulty or the task-type weight, because the estimate already contains them: minutes are
+	 * "attempts × the difficulty-derived ability factor", so a fiddly task is already costed for the
+	 * retries it takes. Multiplying by difficulty again — as this did — charged the same hardness three
+	 * times over, which is how a trivial 40-minute grind came to outrank an 8-minute mechanical task at the
+	 * same boss for the same points. Difficulty still tilts the result, at a square root, so it breaks ties
+	 * between similar-length tasks without ever overturning a large time difference.</p>
+	 *
+	 * <p>Without minutes (synthetic tests, or a boss with no timing data) it falls back to the original
+	 * effort-model product with the kill-count proxy.</p>
+	 */
+	private double costOf(CombatAchievement task, TaskEffortData effort, TaskLiveSignals sig,
+		TaskDifficulty difficulty)
 	{
+		double sink = RankedTask.recStatsSinkFactor(sig.recStatsShortfall());
+		if (minutesFn != null)
+		{
+			int minutes = minutesFn.applyAsInt(task);
+			if (minutes > 0)
+			{
+				return Math.max(1.0, minutes)
+					* Math.sqrt(difficultyFactor(difficulty, difficultyWeight))
+					* sink;
+			}
+		}
+		return model.effortFor(task, effort, sig)
+			* difficultyFactor(difficulty, difficultyWeight)
+			* repetitionFactor(task)
+			* sink;
+	}
+
+	private double repetitionFactor(CombatAchievement task)
+	{
+		if (minutesFn != null)
+		{
+			int minutes = minutesFn.applyAsInt(task);
+			if (minutes > 0)
+			{
+				// Straight proportional to time, so the score behaves as points-per-minute once the other
+				// factors are applied. TIME_BASELINE only keeps the numbers in a familiar range; ordering
+				// depends on ratios, not the constant.
+				return Math.max(0.1, minutes / TIME_BASELINE_MINUTES);
+			}
+		}
 		int kills = TaskTimeModel.requiredKills(task.description());
 		return kills <= 1 ? 1.0 : Math.sqrt(kills);
 	}

@@ -134,8 +134,12 @@ public final class SidePanelViewModelBuilder
 
 	private void rebuildRanker()
 	{
+		// Hand the ranker the same per-task minutes the Route costs by, so a "kill it 15 times" task is
+		// priced at what it actually takes rather than by a repeat count. Safe before the effort engine is
+		// wired: taskMinutes falls back to the empty timing library and the ranker ignores a zero.
 		this.ranker = new LowHangingFruitRanker(this.effortLib, this.model, this.difficultyLib,
-			caPointsWeight, caDifficultyWeight);
+			caPointsWeight, caDifficultyWeight)
+			.withMinutes(this::curatedTaskMinutes);
 	}
 
 	/**
@@ -224,6 +228,7 @@ public final class SidePanelViewModelBuilder
 		this.experience = experience == null ? CombatExperience.empty() : experience;
 		this.profile = profile == null ? PlayerProfile.empty() : profile;
 		this.tripOverheadMinutes = Math.max(0, tripOverheadMinutes);
+		rebuildRanker(); // timing data has landed; re-bind so the ranker costs by real minutes
 		return this;
 	}
 
@@ -244,6 +249,17 @@ public final class SidePanelViewModelBuilder
 	}
 
 	/** Estimated minutes to finish one task, folding in difficulty + attempts + the player's kill count. */
+	/**
+	 * Estimated minutes, but only when this boss actually HAS curated timing — 0 otherwise, which tells the
+	 * ranker to fall back to its effort model. Without the guard a boss with no timing produced a fallback
+	 * figure carrying no real signal, and costing by it quietly flattened the difficulty ordering the
+	 * quick-wins list depends on.
+	 */
+	private int curatedTaskMinutes(CombatAchievement task)
+	{
+		return timingLib.timingFor(task.monster()) == BossTiming.UNKNOWN ? 0 : taskMinutes(task);
+	}
+
 	private int taskMinutes(CombatAchievement task)
 	{
 		TaskDifficulty diff = difficultyLib.difficultyFor(task.id());
