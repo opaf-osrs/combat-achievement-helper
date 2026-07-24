@@ -103,9 +103,19 @@ public class FreshAccountRecStatsSimTest
 		// about ORDER, not hiding. If the dataset ever gains a real gate here, this precondition tells us.
 		assertTrue("CoX GM 5-scale should be an ungated doable-now task", rankWithout >= 0 && rankWith >= 0);
 
-		// The soft sink must push it far down relative to where the naive points/effort ranking put it.
-		assertTrue("rec-stats sink should bury CoX GM (was #" + (rankWithout + 1) + ", now #" + (rankWith + 1) + ")",
-			rankWith > rankWithout + 30);
+		// The sink must still push it down, and must leave it buried at the bottom of the list — which is
+		// the property that actually matters for a fresh account.
+		//
+		// This deliberately measures WHERE it ends up rather than "at least 30 places moved". Task 325 is a
+		// Speed-Runner, so the speed-tier cost now sinks it in BOTH rankings; the baseline it is compared
+		// against is itself near the floor, leaving fewer places left to fall. An absolute distance
+		// silently encodes how high the naive ranking used to put it, and breaks whenever anything else
+		// legitimately sinks the same task.
+		assertTrue("rec-stats sink should push CoX GM further down (was #" + (rankWithout + 1)
+			+ ", now #" + (rankWith + 1) + ")", rankWith > rankWithout);
+		int bottomTenth = with.size() - Math.max(10, with.size() / 10);
+		assertTrue("CoX GM should sit in the bottom tenth for a fresh account (#" + (rankWith + 1)
+			+ " of " + with.size() + ")", rankWith >= bottomTenth);
 
 		RankedTask cox = with.get(rankWith);
 		assertTrue("flagged below rec stats", cox.belowRecStats());

@@ -39,6 +39,13 @@ public final class LowHangingFruitRanker
 	private java.util.function.ToIntFunction<CombatAchievement> minutesFn;
 	/** Nominal minutes for a "normal" task; only sets the scale of the effort numbers. */
 	private static final double TIME_BASELINE_MINUTES = 10.0;
+	// Speed-tier cost multipliers. Applied directly rather than through the difficulty term: curated
+	// difficulty is already inside the minutes estimate, which is why that term is square-rooted, but the
+	// gear/RNG gate on a speed CA is a separate signal that is in neither — halving it made it near
+	// invisible (only 4 of 21 speed CAs moved at all).
+	private static final double SPEED_TRIALIST_COST = 1.15;
+	private static final double SPEED_CHASER_COST = 1.40;
+	private static final double SPEED_RUNNER_COST = 1.80;
 
 	/** Supplies real per-task minutes, so cost tracks time rather than a repeat count. */
 	public LowHangingFruitRanker withMinutes(java.util.function.ToIntFunction<CombatAchievement> fn)
@@ -88,8 +95,42 @@ public final class LowHangingFruitRanker
 	static double difficultyFactor(TaskDifficulty difficulty, double weight)
 	{
 		int d = difficulty == null ? TaskDifficulty.UNKNOWN.difficulty() : difficulty.difficulty();
-		double base = d / NEUTRAL_DIFFICULTY;
+		return difficultyFactor(d, weight);
+	}
+
+	private static double difficultyFactor(double effectiveDifficulty, double weight)
+	{
+		double base = effectiveDifficulty / NEUTRAL_DIFFICULTY;
 		return Math.max(0.05, 1.0 + (base - 1.0) * weight);
+	}
+
+	/**
+	 * Extra difficulty carried by a speed CA, on top of its curated rating. Speed tasks are gated by gear
+	 * and by RNG in a way the rating alone does not capture — an account without best-in-slot simply cannot
+	 * hit some of these times, however well it plays.
+	 *
+	 * <p>Applied to an EFFECTIVE difficulty used only for ranking, deliberately uncapped: the curated scale
+	 * stops at 10, and a maxed-out Speed-Runner has no headroom left, so bumping the displayed number would
+	 * collapse the very ladder this exists to widen (Whisperer's Chaser and Runner both pinned at 10 and
+	 * became indistinguishable). Uncapped, the tiers stay separated all the way up. The number the panel
+	 * shows is the curated one and is untouched.</p>
+	 */
+	private static double speedTierCost(CombatAchievement task)
+	{
+		String n = task.name();
+		if (n.contains("Speed-Runner"))
+		{
+			return SPEED_RUNNER_COST;
+		}
+		if (n.contains("Speed-Chaser"))
+		{
+			return SPEED_CHASER_COST;
+		}
+		if (n.contains("Speed-Trialist"))
+		{
+			return SPEED_TRIALIST_COST;
+		}
+		return 1.0;
 	}
 
 	/**
@@ -186,11 +227,13 @@ public final class LowHangingFruitRanker
 			{
 				return Math.max(1.0, minutes)
 					* Math.sqrt(difficultyFactor(difficulty, difficultyWeight))
+					* speedTierCost(task)
 					* sink;
 			}
 		}
 		return model.effortFor(task, effort, sig)
 			* difficultyFactor(difficulty, difficultyWeight)
+			* speedTierCost(task)
 			* repetitionFactor(task)
 			* sink;
 	}
