@@ -1669,6 +1669,23 @@ public class CombatAchievementsPanel extends PluginPanel
 		row.setOpaque(false);
 		row.setBorder(BorderFactory.createEmptyBorder(6, 0, 2, 0));
 		row.add(label, BorderLayout.CENTER);
+
+		// Clicking the boss name opens that boss, so a route group is a way in to everything else there.
+		// Formatting is untouched — only a hand cursor and a hover tint mark it as clickable — and it is
+		// only wired up when the boss actually has a page, so it can never be a dead click.
+		if (bossExists(boss))
+		{
+			label.setCursor(new Cursor(Cursor.HAND_CURSOR));
+			row.setCursor(new Cursor(Cursor.HAND_CURSOR));
+			addForegroundHover(label, CombatAchievementsTheme.HEADER_GOLD, CombatAchievementsTheme.NAME);
+			onClick(row, () -> {
+				currentMode = PanelMode.BOSSES;
+				selectedCa = null;
+				selectedBoss = boss;
+				buildModeBar();
+				rebuild();
+			});
+		}
 		return fullWidth(row);
 	}
 
