@@ -58,7 +58,7 @@ import org.slf4j.LoggerFactory;
 
 @PluginDescriptor(
 	name = "Combat Achievement Helper",
-	description = "Tracks Combat Achievements live, surfaces quick wins, plans the optimal path to your next tier, with setup and strategy notes per task.",
+	description = "Recommends your next Combat Achievements and routes you to your next tier",
 	tags = {"combat", "achievements", "ca", "pvm", "progression", "tasks"}
 )
 public class CombatAchievementsPlugin extends Plugin
