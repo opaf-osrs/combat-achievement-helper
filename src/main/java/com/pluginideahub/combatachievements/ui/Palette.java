@@ -96,14 +96,19 @@ public final class Palette
 		Palette build() { return new Palette(this); }
 	}
 
-	/** Orange names, green points, gold headers. The panel's default look. */
+	/**
+	 * The panel's default OSRS look, kept as-is in character: orange names, gold headers, green points.
+	 * A warm analogous core (OKLCH hue 62 orange to 88 gold) with green for value and red for negatives.
+	 * Its green/red difficulty ramp is the pretty one, not the accessible one — under red-green colour
+	 * blindness easy and hard collapse together, which is exactly what High contrast exists for.
+	 */
 	public static final Palette CLASSIC = builder()
-		.name("#FF9D33").points("#7FC24A").headerAccent("#FFD98A").desc("#B6AE96")
-		.positive("#4CAF50").negative("#D86A5A").locked("#969696").neutralMeta("#8A8A8A")
-		.accent("#DC8A00").modeSelected("#DC8A00").modeSelectedText("#FFFFFF")
-		.diffEasy("#4CAF50").diffMid("#FFD98A").diffHard("#D86A5A")
-		.tierEasy("#78C878").tierMedium("#78B4DC").tierHard("#C8AA5A")
-		.tierElite("#BE78C8").tierMaster("#DC786E").tierGrandmaster("#E6C85A").build();
+		.name("#FFA752").points("#82D67A").headerAccent("#F2D48E").desc("#AEA798")
+		.positive("#7CCF73").negative("#E66F62").locked("#7E7A72").neutralMeta("#938F85")
+		.accent("#EF912D").modeSelected("#EF912D").modeSelectedText("#1E1E1E")
+		.diffEasy("#7CCF73").diffMid("#F4CC64").diffHard("#E66F62")
+		.tierEasy("#90D189").tierMedium("#71C9FA").tierHard("#E8C773")
+		.tierElite("#C49BF3").tierMaster("#EF7F72").tierGrandmaster("#F0D777").build();
 
 	/**
 	 * Loud on purpose: a magenta / green / cyan triad (OKLCH hues 330, 145, 210) at high chroma. Because
@@ -144,13 +149,18 @@ public final class Palette
 		.tierEasy("#A0B9A4").tierMedium("#9BB5C8").tierHard("#C3B697")
 		.tierElite("#AFA5C4").tierMaster("#C29995").tierGrandmaster("#C7BE9E").build();
 
-	/** Brighter, and picked to stay legible for colour-blind readers: cyan for value, blue-amber-red for
-	 *  difficulty. Nearly every pairing meets AAA contrast. */
+	/**
+	 * Built for legibility rather than looks. Everything sits high on the lightness scale — every text
+	 * role except the deliberately dim "locked" clears WCAG AAA (7:1) on the card — and the hues stay on
+	 * the blue/amber axis that survives red-green colour blindness: value is cyan, never green, and the
+	 * difficulty ramp separates by LIGHTNESS as well as hue so it still reads in greyscale. Checked with
+	 * Vienot-Brettel protanope and deuteranope simulation: every ramp pair keeps clear separation.
+	 */
 	public static final Palette HIGH_CONTRAST = builder()
-		.name("#FFB84D").points("#5FD3C6").headerAccent("#FFD98A").desc("#C9C2B0")
-		.positive("#5FD3C6").negative("#FF9E85").locked("#9A9A9A").neutralMeta("#9A9A9A")
-		.accent("#E8A33D").modeSelected("#E8A33D").modeSelectedText("#1E1E1E")
-		.diffEasy("#6FB7FF").diffMid("#FFC24D").diffHard("#FF9E85")
-		.tierEasy("#7FBFF2").tierMedium("#5FD3C6").tierHard("#FFC24D")
-		.tierElite("#C9A0FF").tierMaster("#FF9E85").tierGrandmaster("#FFD98A").build();
+		.name("#FFCD94").points("#73EEF4").headerAccent("#FCE39F").desc("#C8C4B9")
+		.positive("#73EEF4").negative("#FFA191").locked("#AEAAA4").neutralMeta("#BBB7AF")
+		.accent("#FEB354").modeSelected("#FEB354").modeSelectedText("#1E1E1E")
+		.diffEasy("#9BD1FF").diffMid("#FFDA7D").diffHard("#FFA191")
+		.tierEasy("#A9D7FF").tierMedium("#73EEF4").tierHard("#FFDA7D")
+		.tierElite("#D5B1FF").tierMaster("#FFA191").tierGrandmaster("#FDE7A2").build();
 }
