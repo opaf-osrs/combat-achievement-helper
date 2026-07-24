@@ -105,36 +105,44 @@ public final class Palette
 		.tierEasy("#78C878").tierMedium("#78B4DC").tierHard("#C8AA5A")
 		.tierElite("#BE78C8").tierMaster("#DC786E").tierGrandmaster("#E6C85A").build();
 
-	/** Deeper amber names against brighter gold headers, with a teal-violet-coral difficulty ramp so a
-	 *  difficulty never reads as the points green or the header gold. */
+	/**
+	 * Loud on purpose: a magenta / green / cyan triad (OKLCH hues 330, 145, 210) at high chroma. Because
+	 * every hue sits in the same lightness and chroma band, a saturated scheme still reads as one
+	 * deliberate palette rather than a pile of clashing brights.
+	 */
 	public static final Palette MOLTEN_GAUNTLET = builder()
-		.name("#E28F30").points("#8BD450").headerAccent("#F2C34E").desc("#BDB49A")
-		.positive("#5CB85C").negative("#E4756A").locked("#8F8F8F").neutralMeta("#969696")
-		.accent("#DC8A00").modeSelected("#DC8A00").modeSelectedText("#1E1E1E")
-		.diffEasy("#5BC0C0").diffMid("#C9A0E0").diffHard("#E4756A")
-		.tierEasy("#8BD48B").tierMedium("#78B4DC").tierHard("#C8AA5A")
-		.tierElite("#C88FD2").tierMaster("#DC8A78").tierGrandmaster("#E6C85A").build();
+		.name("#F695EE").points("#7CE782").headerAccent("#27E3FD").desc("#A19BAF")
+		.positive("#7CE782").negative("#EE6570").locked("#7C7885").neutralMeta("#918C9D")
+		.accent("#E175D9").modeSelected("#AF4DA9").modeSelectedText("#FFFFFF")
+		.diffEasy("#7CE782").diffMid("#F3C935").diffHard("#EF656B")
+		.tierEasy("#88E48C").tierMedium("#44D7FF").tierHard("#F0CF4C")
+		.tierElite("#C896FF").tierMaster("#FD7277").tierGrandmaster("#F0D947").build();
 
 	/**
-	 * Neutral and cool: near-white names on pale blue headers and grey meta, with only the difficulty and
-	 * tier ramps keeping any colour — muted, so they stay readable without breaking the calm.
+	 * Cool and airy: one blue family (OKLCH hue 240–245) with analogous cyan/teal carrying value, and a
+	 * single complementary rose for the negatives. Lightness stays high and chroma stays low throughout,
+	 * so the colours read as tinted white rather than as colour.
 	 */
 	public static final Palette LITE = builder()
-		.name("#E7EDF3").points("#8FC7EA").headerAccent("#B3D6F2").desc("#98A2AE")
-		.positive("#87C7DE").negative("#D9908F").locked("#78818D").neutralMeta("#88919D")
-		.accent("#6BA6D6").modeSelected("#4E86B8").modeSelectedText("#FFFFFF")
-		.diffEasy("#8AC7B4").diffMid("#D3C08F").diffHard("#D9908F")
-		.tierEasy("#8FC7AE").tierMedium("#8FC0E4").tierHard("#D3C08F")
-		.tierElite("#B6A8DC").tierMaster("#D9A492").tierGrandmaster("#D8CA96").build();
+		.name("#E0E9F1").points("#84DCE0").headerAccent("#A4D8FE").desc("#95A0AA")
+		.positive("#7ED6D5").negative("#E1938C").locked("#798189").neutralMeta("#89949D")
+		.accent("#68B2EF").modeSelected("#3E80B4").modeSelectedText("#FFFFFF")
+		.diffEasy("#8CD6BA").diffMid("#E0C88E").diffHard("#E3928B")
+		.tierEasy("#92D5B7").tierMedium("#9BD2FA").tierHard("#E0C88E")
+		.tierElite("#C6B1F0").tierMaster("#ECA19A").tierGrandmaster("#E1D195").build();
 
-	/** One warm accent and near-white headers, so headings separate by weight rather than a third colour. */
+	/**
+	 * Near-achromatic. The text roles are pure neutral greys; only the semantic ones (points, difficulty,
+	 * tiers) carry a whisper of chroma — just enough to stay tellable apart. A single muted steel accent
+	 * keeps it from being lifeless.
+	 */
 	public static final Palette MODERN_DARK = builder()
-		.name("#E8935C").points("#6FB749").headerAccent("#F0F0F0").desc("#B0A99A")
-		.positive("#6FB749").negative("#E8795F").locked("#969696").neutralMeta("#969696")
-		.accent("#DC8A00").modeSelected("#DC8A00").modeSelectedText("#1E1E1E")
-		.diffEasy("#6FB749").diffMid("#D9A441").diffHard("#E8795F")
-		.tierEasy("#6FB749").tierMedium("#5AA9E0").tierHard("#D9A441")
-		.tierElite("#BB84DA").tierMaster("#E8795F").tierGrandmaster("#E6C85A").build();
+		.name("#DEDEDE").points("#A4C0A8").headerAccent("#BEBEBE").desc("#929292")
+		.positive("#A4C0A8").negative("#B88C87").locked("#777777").neutralMeta("#8C8C8C")
+		.accent("#99AEC0").modeSelected("#5B6B79").modeSelectedText("#FFFFFF")
+		.diffEasy("#9EBAA2").diffMid("#C5B693").diffHard("#B88C87")
+		.tierEasy("#A0B9A4").tierMedium("#9BB5C8").tierHard("#C3B697")
+		.tierElite("#AFA5C4").tierMaster("#C29995").tierGrandmaster("#C7BE9E").build();
 
 	/** Brighter, and picked to stay legible for colour-blind readers: cyan for value, blue-amber-red for
 	 *  difficulty. Nearly every pairing meets AAA contrast. */
