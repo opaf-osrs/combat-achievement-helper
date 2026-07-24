@@ -129,7 +129,7 @@ public final class Palette
 	 * so the colours read as tinted white rather than as colour.
 	 */
 	public static final Palette LITE = builder()
-		.name("#E0E9F1").points("#84DCE0").headerAccent("#A4D8FE").desc("#95A0AA")
+		.name("#D0D9E1").points("#84DCE0").headerAccent("#A4D8FE").desc("#95A0AA")
 		.positive("#7ED6D5").negative("#E1938C").locked("#798189").neutralMeta("#89949D")
 		.accent("#68B2EF").modeSelected("#3E80B4").modeSelectedText("#FFFFFF")
 		.diffEasy("#8CD6BA").diffMid("#E0C88E").diffHard("#E3928B")
@@ -138,16 +138,16 @@ public final class Palette
 
 	/**
 	 * Near-achromatic. The text roles are pure neutral greys; only the semantic ones (points, difficulty,
-	 * tiers) carry a whisper of chroma — just enough to stay tellable apart. A single muted steel accent
-	 * keeps it from being lifeless.
+	 * tiers) carry chroma — muted, but enough to read as colour rather than as grey. A restrained steel
+	 * accent carries the interactive bits.
 	 */
 	public static final Palette MODERN_DARK = builder()
-		.name("#DEDEDE").points("#A4C0A8").headerAccent("#BEBEBE").desc("#929292")
-		.positive("#A4C0A8").negative("#B88C87").locked("#777777").neutralMeta("#8C8C8C")
-		.accent("#99AEC0").modeSelected("#5B6B79").modeSelectedText("#FFFFFF")
-		.diffEasy("#9EBAA2").diffMid("#C5B693").diffHard("#B88C87")
-		.tierEasy("#A0B9A4").tierMedium("#9BB5C8").tierHard("#C3B697")
-		.tierElite("#AFA5C4").tierMaster("#C29995").tierGrandmaster("#C7BE9E").build();
+		.name("#DEDEDE").points("#93C69D").headerAccent("#BEBEBE").desc("#929292")
+		.positive("#93C69D").negative("#CA827C").locked("#777777").neutralMeta("#8C8C8C")
+		.accent("#89B0D2").modeSelected("#4E6D87").modeSelectedText("#FFFFFF")
+		.diffEasy("#8DC096").diffMid("#CEB577").diffHard("#CA827C")
+		.tierEasy("#8FBF98").tierMedium("#85B8DC").tierHard("#CDB57B")
+		.tierElite("#B2A0D6").tierMaster("#D5908A").tierGrandmaster("#CEBE82").build();
 
 	/**
 	 * Built for legibility rather than looks. Everything sits high on the lightness scale — every text
