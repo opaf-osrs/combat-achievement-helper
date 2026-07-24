@@ -17,6 +17,7 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.image.BufferedImage;
 import java.awt.Insets;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
@@ -33,6 +34,7 @@ import java.util.function.Consumer;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListCellRenderer;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -52,6 +54,7 @@ import javax.swing.event.DocumentListener;
 import net.runelite.client.ui.ColorScheme;
 import net.runelite.client.ui.FontManager;
 import net.runelite.client.ui.PluginPanel;
+import net.runelite.client.util.ImageUtil;
 import net.runelite.client.util.LinkBrowser;
 
 /**
@@ -87,6 +90,8 @@ public class CombatAchievementsPanel extends PluginPanel
 
 	/** Opened by the footer link. Plain browser navigation — nothing is sent from the client. */
 	private static final String PATREON_URL = "https://www.patreon.com/c/CAHelper";
+	/** Discord invite for the footer icon. Empty = the icon is hidden, so a blank never ships a dead link. */
+	private static final String DISCORD_URL = "";
 	/** Cap on cards rendered at once in the (now full) CAs list; refine the search to see more. */
 	private static final int RENDER_CAP = 60;
 	/** Max rank positions a CA can move when the CAs list is shuffled — big enough to surface a different
@@ -625,6 +630,10 @@ public class CombatAchievementsPanel extends PluginPanel
 		// so the whole footer reads as chrome rather than as calls to action.
 		JPanel links = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
 		links.setOpaque(false);
+		if (!DISCORD_URL.isEmpty())
+		{
+			links.add(discordLink());
+		}
 		if (FeedbackLink.hasGeneralForm())
 		{
 			links.add(footerLink("Feedback", FeedbackLink.generalUrl(),
@@ -635,6 +644,44 @@ public class CombatAchievementsPanel extends PluginPanel
 			footer.add(links, BorderLayout.EAST);
 		}
 		return footer;
+	}
+
+	/**
+	 * The Discord mark as a footer button. The bundled PNG is a white silhouette with alpha, tinted here
+	 * to the footer's meta-grey and to gold for the hover state, so the icon tracks the active theme
+	 * instead of needing a recoloured asset per palette.
+	 */
+	private JButton discordLink()
+	{
+		BufferedImage mark = ImageUtil.loadImageResource(CombatAchievementsPlugin.class, "discord.png");
+		JButton link = new JButton(new ImageIcon(tint(mark, CombatAchievementsTheme.NEUTRAL_META)));
+		link.setRolloverIcon(new ImageIcon(tint(mark, CombatAchievementsTheme.HEADER_GOLD)));
+		link.setRolloverEnabled(true);
+		link.setFocusPainted(false);
+		link.setBorderPainted(false);
+		link.setContentAreaFilled(false);
+		link.setOpaque(false);
+		link.setBorder(BorderFactory.createEmptyBorder(2, 0, 0, 0));
+		link.setMargin(new Insets(0, 0, 0, 0));
+		link.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		link.setToolTipText("Opens the Discord invite in your browser");
+		link.addActionListener(e -> LinkBrowser.browse(DISCORD_URL));
+		return link;
+	}
+
+	/** Recolours a white-with-alpha silhouette, keeping its alpha so the edges stay smooth. */
+	private static BufferedImage tint(BufferedImage src, Color colour)
+	{
+		BufferedImage out = new BufferedImage(src.getWidth(), src.getHeight(), BufferedImage.TYPE_INT_ARGB);
+		int rgb = colour.getRGB() & 0x00FFFFFF;
+		for (int y = 0; y < src.getHeight(); y++)
+		{
+			for (int x = 0; x < src.getWidth(); x++)
+			{
+				out.setRGB(x, y, (src.getRGB(x, y) & 0xFF000000) | rgb);
+			}
+		}
+		return out;
 	}
 
 	/** One muted footer link: plain text, meta-grey, warming to gold on hover. */
