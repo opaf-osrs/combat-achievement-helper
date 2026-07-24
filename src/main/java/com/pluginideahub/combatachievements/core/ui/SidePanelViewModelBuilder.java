@@ -935,20 +935,30 @@ public final class SidePanelViewModelBuilder
 	private List<SidePanelViewModel.UnlockView> buildUnlocks(List<UnlockSuggestion> suggestions,
 		Map<Integer, CombatAchievement> byId)
 	{
-		// A quest the player is nowhere near ABLE to do is not a recommendation, however many points it
-		// would open — a level-3 was being offered Master questlines needing 70s purely on prize size.
-		// Judged on the quest chain's OWN skill requirements (the same ready line the Route uses), and
-		// only applied while at least one within-reach quest survives, so the section never empties out
-		// (the standing ruling: this is the one place that answers "what quest next").
+		// A recommendation here means "do this quest, then go collect". Two ways a quest fails that:
+		// the player is nowhere near able to DO it (chain skills past the ready line — a level-3 offered
+		// Master questlines purely on prize size), or they could do it but could USE nothing it opens
+		// (all-40s offered A Kingdom Divided, whose Yama CAs want 90s — the quest was near, the prize
+		// was not). Both judged on the same ready line the Route uses. The filters relax in stages so
+		// the section never empties out (the standing ruling: this is the one place that answers
+		// "what quest next"): full recommendations, else near quests whose prize is still ahead of the
+		// account, else everything. Train next raises the stats; a dropped quest resurfaces here on its
+		// own the moment its prize comes within reach.
 		List<UnlockSuggestion> withinReach = new ArrayList<>();
+		List<UnlockSuggestion> collectable = new ArrayList<>();
 		for (UnlockSuggestion s : suggestions)
 		{
 			if (s.worstSkillShortfall() <= TrainingPlanner.VIABLE_WORST_GAP)
 			{
 				withinReach.add(s);
+				if (s.reachableTaskCount() > 0)
+				{
+					collectable.add(s);
+				}
 			}
 		}
-		List<UnlockSuggestion> shown = withinReach.isEmpty() ? suggestions : withinReach;
+		List<UnlockSuggestion> shown = !collectable.isEmpty() ? collectable
+			: !withinReach.isEmpty() ? withinReach : suggestions;
 
 		List<SidePanelViewModel.UnlockView> views = new ArrayList<>();
 		for (UnlockSuggestion s : shown)
@@ -970,10 +980,8 @@ public final class SidePanelViewModelBuilder
 			}
 			unlockedCas.sort(Comparator.comparingInt(SidePanelViewModel.CaDetail::totalMinutes)
 				.thenComparingInt(d -> d.id));
-			// Shows what the quest OPENS, not what is doable the same day — a quest is permanent progress
-			// and worth doing before you can use it. Reachability decides the ORDER (so a questline whose
-			// CAs are forty levels away sinks) but never whether the suggestion appears: hiding them left a
-			// new account with no "what quest next" advice at all, which is the one thing this answers.
+			// The card still shows what the quest OPENS in full — a quest is permanent progress, and the
+			// numbers should be the honest prize even when only part of it is collectable today.
 			views.add(new SidePanelViewModel.UnlockView(s.questName(), s.difficulty(),
 				s.unlockedTaskCount(), s.unlockedPoints(), s.totalMinutes(),
 				String.join(", ", s.remainingPrerequisites()), String.join(", ", s.unmetSkills()),

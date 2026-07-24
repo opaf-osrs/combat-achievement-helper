@@ -309,40 +309,36 @@ public class RouteReadinessTest
 	}
 
 	@Test
-	public void trainNextGivesBeginnersALadderAndEstablishedAccountsTheNormalRanking()
+	public void trainNextLaddersCombatAtEveryLevelAndNeverBlobsIt()
 	{
-		// Under the ladder cutoff, single combat skills appear ONLY as "toward" rungs (small goals at
-		// the lowest level content recommends), after the skilling goals. At 50+ they never appear
-		// bare — "Strength 56", pointed at Greater Demons, must not come back as a scored goal.
-		List<SidePanelViewModel.TrainingView> beginner = viewModelFor(account(1)).trainings();
-		boolean sawRung = false;
-		boolean sawNormal = false;
-		int lastNormalIndex = -1;
-		int firstRungIndex = Integer.MAX_VALUE;
-		for (int i = 0; i < beginner.size(); i++)
+		// Single combat skills appear only as "toward" rungs — small goals at the recommended stats of
+		// the next content up — after the skilling goals, at EVERY account level. No goal is ever a
+		// round-number blob ("All combat 80"); the next rung is what the next boss actually asks for.
+		for (int lvl : new int[]{1, 60})
 		{
-			SidePanelViewModel.TrainingView t = beginner.get(i);
-			boolean bareCombat = t.label.matches("^(Attack|Strength|Defence|Ranged|Magic|Hitpoints) \\d+$");
-			if (bareCombat)
+			List<SidePanelViewModel.TrainingView> trainings = viewModelFor(account(lvl)).trainings();
+			boolean sawRung = false;
+			int lastNormalIndex = -1;
+			int firstRungIndex = Integer.MAX_VALUE;
+			for (int i = 0; i < trainings.size(); i++)
 			{
-				assertTrue("a bare combat goal must be a ladder rung: " + t.label, t.toward);
-				sawRung = true;
-				firstRungIndex = Math.min(firstRungIndex, i);
+				SidePanelViewModel.TrainingView t = trainings.get(i);
+				assertFalse("no blob goals: " + t.label, t.label.startsWith("All combat"));
+				boolean bareCombat = t.label.matches("^(Attack|Strength|Defence|Ranged|Magic|Hitpoints) \\d+$");
+				if (bareCombat)
+				{
+					assertTrue("a bare combat goal must be a ladder rung: " + t.label, t.toward);
+					sawRung = true;
+					firstRungIndex = Math.min(firstRungIndex, i);
+				}
+				else
+				{
+					lastNormalIndex = Math.max(lastNormalIndex, i);
+				}
 			}
-			else
-			{
-				sawNormal = true;
-				lastNormalIndex = Math.max(lastNormalIndex, i);
-			}
-		}
-		assertTrue("a level-3 gets combat rungs", sawRung);
-		assertTrue("and keeps the skilling goals", sawNormal);
-		assertTrue("skilling goals stay on top, rungs after", lastNormalIndex < firstRungIndex);
-
-		for (SidePanelViewModel.TrainingView t : viewModelFor(account(60)).trainings())
-		{
-			assertFalse("a 50+ account got a bare combat goal: " + t.label,
-				t.label.matches("^(Attack|Strength|Defence|Ranged|Magic|Hitpoints) \\d+$"));
+			assertTrue("an all-" + lvl + "s account gets combat rungs", sawRung);
+			assertTrue("skilling goals stay on top, rungs after (all-" + lvl + "s)",
+				lastNormalIndex < firstRungIndex);
 		}
 	}
 
@@ -359,6 +355,22 @@ public class RouteReadinessTest
 			assertTrue(u.questName + " is " + u.worstShortfall + " levels out of reach",
 				u.worstShortfall <= TrainingPlanner.VIABLE_WORST_GAP);
 		}
+	}
+
+	@Test
+	public void aQuestWhoseWholePrizeIsOutOfReachIsNotRecommended()
+	{
+		// An all-40s account could DO A Kingdom Divided (its chain tops out in the low 50s), but could
+		// use nothing it opens — Yama wants 90s. A recommendation means "do this quest, then go
+		// collect", so the near-quest-far-prize case must not show while real options exist.
+		java.util.List<String> names = new java.util.ArrayList<>();
+		for (SidePanelViewModel.UnlockView u : viewModelFor(account(40)).unlocks())
+		{
+			names.add(u.questName);
+		}
+		assertFalse("the section still offers something", names.isEmpty());
+		assertFalse("A Kingdom Divided offered to an all-40s account: " + names,
+			names.contains("A Kingdom Divided"));
 	}
 
 	@Test

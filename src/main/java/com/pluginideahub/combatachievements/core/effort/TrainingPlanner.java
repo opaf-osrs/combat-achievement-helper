@@ -35,18 +35,14 @@ public final class TrainingPlanner
 	/** See {@link Tuning#VIABLE_WORST_GAP}. */
 	public static final int VIABLE_WORST_GAP = Tuning.VIABLE_WORST_GAP;
 
-	/** Combat recommendations almost always want the whole kit, so raise these together. */
-	private static final String[] COMBAT_KIT = {
-		"Attack", "Strength", "Defence", "Ranged", "Magic", "Hitpoints"
-	};
-	private static final Set<String> COMBAT_KIT_SET = new HashSet<>(java.util.Arrays.asList(COMBAT_KIT));
-	private static final int[] COMBAT_MILESTONES = {20, 30, 40, 50, 60, 70, 80, 90};
+	/** Combat stats never appear as scored single-skill goals; the ladder rungs below cover them. */
+	private static final Set<String> COMBAT_KIT_SET = new HashSet<>(java.util.Arrays.asList(
+		"Attack", "Strength", "Defence", "Ranged", "Magic", "Hitpoints"));
 
 	/**
-	 * Below this level a combat skill gets beginner-ladder treatment: one small rung per skill at the
-	 * lowest level any content recommends, ascending, appended after the skilling goals. From 50 the
-	 * skill graduates to the normal points-per-training-hour ranking — by then the account has a base
-	 * and progression follows the same shape naturally, without being forced.
+	 * Below this level a combat skill's rungs come from non-endgame content only — a raid's low-stat
+	 * puzzle room must not set a fresh account's goal. From 50 up, raids and quest bosses are simply
+	 * the next content, and their recommended stats become the rungs.
 	 */
 	private static final int LADDER_CUTOFF = 50;
 
@@ -140,33 +136,11 @@ public final class TrainingPlanner
 				add(out, e.getKey() + " " + target, raise, all, done, effort, rec, profile, baseViable);
 			}
 		}
-		// "All combat" milestones only once every kit skill has graduated past the ladder — for a
-		// beginner they are one big blob goal, and the per-skill rungs below replace them.
-		if (kitGraduated(profile))
-		{
-			for (int target : COMBAT_MILESTONES)
-			{
-				Map<String, Integer> raise = new HashMap<>();
-				for (String c : COMBAT_KIT)
-				{
-					if (profile.levelOf(c) < target)
-					{
-						raise.put(c, target);
-					}
-				}
-				if (!raise.isEmpty())
-				{
-					add(out, "All combat " + target, raise, all, done, effort, rec, profile, baseViable);
-				}
-			}
-		}
-
 		// One goal per skill — the best rate — so "Ranged 25 / 30 / 40" collapses to a single suggestion.
 		Map<String, TrainingSuggestion> best = new LinkedHashMap<>();
 		for (TrainingSuggestion s : out)
 		{
-			String key = s.skills().size() > 1 && s.label().startsWith("All combat")
-				? "All combat" : String.join("/", s.skills());
+			String key = String.join("/", s.skills());
 			TrainingSuggestion cur = best.get(key);
 			if (cur == null || s.score() > cur.score())
 			{
@@ -179,30 +153,20 @@ public final class TrainingPlanner
 		List<TrainingSuggestion> shown = ranked.size() > limit
 			? new ArrayList<>(ranked.subList(0, limit)) : ranked;
 
-		// The beginner combat ladder rides AFTER the skilling goals (which every account should just
-		// do — Tempoross, Wintertodt, Prayer 43): one small rung per combat skill still under the
-		// cutoff, at the lowest level any reachable content recommends, lowest first.
+		// The combat ladder rides AFTER the skilling goals (which every account should just do —
+		// Tempoross, Wintertodt, Prayer 43): one rung per combat skill, aimed at the recommended
+		// stats of the next content up, lowest first. There is no round-number goal anywhere — the
+		// next rung is always whatever the next boss actually asks for.
 		shown.addAll(ladderRungs(all, done, effort, rec, profile));
 		return shown;
 	}
 
-	private boolean kitGraduated(PlayerProfile profile)
-	{
-		for (String c : LADDER_SKILLS)
-		{
-			if (profile.levelOf(c) < LADDER_CUTOFF)
-			{
-				return false;
-			}
-		}
-		return true;
-	}
-
 	/**
-	 * One rung per under-cutoff combat skill: "Attack 40", aimed at the lowest level any non-endgame
-	 * content recommends or gates on, with the CAs that threshold serves as the prize it works toward.
-	 * Endgame-access content never sets a rung — a raid's "Magic 13" puzzle room is not the reason a
-	 * fresh account trains Magic.
+	 * One rung per combat skill, at any level: "Attack 40", aimed at the lowest level any content above
+	 * the player recommends, with the CAs that threshold serves as the prize it works toward. The next
+	 * rung is always what the next boss actually asks for — never a round number. Below the cutoff,
+	 * endgame-access content cannot set a rung (a raid's "Magic 13" puzzle room is not the reason a
+	 * fresh account trains Magic); past it, raids and quest bosses ARE the next content up.
 	 */
 	private List<TrainingSuggestion> ladderRungs(List<CombatAchievement> all, Set<Integer> done,
 		EffortDataLibrary effort, RecStatsLibrary rec, PlayerProfile profile)
@@ -211,10 +175,7 @@ public final class TrainingPlanner
 		for (String skill : LADDER_SKILLS)
 		{
 			int have = profile.levelOf(skill);
-			if (have >= LADDER_CUTOFF)
-			{
-				continue;
-			}
+			boolean allowEndgame = have >= LADDER_CUTOFF;
 			// Rung targets come from the curated RECOMMENDED stats only. The hard levelReqs carry
 			// quest-chain artifacts (a "Ranged 25" buried in Zulrah's access chain), which made a
 			// level-3's first ranged goal read "Ranged 25 — toward Zulrah". The recs are what the
@@ -222,7 +183,7 @@ public final class TrainingPlanner
 			int target = Integer.MAX_VALUE;
 			for (CombatAchievement a : all)
 			{
-				if (done.contains(a.id()) || bossDifficulty.isEndgameAccess(a.monster()))
+				if (done.contains(a.id()) || (!allowEndgame && bossDifficulty.isEndgameAccess(a.monster())))
 				{
 					continue;
 				}
@@ -249,7 +210,7 @@ public final class TrainingPlanner
 			Map<String, Integer> byMonster = new HashMap<>();
 			for (CombatAchievement a : all)
 			{
-				if (done.contains(a.id()) || bossDifficulty.isEndgameAccess(a.monster()))
+				if (done.contains(a.id()) || (!allowEndgame && bossDifficulty.isEndgameAccess(a.monster())))
 				{
 					continue;
 				}
