@@ -1667,6 +1667,21 @@ public class CombatAchievementsPanel extends PluginPanel
 		content.add(fullWidth(new JLabel(sb.toString())));
 		content.add(spacer());
 
+		// Jump to the boss this CA is at, to see everything else you could knock out on the same trip.
+		// Only offered when that boss actually has a page in the directory, so it can never be a dead end.
+		if (!d.monster.isEmpty() && bossExists(d.monster))
+		{
+			String label = d.monster.length() > 18 ? d.monster.substring(0, 17) + "…" : d.monster;
+			content.add(backButton("View " + label + " →", () -> {
+				currentMode = PanelMode.BOSSES;
+				selectedCa = null;
+				selectedBoss = d.monster;
+				buildModeBar();
+				rebuild();
+			}));
+			content.add(spacer());
+		}
+
 		if (!d.requirements.isEmpty())
 		{
 			content.add(collapseHeader("Requirements", !reqsExpanded,
@@ -1770,6 +1785,19 @@ public class CombatAchievementsPanel extends PluginPanel
 		}
 		sb.append("</body></html>");
 		return fullWidth(new JLabel(sb.toString()));
+	}
+
+	/** True when the boss directory has a page for this monster (so a "View boss" jump can't dead-end). */
+	private boolean bossExists(String monster)
+	{
+		for (SidePanelViewModel.BossRow b : model.bosses())
+		{
+			if (monster.equals(b.monster))
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private void buildBossDetail(String monster)

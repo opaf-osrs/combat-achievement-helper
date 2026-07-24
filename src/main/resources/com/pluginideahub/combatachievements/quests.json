@@ -2,7 +2,7 @@
  "version": "2026-06-29",
  "source": "OSRS Wiki quest pages (per-quest research agents), CA-relevant quest universe",
  "note": "Quest-effort graph for the quests that gate Combat Achievements (gating quests + full prerequisite chains). estMinutes/effortScore are heuristics derived from the wiki Length/Difficulty so the plugin can compare doing a quest chain vs grinding a CA. directPrerequisiteQuests forms the dependency graph.",
- "questCount": 111,
+ "questCount": 112,
  "quests": {
   "A Kingdom Divided": {
    "name": "A Kingdom Divided",
@@ -1168,24 +1168,6 @@
    "series": "Kharidian",
    "wikiUrl": "https://oldschool.runescape.wiki/w/Prince_Ali_Rescue"
   },
-  "Recipe for Disaster: Another Cook's Quest": {
-   "name": "Recipe for Disaster: Another Cook's Quest",
-   "difficulty": "Special",
-   "length": "Short",
-   "estMinutes": 8,
-   "effortScore": 3,
-   "questPoints": 1,
-   "members": true,
-   "combatRequirement": null,
-   "skillRequirements": {
-    "Cooking": 10
-   },
-   "directPrerequisiteQuests": [
-    "Cook's Assistant"
-   ],
-   "series": "Recipe for Disaster",
-   "wikiUrl": "https://oldschool.runescape.wiki/w/Recipe_for_Disaster/Another_Cook%27s_Quest"
-  },
   "Recipe for Disaster/Freeing King Awowogei": {
    "name": "Recipe for Disaster/Freeing King Awowogei",
    "difficulty": "Special",
@@ -1205,6 +1187,24 @@
    ],
    "series": "Recipe for Disaster",
    "wikiUrl": "https://oldschool.runescape.wiki/w/Recipe_for_Disaster/Freeing_King_Awowogei"
+  },
+  "Recipe for Disaster: Another Cook's Quest": {
+   "name": "Recipe for Disaster: Another Cook's Quest",
+   "difficulty": "Special",
+   "length": "Short",
+   "estMinutes": 8,
+   "effortScore": 3,
+   "questPoints": 1,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Cooking": 10
+   },
+   "directPrerequisiteQuests": [
+    "Cook's Assistant"
+   ],
+   "series": "Recipe for Disaster",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/Recipe_for_Disaster/Another_Cook%27s_Quest"
   },
   "Recruitment Drive": {
    "name": "Recruitment Drive",
@@ -1678,6 +1678,27 @@
    "directPrerequisiteQuests": [],
    "series": "Fremennik",
    "wikiUrl": "https://oldschool.runescape.wiki/w/The_Fremennik_Trials"
+  },
+  "The Frozen Door": {
+   "name": "The Frozen Door",
+   "difficulty": "Master",
+   "length": "Long",
+   "estMinutes": 180,
+   "effortScore": 8,
+   "questPoints": 0,
+   "members": true,
+   "combatRequirement": null,
+   "skillRequirements": {
+    "Agility": 70,
+    "Hitpoints": 70,
+    "Ranged": 70,
+    "Strength": 70
+   },
+   "directPrerequisiteQuests": [
+    "Desert Treasure I"
+   ],
+   "series": "God Wars",
+   "wikiUrl": "https://oldschool.runescape.wiki/w/The_Frozen_Door"
   },
   "The Garden of Death": {
    "name": "The Garden of Death",

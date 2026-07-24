@@ -126,6 +126,41 @@ public class QuestGateResolutionTest
 		return monsters;
 	}
 
+	/**
+	 * Nex sits behind the frozen key, which is The Frozen Door miniquest: Desert Treasure I plus a key
+	 * piece from each of the four God Wars generals. Without the gate the plugin routed a player straight
+	 * to Nex on stats alone. The quest must also exist in the quest library, or the gate would lock the
+	 * tasks with no way for the Unlock planner to ever offer the miniquest as the thing to go do.
+	 */
+	@Test
+	public void nexIsGatedBehindTheFrozenDoorAndTheMiniquestIsPlannable()
+	{
+		CombatAchievementLibrary lib = CombatAchievementLibrary.loadBundled();
+		EffortDataLibrary effort = EffortDataLibrary.loadBundled();
+
+		int nexTasks = 0;
+		for (com.pluginideahub.combatachievements.core.achievement.CombatAchievement t : lib.all())
+		{
+			if (!"Nex".equals(t.monster()))
+			{
+				continue;
+			}
+			nexTasks++;
+			TaskEffortData data = effort.effortFor(t.id());
+			boolean gated = false;
+			for (QuestRequirement q : data.questReqs())
+			{
+				gated |= "The Frozen Door".equalsIgnoreCase(q.quest());
+			}
+			assertTrue("Nex task " + t.id() + " (" + t.name() + ") must be gated on The Frozen Door", gated);
+		}
+		assertTrue("expected Nex tasks in the dataset", nexTasks > 0);
+
+		assertNotNull("The Frozen Door must be in the quest library so the unlock can be planned",
+			com.pluginideahub.combatachievements.core.effort.QuestEffortLibrary.loadBundled()
+				.questFor("The Frozen Door"));
+	}
+
 	/** Reads data/quest-gates.json from the working dir (repo root) if available; null otherwise. */
 	private static JsonObject readResourceOrFile()
 	{
