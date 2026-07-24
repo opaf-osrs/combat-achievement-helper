@@ -89,6 +89,8 @@ public final class SidePanelViewModelBuilder
 	private long routeShuffleSeed;
 	/** Task ids the player has barred from the Route ("I'm not doing that one"). */
 	private Set<Integer> barredTasks = Collections.emptySet();
+	/** Task ids the player has pinned INTO the Route ("I want to do this one"). */
+	private Set<Integer> pinnedTasks = Collections.emptySet();
 	// Deliberately fixed (not config): the panel shows a focused shortlist of the best sessions/unlocks;
 	// the underlying rankings are complete, these just cap what is rendered.
 	private static final int SESSIONS_LIMIT = 8;
@@ -192,6 +194,18 @@ public final class SidePanelViewModelBuilder
 	public SidePanelViewModelBuilder barred(Set<Integer> taskIds)
 	{
 		this.barredTasks = taskIds == null || taskIds.isEmpty()
+			? Collections.emptySet() : new HashSet<>(taskIds);
+		return this;
+	}
+
+	/**
+	 * Tasks the player has pinned into the Route. They are taken first and their points come off the gap,
+	 * then the solver optimally fills whatever is left — so pinning steers the route without abandoning
+	 * the optimisation for everything else.
+	 */
+	public SidePanelViewModelBuilder pinned(Set<Integer> taskIds)
+	{
+		this.pinnedTasks = taskIds == null || taskIds.isEmpty()
 			? Collections.emptySet() : new HashSet<>(taskIds);
 		return this;
 	}
@@ -444,6 +458,7 @@ public final class SidePanelViewModelBuilder
 
 		PathPlan plan;
 		boolean trainFirst = false;
+		List<RankedTask> pinnedSteps = Collections.emptyList();
 		if (target == AchievementTier.GRANDMASTER)
 		{
 			// GM additionally requires completing every task, so the path is all incomplete tasks.
@@ -455,10 +470,21 @@ public final class SidePanelViewModelBuilder
 			int pointsGap = Math.max(0, threshold - gamePoints);
 			List<RankedTask> doableNow = new ArrayList<>();
 			List<RankedTask> ready = new ArrayList<>();
+			// Pinned tasks are taken whatever the solver would have chosen. They are honoured even when the
+			// account is below their recommended stats: the player asked for this one specifically, and
+			// second-guessing an explicit choice is worse than letting them take a hard task early.
+			List<RankedTask> forced = new ArrayList<>();
+			int forcedPoints = 0;
 			int doablePoints = 0;
 			int readyPoints = 0;
 			for (RankedTask rt : rankedIncomplete)
 			{
+				if (pinnedTasks.contains(rt.achievement().id()) && rt.doableNow())
+				{
+					forced.add(rt);
+					forcedPoints += rt.achievement().points();
+					continue;
+				}
 				// Barred tasks are ones the player has explicitly said they do not want to do. Dropping them
 				// before the solve (rather than filtering the result) is what lets the next-best task take
 				// the freed slot; if nothing is left to take it, the gap simply stays open and the Route
@@ -480,19 +506,32 @@ public final class SidePanelViewModelBuilder
 			// level-3 was routed at Dagannoth Kings: those tasks have no hard gate, so they counted as doable
 			// and the solver happily used them to close the gap 80 levels early. Stopping short and handing
 			// over to "Train next" is the honest answer — see the trainFirst flag.
-			trainFirst = readyPoints < pointsGap && doablePoints >= pointsGap;
+			// Pinned points already count toward the tier, so only the remainder still needs solving.
+			int remainingGap = Math.max(0, pointsGap - forcedPoints);
+			trainFirst = readyPoints + forcedPoints < pointsGap && doablePoints + forcedPoints >= pointsGap;
 			// Quickest path to the tier, boss-aware: a fixed trip overhead per boss makes the solver keep you
 			// at a boss (do several CAs there) rather than scatter one-CA visits across the game and close the
 			// last gap at a far-off boss. tripOverheadMinutes is the clustering-strength dial.
-			plan = solver.solveClustered(target, pointsGap, ready, this::routeCost, tripOverheadMinutes);
+			plan = solver.solveClustered(target, remainingGap, ready, this::routeCost, tripOverheadMinutes);
+			pinnedSteps = forced;
 		}
 
 		List<SidePanelViewModel.PathRow> steps = new ArrayList<>();
+		int running = 0;
+		for (RankedTask rt : pinnedSteps)
+		{
+			CombatAchievement a = rt.achievement();
+			running += a.points();
+			steps.add(new SidePanelViewModel.PathRow(a.id(), a.name(), a.tier().displayName(),
+				a.points(), running, a.wikiUrl(),
+				videoLib.bestGuideUrl(a.id(), a.name()), buildCaDetail(a, true, "")));
+		}
 		for (PathStep step : plan.steps())
 		{
 			CombatAchievement a = step.achievement();
+			running += a.points();
 			steps.add(new SidePanelViewModel.PathRow(a.id(), a.name(), a.tier().displayName(),
-				a.points(), step.cumulativePoints(), a.wikiUrl(),
+				a.points(), running, a.wikiUrl(),
 				videoLib.bestGuideUrl(a.id(), a.name()), buildCaDetail(a, true, "")));
 		}
 		// The barred pile, so the panel can list what was set aside and offer it back. Drawn from the

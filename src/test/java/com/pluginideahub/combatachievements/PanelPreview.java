@@ -122,6 +122,7 @@ public final class PanelPreview
 			CombatAchievementsPanel panel = new CombatAchievementsPanel(action -> { });
 			// No-op handlers so the Route's per-CA "−" (bar) control renders in the previews.
 			panel.setBarHandlers(id -> { }, id -> { }, () -> { });
+			panel.setRouteHandlers(id -> { }, id -> { });
 			panel.render(viewModel);
 
 			write(panel, PanelMode.RECOMMENDED, new File(outDir, "02-recommended.png"));

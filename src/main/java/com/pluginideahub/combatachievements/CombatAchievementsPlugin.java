@@ -91,6 +91,8 @@ public class CombatAchievementsPlugin extends Plugin
 	private long routeShuffleSeed;
 	/** Task ids the player barred from the Route; persisted per account so the choice survives restarts. */
 	private final Set<Integer> barredTasks = new HashSet<>();
+	/** Task ids pinned INTO the Route from a boss page; persisted per account alongside barred. */
+	private final Set<Integer> pinnedTasks = new HashSet<>();
 	private NavigationButton navigationButton;
 
 	private CombatAchievementLibrary library;
@@ -149,6 +151,7 @@ public class CombatAchievementsPlugin extends Plugin
 		panel.setHowToDefault(config.showHowTo());
 		panel.setDeveloperMode(config.developerMode());
 		panel.setBarHandlers(this::barTask, this::unbarTask, this::clearBarredTasks);
+		panel.setRouteHandlers(this::addToRoute, this::removeFromRoute);
 		navigationButton = NavigationButton.builder()
 			.tooltip("Combat Achievement Helper")
 			.icon(ImageUtil.loadImageResource(CombatAchievementsPlugin.class, "icon.png"))
@@ -207,6 +210,7 @@ public class CombatAchievementsPlugin extends Plugin
 				lastAccountHash = hash;
 				loadKillCounts(hash);
 				loadBarredTasks(hash);
+				loadPinnedTasks(hash);
 				backfillKillCountsFromHiscores();
 			}
 			requestRefresh();
@@ -336,6 +340,81 @@ public class CombatAchievementsPlugin extends Plugin
 	private static String barredKey(long accountHash)
 	{
 		return "barred_" + accountHash;
+	}
+
+	private static String pinnedKey(long accountHash)
+	{
+		return "pinned_" + accountHash;
+	}
+
+	/** Pin a CA into the Route. Pinning also clears any bar on it — the two are opposites. */
+	private void addToRoute(int taskId)
+	{
+		boolean changed = pinnedTasks.add(taskId);
+		changed |= barredTasks.remove(taskId);
+		if (changed)
+		{
+			saveBarredTasks();
+			savePinnedTasks();
+			refresh();
+		}
+	}
+
+	/**
+	 * Remove a CA from the Route. If it was pinned, simply un-pin it and let the solver decide again; if
+	 * the solver chose it, bar it so the solver stops choosing it. Barring a merely-pinned task would
+	 * otherwise be a surprise: undoing your own pin should not blacklist the task.
+	 */
+	private void removeFromRoute(int taskId)
+	{
+		if (pinnedTasks.remove(taskId))
+		{
+			savePinnedTasks();
+		}
+		else
+		{
+			barredTasks.add(taskId);
+			saveBarredTasks();
+		}
+		refresh();
+	}
+
+	private void savePinnedTasks()
+	{
+		if (lastAccountHash == -1L)
+		{
+			return;
+		}
+		try
+		{
+			configManager.setConfiguration(KC_CONFIG_GROUP, pinnedKey(lastAccountHash),
+				GSON.toJson(pinnedTasks));
+		}
+		catch (RuntimeException ex)
+		{
+			log.debug("Combat Achievement Helper: failed to persist pinned tasks", ex);
+		}
+	}
+
+	private void loadPinnedTasks(long accountHash)
+	{
+		pinnedTasks.clear();
+		try
+		{
+			String json = configManager.getConfiguration(KC_CONFIG_GROUP, pinnedKey(accountHash));
+			if (json != null && !json.isEmpty())
+			{
+				Set<Integer> saved = GSON.fromJson(json, new TypeToken<HashSet<Integer>>() { }.getType());
+				if (saved != null)
+				{
+					pinnedTasks.addAll(saved);
+				}
+			}
+		}
+		catch (RuntimeException ex)
+		{
+			log.debug("Combat Achievement Helper: failed to load pinned tasks", ex);
+		}
 	}
 
 	/** Bars a task from the Route and re-solves, so the next-best task takes the freed slot. */
@@ -511,6 +590,7 @@ public class CombatAchievementsPlugin extends Plugin
 			.bossDifficulty(com.pluginideahub.combatachievements.core.effort.BossDifficultyLibrary.loadBundled())
 			.routeShuffle(routeShuffleSeed)
 			.barred(barredTasks)
+			.pinned(pinnedTasks)
 			.detail(taskDetailLibrary)
 			.scaling(scalingLibrary)
 			.effortEngine(bossTimingLibrary, questEffortLibrary, skillXpLibrary, experience, profile, 6);

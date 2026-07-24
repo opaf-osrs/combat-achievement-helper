@@ -120,6 +120,10 @@ public class CombatAchievementsPanel extends PluginPanel
 	private transient Consumer<Integer> onBarTask;
 	/** Put one barred task back in the running. */
 	private transient Consumer<Integer> onUnbarTask;
+	/** Add a CA to the route (pin it) from a boss page. */
+	private transient Consumer<Integer> onAddToRoute;
+	/** Remove a CA from the route from a boss page (unpin if pinned, otherwise bar). */
+	private transient Consumer<Integer> onRemoveFromRoute;
 	/** Clear every barred task, putting them all back in the running. */
 	private transient Runnable onClearBarred;
 
@@ -957,6 +961,13 @@ public class CombatAchievementsPanel extends PluginPanel
 	public void setBarHandlers(Consumer<Integer> barTask, Runnable clearBarred)
 	{
 		setBarHandlers(barTask, null, clearBarred);
+	}
+
+	/** Wires the boss page's add-to / remove-from route controls. */
+	public void setRouteHandlers(Consumer<Integer> addToRoute, Consumer<Integer> removeFromRoute)
+	{
+		this.onAddToRoute = addToRoute;
+		this.onRemoveFromRoute = removeFromRoute;
 	}
 
 	/** Wires bar / un-bar / restore-all to the plugin, which owns and persists the barred set. */
@@ -2302,6 +2313,8 @@ public class CombatAchievementsPanel extends PluginPanel
 	/** A CA card for the boss detail — same layout as the CAs-list {@link #taskCard} for a consistent look. */
 	private JPanel caCard(SidePanelViewModel.CaDetail d)
 	{
+		boolean toggle = d.doableNow && (onAddToRoute != null || onRemoveFromRoute != null);
+		final int textWidth = toggle ? 166 - BAR_BUTTON_WIDTH : 166;
 		JPanel card = new JPanel(new BorderLayout());
 		card.setBackground(ColorScheme.DARK_GRAY_COLOR);
 		Color accent = d.doableNow ? CombatAchievementsTheme.NAME : CombatAchievementsTheme.LOCKED;
@@ -2309,7 +2322,7 @@ public class CombatAchievementsPanel extends PluginPanel
 			BorderFactory.createMatteBorder(0, 3, 0, 0, accent),
 			BorderFactory.createEmptyBorder(5, 7, 5, 7)));
 
-		StringBuilder sb = new StringBuilder("<html><body style='width:166px'>");
+		StringBuilder sb = new StringBuilder("<html><body style='width:" + textWidth + "px'>");
 		sb.append("<span style='color:").append(CombatAchievementsTheme.hex(accent))
 			.append("'><b>").append(escape(d.name)).append("</b></span>");
 		if (!d.doableNow)
@@ -2332,15 +2345,78 @@ public class CombatAchievementsPanel extends PluginPanel
 		sb.append("</body></html>");
 		JLabel label = new JLabel(sb.toString());
 		label.setBorder(BorderFactory.createEmptyBorder(0, 0, 3, 0));
+		// As on the route cards: the HTML body width only drives wrapping, the label still reports a wider
+		// preferred size, and that pushes the card past the panel so the right-hand control is clipped away.
+		Dimension pref = label.getPreferredSize();
+		Dimension capped = new Dimension(Math.min(pref.width, textWidth), pref.height);
+		label.setPreferredSize(capped);
+		label.setMaximumSize(capped);
 		card.add(label, BorderLayout.CENTER);
 
 		card.add(linkRow(d.wikiUrl, d.guideUrl, d.curatedVideo), BorderLayout.SOUTH);
+		// "-" when this CA is already in the route, "+" when it is not, so a boss page doubles as a way to
+		// steer the route: take more of this boss, or drop the ones you would rather skip.
+		if (toggle)
+		{
+			card.add(routeToggle(d), BorderLayout.EAST);
+		}
 		addHover(card, ColorScheme.DARK_GRAY_COLOR, ColorScheme.DARK_GRAY_HOVER_COLOR);
 		onClick(card, () -> {
 			selectedCa = d;
 			rebuild();
 		});
-		return fullWidth(card);
+		fullWidth(card);
+		card.setMaximumSize(new Dimension(ROUTE_CARD_MAX_WIDTH, card.getPreferredSize().height));
+		return card;
+	}
+
+	/** True when this CA is one of the Route's current steps. */
+	private boolean inRoute(int id)
+	{
+		if (model.path() == null)
+		{
+			return false;
+		}
+		for (SidePanelViewModel.PathRow r : model.path().steps)
+		{
+			if (r.id == id)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/** The boss page's route control: "-" to drop a routed CA, "+" to pull one in. */
+	private JButton routeToggle(SidePanelViewModel.CaDetail d)
+	{
+		boolean routed = inRoute(d.id);
+		JButton b = new JButton(routed ? "-" : "+");
+		b.setFont(FontManager.getRunescapeBoldFont());
+		b.setToolTipText(routed
+			? "Remove " + d.name + " from the route"
+			: "Add " + d.name + " to the route");
+		b.setFocusPainted(false);
+		b.setBorderPainted(false);
+		b.setContentAreaFilled(false);
+		b.setOpaque(false);
+		Color idle = routed
+			? blend(CombatAchievementsTheme.NEUTRAL_META, CombatAchievementsTheme.NEGATIVE, 0.72)
+			: blend(CombatAchievementsTheme.NEUTRAL_META, CombatAchievementsTheme.POSITIVE, 0.72);
+		b.setForeground(idle);
+		addForegroundHover(b, idle,
+			routed ? CombatAchievementsTheme.NEGATIVE : CombatAchievementsTheme.POSITIVE);
+		b.setBorder(BorderFactory.createEmptyBorder(0, 4, 0, 0));
+		b.setPreferredSize(new Dimension(BAR_BUTTON_WIDTH, 18));
+		b.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		b.addActionListener(e -> {
+			Consumer<Integer> handler = routed ? onRemoveFromRoute : onAddToRoute;
+			if (handler != null)
+			{
+				handler.accept(d.id);
+			}
+		});
+		return b;
 	}
 
 	private JButton backButton(String text, Runnable action)

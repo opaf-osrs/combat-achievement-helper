@@ -107,6 +107,45 @@ public class RouteReadinessTest
 			.path();
 	}
 
+	private SidePanelViewModel.PathView routePinning(PlayerProfile profile, int gamePoints,
+		java.util.Set<Integer> pinned)
+	{
+		return new SidePanelViewModelBuilder(lib, effort, VideoGuideLibrary.loadBundled(),
+			GuideLibrary.loadBundled(), TierRewardLibrary.loadBundled(), EffortModel.standard())
+			.difficulty(TaskDifficultyLibrary.loadBundled())
+			.recStats(recStats)
+			.bossDifficulty(BossDifficultyLibrary.loadBundled())
+			.detail(TaskDetailLibrary.loadBundled())
+			.pinned(pinned)
+			.effortEngine(BossTimingLibrary.loadBundled(), QuestEffortLibrary.loadBundled(),
+				SkillXpLibrary.loadBundled(), CombatExperience.empty(), profile, 6)
+			.build(new ProgressSnapshot(Collections.emptySet(), gamePoints, gamePoints, null, 1L),
+				new ProfileSignalsProvider(effort, recStats, profile), null)
+			.path();
+	}
+
+	@Test
+	public void pinningATaskForcesItIntoTheRouteAndShrinksTheRest()
+	{
+		PlayerProfile maxed = account(99);
+		SidePanelViewModel.PathView before = routePinning(maxed, 1000, Collections.emptySet());
+		assertTrue("precondition: a real route", before.steps.size() > 2);
+
+		// Pick a CA the solver did NOT choose, and pin it.
+		java.util.Set<Integer> chosen = new HashSet<>();
+		before.steps.forEach(r -> chosen.add(r.id));
+		int unchosen = lib.all().stream()
+			.filter(t -> t.hasMonster() && !chosen.contains(t.id()))
+			.map(t -> t.id())
+			.findFirst().orElseThrow(() -> new AssertionError("expected an unrouted CA"));
+
+		SidePanelViewModel.PathView after = routePinning(maxed, 1000, Collections.singleton(unchosen));
+
+		assertTrue("the pinned CA is now in the route",
+			after.steps.stream().anyMatch(r -> r.id == unchosen));
+		assertTrue("the route still covers the gap", after.shownPoints() >= after.pointsGap);
+	}
+
 	@Test
 	public void barringARouteTaskReplacesItAndStillClosesTheGap()
 	{
