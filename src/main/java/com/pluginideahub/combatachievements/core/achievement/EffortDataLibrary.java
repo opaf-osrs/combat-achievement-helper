@@ -3,13 +3,8 @@ package com.pluginideahub.combatachievements.core.achievement;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import java.io.BufferedReader;
-import java.io.IOException;
+import com.pluginideahub.combatachievements.core.data.BundledJson;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -47,80 +42,36 @@ public final class EffortDataLibrary
 	/** Loads the bundled curated effort dataset; returns {@link #empty()} if absent or unreadable. */
 	public static EffortDataLibrary loadBundled()
 	{
-		try (InputStream in = EffortDataLibrary.class.getResourceAsStream(BUNDLED_RESOURCE))
-		{
-			if (in == null)
-			{
-				return empty();
-			}
-			return load(in);
-		}
-		catch (IOException ex)
-		{
-			return empty();
-		}
+		return fromRoot(BundledJson.readBundled(EffortDataLibrary.class, BUNDLED_RESOURCE));
 	}
 
 	/** Loads from an arbitrary stream; returns {@link #empty()} on any malformed input. */
 	public static EffortDataLibrary load(InputStream in)
 	{
-		try (Reader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8)))
-		{
-			JsonElement parsed = JsonParser.parseReader(reader);
-			if (parsed == null || !parsed.isJsonObject())
-			{
-				return empty();
-			}
-			JsonObject root = parsed.getAsJsonObject();
-			String version = root.has("version") && !root.get("version").isJsonNull()
-				? root.get("version").getAsString() : "unknown";
+		return fromRoot(BundledJson.read(in));
+	}
 
-			Map<Integer, TaskEffortData> map = new LinkedHashMap<>();
-			JsonElement tasksEl = root.get("tasks");
-			if (tasksEl != null && tasksEl.isJsonObject())
-			{
-				for (Map.Entry<String, JsonElement> entry : tasksEl.getAsJsonObject().entrySet())
-				{
-					Integer id = tryParseId(entry.getKey());
-					if (id == null || !entry.getValue().isJsonObject())
-					{
-						continue;
-					}
-					map.put(id, parseEntry(entry.getValue().getAsJsonObject()));
-				}
-			}
-			return new EffortDataLibrary(version, map);
-		}
-		catch (RuntimeException | IOException ex)
+	private static EffortDataLibrary fromRoot(JsonObject root)
+	{
+		if (root == null)
 		{
 			return empty();
 		}
-	}
-
-	private static Integer tryParseId(String key)
-	{
-		try
-		{
-			return Integer.parseInt(key.trim());
-		}
-		catch (NumberFormatException ex)
-		{
-			return null;
-		}
+		return new EffortDataLibrary(BundledJson.optString(root, "version", "unknown"),
+			BundledJson.idMap(root, "tasks", EffortDataLibrary::parseEntry));
 	}
 
 	private static TaskEffortData parseEntry(JsonObject obj)
 	{
-		String access = optString(obj, "access", "none");
-		TaskEffortData.GearTier gearTier =
-			TaskEffortData.GearTier.fromString(optString(obj, "gearTier", "mid"), TaskEffortData.GearTier.MID);
-		TaskEffortData.Intensity rng =
-			TaskEffortData.Intensity.fromString(optString(obj, "rng", "low"), TaskEffortData.Intensity.LOW);
-		TaskEffortData.Intensity supply =
-			TaskEffortData.Intensity.fromString(optString(obj, "supply", "low"), TaskEffortData.Intensity.LOW);
-		boolean soloable = !obj.has("soloable") || obj.get("soloable").isJsonNull()
-			|| obj.get("soloable").getAsBoolean();
-		String minigame = optString(obj, "minigameOrRaid", "");
+		String access = BundledJson.optString(obj, "access", "none");
+		TaskEffortData.GearTier gearTier = TaskEffortData.GearTier.fromString(
+			BundledJson.optString(obj, "gearTier", "mid"), TaskEffortData.GearTier.MID);
+		TaskEffortData.Intensity rng = TaskEffortData.Intensity.fromString(
+			BundledJson.optString(obj, "rng", "low"), TaskEffortData.Intensity.LOW);
+		TaskEffortData.Intensity supply = TaskEffortData.Intensity.fromString(
+			BundledJson.optString(obj, "supply", "low"), TaskEffortData.Intensity.LOW);
+		boolean soloable = BundledJson.optBoolean(obj, "soloable", true);
+		String minigame = BundledJson.optString(obj, "minigameOrRaid", "");
 
 		Map<String, Integer> levelReqs = new LinkedHashMap<>();
 		JsonElement reqsEl = obj.get("levelReqs");
@@ -178,7 +129,7 @@ public final class EffortDataLibrary
 				else if (item.isJsonObject())
 				{
 					JsonObject q = item.getAsJsonObject();
-					String name = optString(q, "name", "");
+					String name = BundledJson.optString(q, "name", "");
 					if (!name.trim().isEmpty())
 					{
 						boolean started = q.has("startedSuffices") && !q.get("startedSuffices").isJsonNull()
@@ -193,23 +144,6 @@ public final class EffortDataLibrary
 			}
 		}
 		return out;
-	}
-
-	private static String optString(JsonObject obj, String key, String fallback)
-	{
-		JsonElement el = obj.get(key);
-		if (el == null || el.isJsonNull())
-		{
-			return fallback;
-		}
-		try
-		{
-			return el.getAsString();
-		}
-		catch (RuntimeException ex)
-		{
-			return fallback;
-		}
 	}
 
 	public String version()

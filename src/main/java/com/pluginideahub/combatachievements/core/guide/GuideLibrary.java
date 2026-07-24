@@ -1,16 +1,10 @@
 package com.pluginideahub.combatachievements.core.guide;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.pluginideahub.combatachievements.core.achievement.AchievementTier;
-import java.io.BufferedReader;
-import java.io.IOException;
+import com.pluginideahub.combatachievements.core.data.BundledJson;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -39,34 +33,25 @@ public final class GuideLibrary
 
 	public static GuideLibrary loadBundled()
 	{
-		try (InputStream in = GuideLibrary.class.getResourceAsStream(BUNDLED_RESOURCE))
-		{
-			if (in == null)
-			{
-				return empty();
-			}
-			return load(in);
-		}
-		catch (IOException ex)
-		{
-			return empty();
-		}
+		return fromRoot(BundledJson.readBundled(GuideLibrary.class, BUNDLED_RESOURCE));
 	}
 
 	public static GuideLibrary load(InputStream in)
 	{
-		try (Reader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8)))
+		return fromRoot(BundledJson.read(in));
+	}
+
+	private static GuideLibrary fromRoot(JsonObject root)
+	{
+		JsonElement guidesEl = root == null ? null : root.get("guides");
+		if (guidesEl == null || !guidesEl.isJsonArray())
 		{
-			JsonElement parsed = JsonParser.parseReader(reader);
-			if (parsed == null || !parsed.isJsonObject())
-			{
-				return empty();
-			}
-			JsonElement guidesEl = parsed.getAsJsonObject().get("guides");
-			if (guidesEl == null || !guidesEl.isJsonArray())
-			{
-				return empty();
-			}
+			return empty();
+		}
+		// Guides are an ordered, authored list — one broken guide means a broken file, so the whole
+		// library is discarded rather than a guide silently dropped.
+		try
+		{
 			List<Guide> guides = new ArrayList<>();
 			for (JsonElement el : guidesEl.getAsJsonArray())
 			{
@@ -77,7 +62,7 @@ public final class GuideLibrary
 			}
 			return new GuideLibrary(guides);
 		}
-		catch (RuntimeException | IOException ex)
+		catch (RuntimeException ex)
 		{
 			return empty();
 		}
@@ -85,12 +70,13 @@ public final class GuideLibrary
 
 	private static Guide parseGuide(JsonObject obj)
 	{
-		String id = optString(obj, "id");
-		String title = optString(obj, "title");
-		String author = optString(obj, "author");
-		String summary = optString(obj, "summary");
-		String videoUrl = optString(obj, "videoUrl");
-		AchievementTier targetTier = AchievementTier.fromDisplayName(optString(obj, "targetTier"));
+		String id = BundledJson.optString(obj, "id", "");
+		String title = BundledJson.optString(obj, "title", "");
+		String author = BundledJson.optString(obj, "author", "");
+		String summary = BundledJson.optString(obj, "summary", "");
+		String videoUrl = BundledJson.optString(obj, "videoUrl", "");
+		AchievementTier targetTier = AchievementTier.fromDisplayName(
+			BundledJson.optString(obj, "targetTier", ""));
 
 		List<String> tags = new ArrayList<>();
 		JsonElement tagsEl = obj.get("tags");
@@ -111,7 +97,8 @@ public final class GuideLibrary
 				if (s.isJsonObject())
 				{
 					JsonObject so = s.getAsJsonObject();
-					steps.add(new GuideStep(optString(so, "note"), optInt(so, "taskId", -1)));
+					steps.add(new GuideStep(BundledJson.optString(so, "note", ""),
+						BundledJson.optInt(so, "taskId", -1)));
 				}
 				else if (s.isJsonPrimitive())
 				{
@@ -121,40 +108,6 @@ public final class GuideLibrary
 		}
 
 		return new Guide(id, title, author, summary, videoUrl, targetTier, tags, steps);
-	}
-
-	private static String optString(JsonObject obj, String key)
-	{
-		JsonElement el = obj.get(key);
-		if (el == null || el.isJsonNull())
-		{
-			return "";
-		}
-		try
-		{
-			return el.getAsString();
-		}
-		catch (RuntimeException ex)
-		{
-			return "";
-		}
-	}
-
-	private static int optInt(JsonObject obj, String key, int fallback)
-	{
-		JsonElement el = obj.get(key);
-		if (el == null || el.isJsonNull())
-		{
-			return fallback;
-		}
-		try
-		{
-			return el.getAsInt();
-		}
-		catch (RuntimeException ex)
-		{
-			return fallback;
-		}
 	}
 
 	public List<Guide> all()

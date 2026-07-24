@@ -2,13 +2,8 @@ package com.pluginideahub.combatachievements.core.effort;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import java.io.BufferedReader;
-import java.io.IOException;
+import com.pluginideahub.combatachievements.core.data.BundledJson;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -44,69 +39,39 @@ public final class BossDifficultyLibrary
 
 	public static BossDifficultyLibrary loadBundled()
 	{
-		try (InputStream in = BossDifficultyLibrary.class.getResourceAsStream(BUNDLED_RESOURCE))
-		{
-			return in == null ? empty() : load(in);
-		}
-		catch (IOException ex)
-		{
-			return empty();
-		}
+		return fromRoot(BundledJson.readBundled(BossDifficultyLibrary.class, BUNDLED_RESOURCE));
 	}
 
 	public static BossDifficultyLibrary load(InputStream in)
 	{
-		try (Reader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8)))
-		{
-			JsonElement parsed = JsonParser.parseReader(reader);
-			if (parsed == null || !parsed.isJsonObject())
-			{
-				return empty();
-			}
-			JsonObject root = parsed.getAsJsonObject();
-			String version = root.has("version") && !root.get("version").isJsonNull()
-				? root.get("version").getAsString() : "unknown";
+		return fromRoot(BundledJson.read(in));
+	}
 
-			Map<String, Integer> map = new LinkedHashMap<>();
-			JsonElement el = root.get("bosses");
-			if (el != null && el.isJsonObject())
-			{
-				for (Map.Entry<String, JsonElement> e : el.getAsJsonObject().entrySet())
-				{
-					try
-					{
-						int diff = e.getValue().getAsInt();
-						map.put(e.getKey().trim().toLowerCase(Locale.ROOT),
-							Math.max(0, Math.min(10, diff)));
-					}
-					catch (RuntimeException ignored)
-					{
-						// skip malformed entry
-					}
-				}
-			}
-			java.util.Set<String> gated = new java.util.HashSet<>();
-			JsonElement ga = root.get("endgameAccess");
-			if (ga != null && ga.isJsonArray())
-			{
-				for (JsonElement e : ga.getAsJsonArray())
-				{
-					try
-					{
-						gated.add(e.getAsString().trim().toLowerCase(Locale.ROOT));
-					}
-					catch (RuntimeException ignored)
-					{
-						// skip malformed entry
-					}
-				}
-			}
-			return new BossDifficultyLibrary(version, map, gated);
-		}
-		catch (RuntimeException | IOException ex)
+	private static BossDifficultyLibrary fromRoot(JsonObject root)
+	{
+		if (root == null)
 		{
 			return empty();
 		}
+		Map<String, Integer> map = BundledJson.nameMapValues(root, "bosses",
+			el -> Math.max(0, Math.min(10, el.getAsInt())));
+		java.util.Set<String> gated = new java.util.HashSet<>();
+		JsonElement ga = root.get("endgameAccess");
+		if (ga != null && ga.isJsonArray())
+		{
+			for (JsonElement e : ga.getAsJsonArray())
+			{
+				try
+				{
+					gated.add(e.getAsString().trim().toLowerCase(Locale.ROOT));
+				}
+				catch (RuntimeException ignored)
+				{
+					// skip malformed entry
+				}
+			}
+		}
+		return new BossDifficultyLibrary(BundledJson.optString(root, "version", "unknown"), map, gated);
 	}
 
 	/**

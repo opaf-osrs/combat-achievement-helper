@@ -1,14 +1,8 @@
 package com.pluginideahub.combatachievements.core.combat;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import java.io.BufferedReader;
-import java.io.IOException;
+import com.pluginideahub.combatachievements.core.data.BundledJson;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -38,77 +32,33 @@ public final class MonsterStatsLibrary
 
 	public static MonsterStatsLibrary loadBundled()
 	{
-		try (InputStream in = MonsterStatsLibrary.class.getResourceAsStream(BUNDLED_RESOURCE))
-		{
-			if (in == null)
-			{
-				return empty();
-			}
-			return load(in);
-		}
-		catch (IOException ex)
-		{
-			return empty();
-		}
+		return fromRoot(BundledJson.readBundled(MonsterStatsLibrary.class, BUNDLED_RESOURCE));
 	}
 
 	public static MonsterStatsLibrary load(InputStream in)
 	{
-		try (Reader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8)))
-		{
-			JsonElement parsed = JsonParser.parseReader(reader);
-			if (parsed == null || !parsed.isJsonObject())
-			{
-				return empty();
-			}
-			JsonElement monstersEl = parsed.getAsJsonObject().get("monsters");
-			if (monstersEl == null || !monstersEl.isJsonObject())
-			{
-				return empty();
-			}
-			Map<String, MonsterStats> map = new LinkedHashMap<>();
-			for (Map.Entry<String, JsonElement> entry : monstersEl.getAsJsonObject().entrySet())
-			{
-				if (!entry.getValue().isJsonObject())
-				{
-					continue;
-				}
-				JsonObject o = entry.getValue().getAsJsonObject();
-				MonsterStats stats = new MonsterStats(
-					entry.getKey(),
-					intOf(o, "hitpoints"),
-					intOf(o, "defenceLevel"),
-					intOf(o, "magicLevel"),
-					intOf(o, "defStab"),
-					intOf(o, "defSlash"),
-					intOf(o, "defCrush"),
-					intOf(o, "defRange"),
-					intOf(o, "defMagic"));
-				map.put(entry.getKey().trim().toLowerCase(Locale.ROOT), stats);
-			}
-			return new MonsterStatsLibrary(map);
-		}
-		catch (RuntimeException | IOException ex)
-		{
-			return empty();
-		}
+		return fromRoot(BundledJson.read(in));
 	}
 
-	private static int intOf(JsonObject o, String key)
+	private static MonsterStatsLibrary fromRoot(JsonObject root)
 	{
-		JsonElement el = o.get(key);
-		if (el == null || el.isJsonNull())
-		{
-			return 0;
-		}
-		try
-		{
-			return el.getAsInt();
-		}
-		catch (RuntimeException ex)
-		{
-			return 0;
-		}
+		return new MonsterStatsLibrary(
+			BundledJson.nameMap(root, "monsters", MonsterStatsLibrary::parseStats));
+	}
+
+	/** {@code name} is the raw dataset key — MonsterStats keeps the display form. */
+	private static MonsterStats parseStats(String name, JsonObject o)
+	{
+		return new MonsterStats(
+			name,
+			BundledJson.optInt(o, "hitpoints", 0),
+			BundledJson.optInt(o, "defenceLevel", 0),
+			BundledJson.optInt(o, "magicLevel", 0),
+			BundledJson.optInt(o, "defStab", 0),
+			BundledJson.optInt(o, "defSlash", 0),
+			BundledJson.optInt(o, "defCrush", 0),
+			BundledJson.optInt(o, "defRange", 0),
+			BundledJson.optInt(o, "defMagic", 0));
 	}
 
 	public int count()

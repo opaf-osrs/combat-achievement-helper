@@ -1,15 +1,9 @@
 package com.pluginideahub.combatachievements.core.effort;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import java.io.BufferedReader;
-import java.io.IOException;
+import com.pluginideahub.combatachievements.core.data.BundledJson;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -80,78 +74,55 @@ public final class SkillXpLibrary
 
 	public static SkillXpLibrary loadBundled()
 	{
-		try (InputStream in = SkillXpLibrary.class.getResourceAsStream(BUNDLED_RESOURCE))
-		{
-			return in == null ? empty() : load(in);
-		}
-		catch (IOException ex)
-		{
-			return empty();
-		}
+		return fromRoot(BundledJson.readBundled(SkillXpLibrary.class, BUNDLED_RESOURCE));
 	}
 
 	public static SkillXpLibrary load(InputStream in)
 	{
-		try (Reader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8)))
-		{
-			JsonElement parsed = JsonParser.parseReader(reader);
-			if (parsed == null || !parsed.isJsonObject())
-			{
-				return empty();
-			}
-			JsonObject root = parsed.getAsJsonObject();
-			String version = root.has("version") && !root.get("version").isJsonNull()
-				? root.get("version").getAsString() : "unknown";
+		return fromRoot(BundledJson.read(in));
+	}
 
-			Map<String, List<Bracket>> map = new LinkedHashMap<>();
-			JsonElement el = root.get("skills");
-			if (el != null && el.isJsonObject())
-			{
-				for (Map.Entry<String, JsonElement> e : el.getAsJsonObject().entrySet())
-				{
-					if (!e.getValue().isJsonObject())
-					{
-						continue;
-					}
-					List<Bracket> brackets = new ArrayList<>();
-					JsonElement bEl = e.getValue().getAsJsonObject().get("brackets");
-					if (bEl != null && bEl.isJsonArray())
-					{
-						for (JsonElement b : bEl.getAsJsonArray())
-						{
-							if (!b.isJsonObject())
-							{
-								continue;
-							}
-							JsonObject bo = b.getAsJsonObject();
-							try
-							{
-								int perHour = optInt(bo, "xpPerHour");
-								int perDay = optInt(bo, "xpPerDay");
-								if (perHour > 0 || perDay > 0)
-								{
-									brackets.add(new Bracket(bo.get("fromLevel").getAsInt(),
-										bo.get("toLevel").getAsInt(), perHour, perDay));
-								}
-							}
-							catch (RuntimeException ignored)
-							{
-								// skip malformed bracket
-							}
-						}
-					}
-					if (!brackets.isEmpty())
-					{
-						map.put(e.getKey().trim().toLowerCase(Locale.ROOT), brackets);
-					}
-				}
-			}
-			return new SkillXpLibrary(version, map);
-		}
-		catch (RuntimeException | IOException ex)
+	private static SkillXpLibrary fromRoot(JsonObject root)
+	{
+		if (root == null)
 		{
 			return empty();
 		}
+		return new SkillXpLibrary(BundledJson.optString(root, "version", "unknown"),
+			BundledJson.nameMap(root, "skills", (name, o) -> parseBrackets(o)));
+	}
+
+	/** Null when the skill has no usable bracket, so it never enters the map. */
+	private static List<Bracket> parseBrackets(JsonObject skill)
+	{
+		List<Bracket> brackets = new ArrayList<>();
+		JsonElement bEl = skill.get("brackets");
+		if (bEl != null && bEl.isJsonArray())
+		{
+			for (JsonElement b : bEl.getAsJsonArray())
+			{
+				if (!b.isJsonObject())
+				{
+					continue;
+				}
+				JsonObject bo = b.getAsJsonObject();
+				try
+				{
+					int perHour = optInt(bo, "xpPerHour");
+					int perDay = optInt(bo, "xpPerDay");
+					if (perHour > 0 || perDay > 0)
+					{
+						brackets.add(new Bracket(bo.get("fromLevel").getAsInt(),
+							bo.get("toLevel").getAsInt(), perHour, perDay));
+					}
+				}
+				catch (RuntimeException ignored)
+				{
+					// skip malformed bracket
+				}
+			}
+		}
+		return brackets.isEmpty() ? null : brackets;
 	}
 
 	public String version()
@@ -171,6 +142,7 @@ public final class SkillXpLibrary
 		return XP_AT_LEVEL[l];
 	}
 
+	/** Strict on wrong-typed rates: a non-numeric value invalidates the bracket, not just the field. */
 	private static int optInt(JsonObject o, String key)
 	{
 		JsonElement el = o.get(key);

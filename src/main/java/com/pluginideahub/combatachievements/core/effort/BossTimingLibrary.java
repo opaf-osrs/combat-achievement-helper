@@ -1,14 +1,8 @@
 package com.pluginideahub.combatachievements.core.effort;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import java.io.BufferedReader;
-import java.io.IOException;
+import com.pluginideahub.combatachievements.core.data.BundledJson;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -40,102 +34,25 @@ public final class BossTimingLibrary
 
 	public static BossTimingLibrary loadBundled()
 	{
-		try (InputStream in = BossTimingLibrary.class.getResourceAsStream(BUNDLED_RESOURCE))
-		{
-			return in == null ? empty() : load(in);
-		}
-		catch (IOException ex)
-		{
-			return empty();
-		}
+		return fromRoot(BundledJson.readBundled(BossTimingLibrary.class, BUNDLED_RESOURCE));
 	}
 
 	public static BossTimingLibrary load(InputStream in)
 	{
-		try (Reader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8)))
-		{
-			JsonElement parsed = JsonParser.parseReader(reader);
-			if (parsed == null || !parsed.isJsonObject())
-			{
-				return empty();
-			}
-			JsonObject root = parsed.getAsJsonObject();
-			String version = root.has("version") && !root.get("version").isJsonNull()
-				? root.get("version").getAsString() : "unknown";
+		return fromRoot(BundledJson.read(in));
+	}
 
-			Map<String, BossTiming> map = new LinkedHashMap<>();
-			JsonElement el = root.get("monsters");
-			if (el != null && el.isJsonObject())
-			{
-				for (Map.Entry<String, JsonElement> e : el.getAsJsonObject().entrySet())
-				{
-					if (!e.getValue().isJsonObject())
-					{
-						continue;
-					}
-					JsonObject o = e.getValue().getAsJsonObject();
-					map.put(e.getKey().trim().toLowerCase(Locale.ROOT), new BossTiming(
-						optInt(o, "ttkSeconds"), optInt(o, "respawnSeconds"), optInt(o, "killsPerHour"),
-						optString(o, "note"), optDouble(o, "attemptsPerKill", 1.0)));
-				}
-			}
-			return new BossTimingLibrary(version, map);
-		}
-		catch (RuntimeException | IOException ex)
+	private static BossTimingLibrary fromRoot(JsonObject root)
+	{
+		if (root == null)
 		{
 			return empty();
 		}
-	}
-
-	private static int optInt(JsonObject o, String key)
-	{
-		JsonElement el = o.get(key);
-		if (el == null || el.isJsonNull())
-		{
-			return 0;
-		}
-		try
-		{
-			return el.getAsInt();
-		}
-		catch (RuntimeException ex)
-		{
-			return 0;
-		}
-	}
-
-	private static double optDouble(JsonObject o, String key, double fallback)
-	{
-		JsonElement el = o.get(key);
-		if (el == null || el.isJsonNull())
-		{
-			return fallback;
-		}
-		try
-		{
-			return el.getAsDouble();
-		}
-		catch (RuntimeException ex)
-		{
-			return fallback;
-		}
-	}
-
-	private static String optString(JsonObject o, String key)
-	{
-		JsonElement el = o.get(key);
-		if (el == null || el.isJsonNull())
-		{
-			return "";
-		}
-		try
-		{
-			return el.getAsString();
-		}
-		catch (RuntimeException ex)
-		{
-			return "";
-		}
+		return new BossTimingLibrary(BundledJson.optString(root, "version", "unknown"),
+			BundledJson.nameMap(root, "monsters", (name, o) -> new BossTiming(
+				BundledJson.optInt(o, "ttkSeconds", 0), BundledJson.optInt(o, "respawnSeconds", 0),
+				BundledJson.optInt(o, "killsPerHour", 0), BundledJson.optString(o, "note", ""),
+				BundledJson.optDouble(o, "attemptsPerKill", 1.0))));
 	}
 
 	public String version()

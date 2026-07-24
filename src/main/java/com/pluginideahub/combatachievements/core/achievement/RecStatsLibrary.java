@@ -3,13 +3,8 @@ package com.pluginideahub.combatachievements.core.achievement;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import java.io.BufferedReader;
-import java.io.IOException;
+import com.pluginideahub.combatachievements.core.data.BundledJson;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -44,64 +39,52 @@ public final class RecStatsLibrary
 
 	public static RecStatsLibrary loadBundled()
 	{
-		try (InputStream in = RecStatsLibrary.class.getResourceAsStream(BUNDLED_RESOURCE))
-		{
-			return in == null ? empty() : load(in);
-		}
-		catch (IOException ex)
-		{
-			return empty();
-		}
+		return fromRoot(BundledJson.readBundled(RecStatsLibrary.class, BUNDLED_RESOURCE));
 	}
 
 	public static RecStatsLibrary load(InputStream in)
 	{
-		try (Reader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8)))
-		{
-			JsonElement parsed = JsonParser.parseReader(reader);
-			if (parsed == null || !parsed.isJsonObject())
-			{
-				return empty();
-			}
-			JsonElement tasksEl = parsed.getAsJsonObject().get("tasks");
-			if (tasksEl == null || !tasksEl.isJsonObject())
-			{
-				return empty();
-			}
-			Map<Integer, List<StatRequirement>> hard = new LinkedHashMap<>();
-			Map<Integer, List<StatRequirement>> soft = new LinkedHashMap<>();
-			for (Map.Entry<String, JsonElement> entry : tasksEl.getAsJsonObject().entrySet())
-			{
-				if (entry.getValue() == null || !entry.getValue().isJsonObject())
-				{
-					continue;
-				}
-				try
-				{
-					int id = Integer.parseInt(entry.getKey().trim());
-					JsonObject o = entry.getValue().getAsJsonObject();
-					List<StatRequirement> h = parseReqs(o.get("hard"));
-					List<StatRequirement> s = parseReqs(o.get("soft"));
-					if (!h.isEmpty())
-					{
-						hard.put(id, h);
-					}
-					if (!s.isEmpty())
-					{
-						soft.put(id, s);
-					}
-				}
-				catch (RuntimeException ignored)
-				{
-					// skip malformed entry
-				}
-			}
-			return new RecStatsLibrary(hard, soft);
-		}
-		catch (RuntimeException | IOException ex)
+		return fromRoot(BundledJson.read(in));
+	}
+
+	private static RecStatsLibrary fromRoot(JsonObject root)
+	{
+		JsonObject tasks = BundledJson.objectMember(root, "tasks");
+		if (tasks == null)
 		{
 			return empty();
 		}
+		// A task lands in the hard/soft map only when it has requirements of that kind — count()
+		// reflects tasks with data, not every id in the file.
+		Map<Integer, List<StatRequirement>> hard = new LinkedHashMap<>();
+		Map<Integer, List<StatRequirement>> soft = new LinkedHashMap<>();
+		for (Map.Entry<String, JsonElement> entry : tasks.entrySet())
+		{
+			if (entry.getValue() == null || !entry.getValue().isJsonObject())
+			{
+				continue;
+			}
+			try
+			{
+				int id = Integer.parseInt(entry.getKey().trim());
+				JsonObject o = entry.getValue().getAsJsonObject();
+				List<StatRequirement> h = parseReqs(o.get("hard"));
+				List<StatRequirement> s = parseReqs(o.get("soft"));
+				if (!h.isEmpty())
+				{
+					hard.put(id, h);
+				}
+				if (!s.isEmpty())
+				{
+					soft.put(id, s);
+				}
+			}
+			catch (RuntimeException ignored)
+			{
+				// skip malformed entry
+			}
+		}
+		return new RecStatsLibrary(hard, soft);
 	}
 
 	private static List<StatRequirement> parseReqs(JsonElement el)

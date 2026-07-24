@@ -2,13 +2,8 @@ package com.pluginideahub.combatachievements.core.achievement;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import java.io.BufferedReader;
-import java.io.IOException;
+import com.pluginideahub.combatachievements.core.data.BundledJson;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -38,52 +33,17 @@ public final class CompletionLibrary
 
 	public static CompletionLibrary loadBundled()
 	{
-		try (InputStream in = CompletionLibrary.class.getResourceAsStream(BUNDLED_RESOURCE))
-		{
-			if (in == null)
-			{
-				return empty();
-			}
-			return load(in);
-		}
-		catch (IOException ex)
-		{
-			return empty();
-		}
+		return fromRoot(BundledJson.readBundled(CompletionLibrary.class, BUNDLED_RESOURCE));
 	}
 
 	public static CompletionLibrary load(InputStream in)
 	{
-		try (Reader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8)))
-		{
-			JsonElement parsed = JsonParser.parseReader(reader);
-			if (parsed == null || !parsed.isJsonObject())
-			{
-				return empty();
-			}
-			JsonElement tasksEl = parsed.getAsJsonObject().get("tasks");
-			if (tasksEl == null || !tasksEl.isJsonObject())
-			{
-				return empty();
-			}
-			Map<Integer, Double> map = new LinkedHashMap<>();
-			for (Map.Entry<String, JsonElement> entry : tasksEl.getAsJsonObject().entrySet())
-			{
-				try
-				{
-					map.put(Integer.parseInt(entry.getKey().trim()), entry.getValue().getAsDouble());
-				}
-				catch (RuntimeException ignored)
-				{
-					// skip malformed entry
-				}
-			}
-			return new CompletionLibrary(map);
-		}
-		catch (RuntimeException | IOException ex)
-		{
-			return empty();
-		}
+		return fromRoot(BundledJson.read(in));
+	}
+
+	private static CompletionLibrary fromRoot(JsonObject root)
+	{
+		return new CompletionLibrary(BundledJson.idMapValues(root, "tasks", JsonElement::getAsDouble));
 	}
 
 	public int count()

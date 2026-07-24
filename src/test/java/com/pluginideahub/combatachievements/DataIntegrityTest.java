@@ -89,6 +89,32 @@ public class DataIntegrityTest
 	}
 
 	@Test
+	public void recStatsKeysAreValidTaskIds()
+	{
+		// The two biggest id-keyed datasets are both regenerated from the free-form curation CSV, so
+		// they are the most likely to drift — and they were the only ones this suite didn't guard.
+		int n = CombatAchievementLibrary.loadBundled().taskCount();
+		List<Integer> keys = taskKeys(PKG + "rec_stats.json");
+		assertTrue("rec_stats.json is unexpectedly sparse (" + keys.size() + " entries)", keys.size() > 400);
+		for (int key : keys)
+		{
+			assertInRange(key, n);
+		}
+	}
+
+	@Test
+	public void taskDetailKeysAreValidTaskIds()
+	{
+		int n = CombatAchievementLibrary.loadBundled().taskCount();
+		List<Integer> keys = taskKeys(PKG + "task_detail.json");
+		assertTrue("task_detail.json is unexpectedly sparse (" + keys.size() + " entries)", keys.size() > 400);
+		for (int key : keys)
+		{
+			assertInRange(key, n);
+		}
+	}
+
+	@Test
 	public void monsterStatsArePresent()
 	{
 		assertTrue("expected the auto-sourced monster stats", MonsterStatsLibrary.loadBundled().count() >= 60);

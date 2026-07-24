@@ -1,15 +1,9 @@
 package com.pluginideahub.combatachievements.core.video;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import java.io.BufferedReader;
-import java.io.IOException;
+import com.pluginideahub.combatachievements.core.data.BundledJson;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -41,62 +35,50 @@ public final class VideoGuideLibrary
 	/** Loads the bundled curated guides; returns {@link #empty()} if absent or unreadable. */
 	public static VideoGuideLibrary loadBundled()
 	{
-		try (InputStream in = VideoGuideLibrary.class.getResourceAsStream(BUNDLED_RESOURCE))
-		{
-			if (in == null)
-			{
-				return empty();
-			}
-			return load(in);
-		}
-		catch (IOException ex)
-		{
-			return empty();
-		}
+		return fromRoot(BundledJson.readBundled(VideoGuideLibrary.class, BUNDLED_RESOURCE));
 	}
 
 	/** Loads from a stream; returns {@link #empty()} on malformed input. */
 	public static VideoGuideLibrary load(InputStream in)
 	{
-		try (Reader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8)))
-		{
-			JsonElement parsed = JsonParser.parseReader(reader);
-			if (parsed == null || !parsed.isJsonObject())
-			{
-				return empty();
-			}
-			Map<Integer, List<String>> map = new LinkedHashMap<>();
-			for (Map.Entry<String, JsonElement> entry : parsed.getAsJsonObject().entrySet())
-			{
-				Integer id = tryParseId(entry.getKey());
-				if (id == null)
-				{
-					continue;
-				}
-				List<String> urls = new ArrayList<>();
-				JsonElement value = entry.getValue();
-				if (value.isJsonArray())
-				{
-					for (JsonElement url : value.getAsJsonArray())
-					{
-						addUrl(urls, url);
-					}
-				}
-				else
-				{
-					addUrl(urls, value);
-				}
-				if (!urls.isEmpty())
-				{
-					map.put(id, Collections.unmodifiableList(urls));
-				}
-			}
-			return new VideoGuideLibrary(map);
-		}
-		catch (RuntimeException | IOException ex)
+		return fromRoot(BundledJson.read(in));
+	}
+
+	private static VideoGuideLibrary fromRoot(JsonObject root)
+	{
+		if (root == null)
 		{
 			return empty();
 		}
+		// The root object IS the id → urls map (no wrapping member); a value may be a single url
+		// string or an array of them.
+		Map<Integer, List<String>> map = new LinkedHashMap<>();
+		for (Map.Entry<String, JsonElement> entry : root.entrySet())
+		{
+			Integer id = tryParseId(entry.getKey());
+			if (id == null)
+			{
+				continue;
+			}
+			List<String> urls = new ArrayList<>();
+			JsonElement value = entry.getValue();
+			if (value.isJsonArray())
+			{
+				for (JsonElement url : value.getAsJsonArray())
+				{
+					addUrl(urls, url);
+				}
+			}
+			else
+			{
+				addUrl(urls, value);
+			}
+			if (!urls.isEmpty())
+			{
+				map.put(id, Collections.unmodifiableList(urls));
+			}
+		}
+		return new VideoGuideLibrary(map);
 	}
 
 	private static void addUrl(List<String> urls, JsonElement el)

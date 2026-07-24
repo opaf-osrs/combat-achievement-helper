@@ -1,15 +1,9 @@
 package com.pluginideahub.combatachievements.core.achievement;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import java.io.BufferedReader;
-import java.io.IOException;
+import com.pluginideahub.combatachievements.core.data.BundledJson;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -42,70 +36,47 @@ public final class TierRewardLibrary
 
 	public static TierRewardLibrary loadBundled()
 	{
-		try (InputStream in = TierRewardLibrary.class.getResourceAsStream(BUNDLED_RESOURCE))
-		{
-			return in == null ? empty() : load(in);
-		}
-		catch (IOException ex)
-		{
-			return empty();
-		}
+		return fromRoot(BundledJson.readBundled(TierRewardLibrary.class, BUNDLED_RESOURCE));
 	}
 
 	public static TierRewardLibrary load(InputStream in)
 	{
-		try (Reader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8)))
-		{
-			JsonElement parsed = JsonParser.parseReader(reader);
-			if (parsed == null || !parsed.isJsonObject())
-			{
-				return empty();
-			}
-			JsonObject root = parsed.getAsJsonObject();
-			String version = root.has("version") && !root.get("version").isJsonNull()
-				? root.get("version").getAsString() : "unknown";
+		return fromRoot(BundledJson.read(in));
+	}
 
-			Map<String, TierReward> map = new LinkedHashMap<>();
-			JsonElement tiersEl = root.get("tiers");
-			if (tiersEl != null && tiersEl.isJsonObject())
-			{
-				for (Map.Entry<String, JsonElement> e : tiersEl.getAsJsonObject().entrySet())
-				{
-					if (!e.getValue().isJsonObject())
-					{
-						continue;
-					}
-					JsonObject obj = e.getValue().getAsJsonObject();
-					String headline = obj.has("headline") && !obj.get("headline").isJsonNull()
-						? obj.get("headline").getAsString() : "";
-					List<String> rewards = new ArrayList<>();
-					JsonElement rewEl = obj.get("rewards");
-					if (rewEl != null && rewEl.isJsonArray())
-					{
-						for (JsonElement r : rewEl.getAsJsonArray())
-						{
-							try
-							{
-								if (r.isJsonPrimitive() && r.getAsJsonPrimitive().isString())
-								{
-									rewards.add(r.getAsString());
-								}
-							}
-							catch (RuntimeException ignored)
-							{
-								// skip malformed reward line
-							}
-						}
-					}
-					map.put(e.getKey().trim().toLowerCase(Locale.ROOT), new TierReward(headline, rewards));
-				}
-			}
-			return new TierRewardLibrary(version, map);
-		}
-		catch (RuntimeException | IOException ex)
+	private static TierRewardLibrary fromRoot(JsonObject root)
+	{
+		if (root == null)
 		{
 			return empty();
 		}
+		return new TierRewardLibrary(BundledJson.optString(root, "version", "unknown"),
+			BundledJson.nameMap(root, "tiers", (name, obj) -> parseTier(obj)));
+	}
+
+	private static TierReward parseTier(JsonObject obj)
+	{
+		String headline = BundledJson.optString(obj, "headline", "");
+		List<String> rewards = new ArrayList<>();
+		JsonElement rewEl = obj.get("rewards");
+		if (rewEl != null && rewEl.isJsonArray())
+		{
+			for (JsonElement r : rewEl.getAsJsonArray())
+			{
+				try
+				{
+					if (r.isJsonPrimitive() && r.getAsJsonPrimitive().isString())
+					{
+						rewards.add(r.getAsString());
+					}
+				}
+				catch (RuntimeException ignored)
+				{
+					// skip malformed reward line
+				}
+			}
+		}
+		return new TierReward(headline, rewards);
 	}
 
 	public String version()

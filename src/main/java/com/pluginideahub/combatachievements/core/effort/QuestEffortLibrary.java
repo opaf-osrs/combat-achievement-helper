@@ -1,15 +1,9 @@
 package com.pluginideahub.combatachievements.core.effort;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import java.io.BufferedReader;
-import java.io.IOException;
+import com.pluginideahub.combatachievements.core.data.BundledJson;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -45,49 +39,22 @@ public final class QuestEffortLibrary
 
 	public static QuestEffortLibrary loadBundled()
 	{
-		try (InputStream in = QuestEffortLibrary.class.getResourceAsStream(BUNDLED_RESOURCE))
-		{
-			return in == null ? empty() : load(in);
-		}
-		catch (IOException ex)
-		{
-			return empty();
-		}
+		return fromRoot(BundledJson.readBundled(QuestEffortLibrary.class, BUNDLED_RESOURCE));
 	}
 
 	public static QuestEffortLibrary load(InputStream in)
 	{
-		try (Reader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8)))
-		{
-			JsonElement parsed = JsonParser.parseReader(reader);
-			if (parsed == null || !parsed.isJsonObject())
-			{
-				return empty();
-			}
-			JsonObject root = parsed.getAsJsonObject();
-			String version = root.has("version") && !root.get("version").isJsonNull()
-				? root.get("version").getAsString() : "unknown";
+		return fromRoot(BundledJson.read(in));
+	}
 
-			Map<String, QuestInfo> map = new LinkedHashMap<>();
-			JsonElement el = root.get("quests");
-			if (el != null && el.isJsonObject())
-			{
-				for (Map.Entry<String, JsonElement> e : el.getAsJsonObject().entrySet())
-				{
-					if (!e.getValue().isJsonObject())
-					{
-						continue;
-					}
-					QuestInfo info = parse(e.getValue().getAsJsonObject());
-					map.put(e.getKey().trim().toLowerCase(Locale.ROOT), info);
-				}
-			}
-			return new QuestEffortLibrary(version, map);
-		}
-		catch (RuntimeException | IOException ex)
+	private static QuestEffortLibrary fromRoot(JsonObject root)
+	{
+		if (root == null)
 		{
 			return empty();
 		}
+		return new QuestEffortLibrary(BundledJson.optString(root, "version", "unknown"),
+			BundledJson.nameMap(root, "quests", (name, o) -> parse(o)));
 	}
 
 	private static QuestInfo parse(JsonObject o)
@@ -127,61 +94,11 @@ public final class QuestEffortLibrary
 				}
 			}
 		}
-		return new QuestInfo(optString(o, "name"), optString(o, "difficulty"), optString(o, "length"),
-			optInt(o, "estMinutes"), optInt(o, "effortScore"), optInt(o, "questPoints"),
-			optBool(o, "members"), skills, prereqs);
-	}
-
-	private static int optInt(JsonObject o, String key)
-	{
-		JsonElement el = o.get(key);
-		if (el == null || el.isJsonNull())
-		{
-			return 0;
-		}
-		try
-		{
-			return el.getAsInt();
-		}
-		catch (RuntimeException ex)
-		{
-			return 0;
-		}
-	}
-
-	private static boolean optBool(JsonObject o, String key)
-	{
-		JsonElement el = o.get(key);
-		return el != null && !el.isJsonNull() && el.isJsonPrimitive() && tryBool(el);
-	}
-
-	private static boolean tryBool(JsonElement el)
-	{
-		try
-		{
-			return el.getAsBoolean();
-		}
-		catch (RuntimeException ex)
-		{
-			return false;
-		}
-	}
-
-	private static String optString(JsonObject o, String key)
-	{
-		JsonElement el = o.get(key);
-		if (el == null || el.isJsonNull())
-		{
-			return "";
-		}
-		try
-		{
-			return el.getAsString();
-		}
-		catch (RuntimeException ex)
-		{
-			return "";
-		}
+		return new QuestInfo(BundledJson.optString(o, "name", ""),
+			BundledJson.optString(o, "difficulty", ""), BundledJson.optString(o, "length", ""),
+			BundledJson.optInt(o, "estMinutes", 0), BundledJson.optInt(o, "effortScore", 0),
+			BundledJson.optInt(o, "questPoints", 0), BundledJson.optBoolean(o, "members", false),
+			skills, prereqs);
 	}
 
 	public String version()

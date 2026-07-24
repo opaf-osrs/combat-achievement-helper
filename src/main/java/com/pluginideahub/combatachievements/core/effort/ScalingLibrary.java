@@ -2,14 +2,9 @@ package com.pluginideahub.combatachievements.core.effort;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.pluginideahub.combatachievements.core.achievement.TaskType;
-import java.io.BufferedReader;
-import java.io.IOException;
+import com.pluginideahub.combatachievements.core.data.BundledJson;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -73,51 +68,40 @@ public final class ScalingLibrary
 
 	public static ScalingLibrary loadBundled()
 	{
-		try (InputStream in = ScalingLibrary.class.getResourceAsStream(BUNDLED_RESOURCE))
-		{
-			return in == null ? defaults() : load(in);
-		}
-		catch (IOException ex)
-		{
-			return defaults();
-		}
+		return fromRoot(BundledJson.readBundled(ScalingLibrary.class, BUNDLED_RESOURCE));
 	}
 
 	public static ScalingLibrary load(InputStream in)
 	{
-		try (Reader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8)))
-		{
-			JsonElement parsed = JsonParser.parseReader(reader);
-			if (parsed == null || !parsed.isJsonObject())
-			{
-				return defaults();
-			}
-			JsonObject root = parsed.getAsJsonObject();
-			Map<String, Double> base = readStringDoubles(root, "type_base_attempts");
-			Map<Integer, Double> ability = new HashMap<>();
-			for (Map.Entry<String, Double> e : readStringDoubles(root, "ability_factor").entrySet())
-			{
-				try
-				{
-					ability.put(Integer.parseInt(e.getKey().trim()), e.getValue());
-				}
-				catch (NumberFormatException ignored)
-				{
-					// skip non-integer ability rating key
-				}
-			}
-			Map<String, Double> comp = readStringDoubles(root, "competence_factor");
-			Map<String, Double> thresholds = readStringDoubles(root, "competence_threshold");
-			int experienced = thresholds.containsKey("EXPERIENCED")
-				? (int) Math.round(thresholds.get("EXPERIENCED")) : 25;
-			int veteran = thresholds.containsKey("VETERAN")
-				? (int) Math.round(thresholds.get("VETERAN")) : 150;
-			return new ScalingLibrary(base, ability, comp, experienced, veteran);
-		}
-		catch (RuntimeException | IOException ex)
+		return fromRoot(BundledJson.read(in));
+	}
+
+	private static ScalingLibrary fromRoot(JsonObject root)
+	{
+		if (root == null)
 		{
 			return defaults();
 		}
+		Map<String, Double> base = readStringDoubles(root, "type_base_attempts");
+		Map<Integer, Double> ability = new HashMap<>();
+		for (Map.Entry<String, Double> e : readStringDoubles(root, "ability_factor").entrySet())
+		{
+			try
+			{
+				ability.put(Integer.parseInt(e.getKey().trim()), e.getValue());
+			}
+			catch (NumberFormatException ignored)
+			{
+				// skip non-integer ability rating key
+			}
+		}
+		Map<String, Double> comp = readStringDoubles(root, "competence_factor");
+		Map<String, Double> thresholds = readStringDoubles(root, "competence_threshold");
+		int experienced = thresholds.containsKey("EXPERIENCED")
+			? (int) Math.round(thresholds.get("EXPERIENCED")) : 25;
+		int veteran = thresholds.containsKey("VETERAN")
+			? (int) Math.round(thresholds.get("VETERAN")) : 150;
+		return new ScalingLibrary(base, ability, comp, experienced, veteran);
 	}
 
 	private static Map<String, Double> readStringDoubles(JsonObject root, String section)
