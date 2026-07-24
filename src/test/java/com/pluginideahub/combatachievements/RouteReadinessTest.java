@@ -74,6 +74,36 @@ public class RouteReadinessTest
 			.path();
 	}
 
+	private SidePanelViewModel.PathView routeAtPoints(PlayerProfile profile, int gamePoints)
+	{
+		return new SidePanelViewModelBuilder(lib, effort, VideoGuideLibrary.loadBundled(),
+			GuideLibrary.loadBundled(), TierRewardLibrary.loadBundled(), EffortModel.standard())
+			.difficulty(TaskDifficultyLibrary.loadBundled())
+			.recStats(recStats)
+			.bossDifficulty(BossDifficultyLibrary.loadBundled())
+			.detail(TaskDetailLibrary.loadBundled())
+			.effortEngine(BossTimingLibrary.loadBundled(), QuestEffortLibrary.loadBundled(),
+				SkillXpLibrary.loadBundled(), CombatExperience.empty(), profile, 6)
+			.build(new ProgressSnapshot(Collections.emptySet(), gamePoints, gamePoints, null, 1L),
+				new ProfileSignalsProvider(effort, recStats, profile), null)
+			.path();
+	}
+
+	@Test
+	public void aReadyAccountIsNotSentToHardContentWhenEasyContentClosesTheGap()
+	{
+		// The Nex-vs-Chaos-Fanatic case: a maxed account meets Nex's recommended stats, so a time-only route
+		// would send it there (Nex is efficient per point). Weighting the route by difficulty means the easy
+		// content it can also do is preferred, so a modest gap is closed without reaching for difficulty 7+.
+		PlayerProfile maxed = account(99);
+		SidePanelViewModel.PathView path = routeAtPoints(maxed, 1000); // ~64 pts short of Elite
+
+		assertTrue("precondition: a real route with steps", path.steps.size() > 3);
+		int hardest = path.steps.stream().mapToInt(s -> s.detail.difficulty).max().orElse(0);
+		assertTrue("a small gap is closed with easy content, not difficulty-7+ bosses (hardest was "
+				+ hardest + ")", hardest <= 6);
+	}
+
 	/** The worst single-stat gap the route asks the account to stretch across. */
 	private int worstGapInRoute(PlayerProfile profile, SidePanelViewModel.PathView path)
 	{

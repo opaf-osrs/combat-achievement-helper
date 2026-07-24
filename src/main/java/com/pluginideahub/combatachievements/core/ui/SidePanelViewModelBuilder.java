@@ -83,9 +83,6 @@ public final class SidePanelViewModelBuilder
 	private double caDifficultyWeight = 1.0;
 	private double unlockBias = 1.0;
 	private double unlockDifficultyWeight = 1.0;
-	// Route CA-path cost = estimated minutes (quickest path), tuned by these (1.0 each = pure time).
-	private double routePathPointsWeight = 1.0;
-	private double routePathDifficultyWeight = 1.0;
 	private long routeShuffleSeed;
 	// Deliberately fixed (not config): the panel shows a focused shortlist of the best sessions/unlocks;
 	// the underlying rankings are complete, these just cap what is rendered.
@@ -179,17 +176,6 @@ public final class SidePanelViewModelBuilder
 	}
 
 	/**
-	 * Sets the Route CA-path weights layered on the quickest-path (time) cost: {@code pointsWeight} favours
-	 * high-point tasks, {@code difficultyWeight} avoids hard ones. Each 1.0 = neutral (pure time).
-	 */
-	public SidePanelViewModelBuilder routePathWeights(double pointsWeight, double difficultyWeight)
-	{
-		this.routePathPointsWeight = pointsWeight;
-		this.routePathDifficultyWeight = difficultyWeight;
-		return this;
-	}
-
-	/**
 	 * Seed for the Route "suggest new" reshuffle: a non-zero value perturbs the path cost so the solver
 	 * re-picks a different but still-quick set. 0 = the true optimum.
 	 */
@@ -250,24 +236,24 @@ public final class SidePanelViewModelBuilder
 	}
 
 	/**
-	 * The Route's per-task cost: base is estimated minutes (so the solver finds the quickest path), tuned
-	 * by the Route points weight (favour high-point tasks) and difficulty weight (avoid hard ones). Both
-	 * 1.0 → pure time.
+	 * The Route's per-task cost: estimated minutes, weighted by difficulty so an EASY task is preferred
+	 * over a HARD one even when the hard one is quicker per point. Without this the route optimised pure
+	 * time and sent a player to Nex (difficulty 7–8) instead of finishing the easy CAs at a boss they were
+	 * already at (Chaos Fanatic, difficulty 2–4), because Nex is time-efficient per point. The linear
+	 * {@code difficulty/3} factor matches how the CAs list ranks, so the two surfaces now agree.
 	 */
 	private double routeCost(RankedTask rt)
 	{
 		CombatAchievement task = rt.achievement();
 		double minutes = Math.max(1, taskMinutes(task));
 		int d = rt.difficulty() == null ? 3 : Math.max(1, rt.difficulty().difficulty());
-		int pts = Math.max(1, task.points());
-		double diffFactor = Math.pow(d / 3.0, routePathDifficultyWeight - 1.0);
-		double ptsFactor = Math.pow(pts, routePathPointsWeight - 1.0);
+		double difficultyFactor = d / 3.0; // linear, neutral at difficulty 3 — as the CAs ranker uses
 		// Below the task's soft recommended stats -> push it later in the route (attemptable, not advised).
-		// Same shared 2%-per-level sink as the CAs ranker and the Sessions/Bosses ordering.
+		// Same shared sink as the CAs ranker and the Sessions/Bosses ordering.
 		double recStatsFactor = rt.recStatsSinkFactor();
 		// "Suggest new" reshuffle: a ±30% cost jitter nudges the solver onto a different but still-quick set.
 		double jitter = routeShuffleSeed == 0 ? 1.0 : 0.7 + 0.6 * hashUnit(routeShuffleSeed, task.id());
-		return minutes * diffFactor * recStatsFactor / Math.max(1e-9, ptsFactor) * jitter;
+		return minutes * difficultyFactor * recStatsFactor * jitter;
 	}
 
 	/** Deterministic uniform [0,1) hash of (seed, id) via a splitmix64 finaliser (decorrelated seeds). */
