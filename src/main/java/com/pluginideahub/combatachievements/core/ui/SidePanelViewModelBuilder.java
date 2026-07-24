@@ -402,9 +402,11 @@ public final class SidePanelViewModelBuilder
 		List<SidePanelViewModel.UnlockView> unlocks = buildUnlocks(unlockSuggestions, byId);
 		List<SidePanelViewModel.TrainingView> trainings = buildTrainings(
 			beginner ? withoutGatedTasks(all) : all, snapshot.completedIds());
-		// Beginner-gated like every other surface: a brand-new account had Chambers of Xeric and Theatre of
-		// Blood sitting in its boss directory because this one list was built from the ungated ranking.
-		List<SidePanelViewModel.BossRow> bosses = buildBossDirectory(recommendable, all,
+		// Deliberately UNGATED, unlike the other surfaces: the directory is where bosses are looked up
+		// (search, quest-page jumps, "View boss"), so hiding endgame content for a beginner made those
+		// links dead-end — the Colosseum was simply not findable. The readiness sink on each row keeps
+		// raid content out of a beginner's top Recommended rows; it just no longer erases the pages.
+		List<SidePanelViewModel.BossRow> bosses = buildBossDirectory(rankedIncomplete, all,
 			snapshot.completedIds());
 
 		return SidePanelViewModel.ready(lib.version(), gamePoints, totalAvailable,

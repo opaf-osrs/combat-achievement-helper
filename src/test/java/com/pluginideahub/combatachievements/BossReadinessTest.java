@@ -128,24 +128,19 @@ public class BossReadinessTest
 	}
 
 	@Test
-	public void theDirectoryIsBeginnerGatedLikeEveryOtherSurface()
+	public void theDirectoryListsEveryBossEvenForABeginnerButMarksItsUnreadiness()
 	{
-		List<String> beginner = new ArrayList<>();
-		for (SidePanelViewModel.BossRow b : bossesFor(account(1)))
-		{
-			beginner.add(b.monster);
-		}
-		assertFalse("no raids in a brand-new account's boss directory",
-			beginner.contains("Chambers of Xeric"));
-		assertFalse(beginner.contains("Theatre of Blood"));
-
-		List<String> established = new ArrayList<>();
-		for (SidePanelViewModel.BossRow b : bossesFor(account(70)))
-		{
-			established.add(b.monster);
-		}
-		assertTrue("but a combat-89 account browses the whole game",
-			established.contains("Chambers of Xeric"));
+		// Unlike the recommendation surfaces, the directory is a lookup: search, quest-page jumps and
+		// "View boss" links all resolve against it, and hiding endgame content for a beginner made the
+		// Colosseum unfindable and its links dead. So everything is listed — a beginner's unreadiness
+		// shows in the row's sink (which the Recommended sort divides by), not in the boss being erased.
+		List<SidePanelViewModel.BossRow> beginner = bossesFor(account(1));
+		SidePanelViewModel.BossRow colosseum = named(beginner, "Fortis Colosseum");
+		SidePanelViewModel.BossRow hueycoatl = named(beginner, "The Hueycoatl");
+		named(beginner, "Chambers of Xeric");
+		assertTrue("a level-3 is marked far from the Colosseum", colosseum.readinessSink > 2.0
+			|| colosseum.locked);
+		assertTrue("and from the Hueycoatl", hueycoatl.readinessSink > 2.0 || hueycoatl.locked);
 	}
 
 	private static SidePanelViewModel.BossRow named(List<SidePanelViewModel.BossRow> rows, String monster)

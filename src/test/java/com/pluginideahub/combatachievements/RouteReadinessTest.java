@@ -308,6 +308,21 @@ public class RouteReadinessTest
 	}
 
 	@Test
+	public void trainNextNeverSetsASingleCombatSkillAsAGoal()
+	{
+		// Combat stats train together and are covered by the "All combat N" milestones; a recommended
+		// stat must not become a personal goal ("Strength 56", pointed at Greater Demons, for a level-3).
+		for (int lvl : new int[]{1, 40})
+		{
+			for (SidePanelViewModel.TrainingView t : viewModelFor(account(lvl)).trainings())
+			{
+				assertFalse("a bare combat-skill goal was suggested: " + t.label,
+					t.label.matches("^(Attack|Strength|Defence|Ranged|Magic|Hitpoints) \\d+$"));
+			}
+		}
+	}
+
+	@Test
 	public void unlockSuggestionsStayWithinTheReadyLineWhenAnyQuestIsWithinIt()
 	{
 		// A quest the player is nowhere near able to do is not a recommendation, however big its prize.

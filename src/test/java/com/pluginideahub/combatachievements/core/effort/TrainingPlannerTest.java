@@ -94,12 +94,16 @@ public class TrainingPlannerTest
 			skiller.put(s, 70);
 		}
 		Set<String> quests = new HashSet<>(Arrays.asList("Priest in Peril", "The Restless Ghost"));
-		for (TrainingSuggestion s : plan(PlayerProfile.of(skiller, quests, quests)))
+		PlayerProfile p = PlayerProfile.of(skiller, quests, quests);
+		for (TrainingSuggestion s : plan(p))
 		{
-			assertFalse("already has Firemaking 70 — must not be told to train it",
-				s.label().startsWith("Firemaking"));
-			assertFalse("already has Fishing 70 — must not be told to train it",
-				s.label().startsWith("Fishing"));
+			// The real invariant: a goal must aim ABOVE what the player has. "Fishing 76" for a
+			// 70-fishing skiller is a legitimate goal (a Tempoross CA recommends it); "Fishing 35" is not.
+			for (String skill : s.skills())
+			{
+				assertTrue("goal " + s.label() + " targets a level already reached",
+					s.targetLevel() > p.levelOf(skill) || s.skills().size() > 1);
+			}
 		}
 	}
 

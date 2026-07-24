@@ -45,6 +45,7 @@ public final class TrainingPlanner
 	private static final String[] COMBAT_KIT = {
 		"Attack", "Strength", "Defence", "Ranged", "Magic", "Hitpoints"
 	};
+	private static final Set<String> COMBAT_KIT_SET = new HashSet<>(java.util.Arrays.asList(COMBAT_KIT));
 	private static final int[] COMBAT_MILESTONES = {20, 30, 40, 50, 60, 70, 80, 90};
 
 	private final SkillXpLibrary skillXp;
@@ -86,9 +87,13 @@ public final class TrainingPlanner
 			{
 				continue;
 			}
+			// Combat-kit skills never become single-skill goals, gate or not: they train together, the
+			// "All combat N" milestones cover them, and "Strength 60" pointed at one boss is exactly the
+			// kind of advice this section must not give a fresh account.
 			for (Map.Entry<String, Integer> req : effort.effortFor(a.id()).levelReqs().entrySet())
 			{
-				if (req.getValue() != null && req.getValue() > profile.levelOf(req.getKey()))
+				if (req.getValue() != null && req.getValue() > profile.levelOf(req.getKey())
+					&& !COMBAT_KIT_SET.contains(req.getKey()))
 				{
 					thresholds.computeIfAbsent(req.getKey(), k -> new TreeSet<>()).add(req.getValue());
 				}
@@ -101,7 +106,7 @@ public final class TrainingPlanner
 			{
 				for (String skill : req.skills())
 				{
-					if (req.level() > profile.levelOf(skill))
+					if (req.level() > profile.levelOf(skill) && !COMBAT_KIT_SET.contains(skill))
 					{
 						thresholds.computeIfAbsent(skill, k -> new TreeSet<>()).add(req.level());
 					}
