@@ -11,8 +11,7 @@ import java.util.Map;
  * Loads the bundled {@code task_difficulty.json} (task id → {@link TaskDifficulty}), the curated
  * pure-skill Difficulty compiled from the boss ratings + keyword bumps. Sparse and safe: a
  * missing/malformed file yields an empty library where every lookup returns {@link
- * TaskDifficulty#UNKNOWN}, so a data problem never breaks the ranker. Pure Java (Gson only). Mirrors
- * {@code CompletionLibrary}. See CONTEXT.md "Difficulty".
+ * TaskDifficulty#UNKNOWN}, so a data problem never breaks the ranker. Pure Java (Gson only).
  */
 public final class TaskDifficultyLibrary
 {

@@ -6,7 +6,6 @@ import com.google.gson.JsonParser;
 import com.pluginideahub.combatachievements.core.achievement.AchievementTier;
 import com.pluginideahub.combatachievements.core.achievement.CombatAchievement;
 import com.pluginideahub.combatachievements.core.achievement.CombatAchievementLibrary;
-import com.pluginideahub.combatachievements.core.achievement.CompletionLibrary;
 import com.pluginideahub.combatachievements.core.achievement.TaskDifficultyLibrary;
 import com.pluginideahub.combatachievements.core.achievement.TierRewardLibrary;
 import com.pluginideahub.combatachievements.core.combat.MonsterStatsLibrary;
@@ -41,22 +40,6 @@ public class DataIntegrityTest
 		for (int id = 0; id < n; id++)
 		{
 			assertNotNull("task ids must be contiguous 0.." + (n - 1) + "; missing " + id, lib.byId(id));
-		}
-	}
-
-	@Test
-	public void completionCoversEveryTaskWithKeysInRange()
-	{
-		CombatAchievementLibrary lib = CombatAchievementLibrary.loadBundled();
-		CompletionLibrary comp = CompletionLibrary.loadBundled();
-		assertEquals("completion% must cover every task", lib.taskCount(), comp.count());
-		for (CombatAchievement t : lib.all())
-		{
-			assertTrue("no completion% for task " + t.id(), comp.completionFor(t.id()) >= 0);
-		}
-		for (int key : taskKeys(PKG + "task_completion.json"))
-		{
-			assertInRange(key, lib.taskCount());
 		}
 	}
 
