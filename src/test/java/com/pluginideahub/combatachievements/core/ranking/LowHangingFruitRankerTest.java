@@ -63,9 +63,13 @@ public class LowHangingFruitRankerTest
 		assertEquals("Hard KC ranks first", 1, ranked.get(0).achievement().id());
 		assertEquals(2, ranked.get(1).achievement().id());
 
-		// Matches the worked example in docs/DESIGN.md §6b.1.
-		assertEquals(1.45, ranked.get(0).effort(), 1e-6);
-		assertEquals(3.0 / 1.45, ranked.get(0).score(), 1e-6);
+		// The worked example in docs/DESIGN.md §6b.1, now carrying the repetition cost: the Hard task says
+		// "20 times", so its base effort is multiplied by sqrt(20). The Master task is a single attempt and
+		// is unaffected. The Hard grind still wins — 20 Abyssal Sire kills really is the easier job — which
+		// is exactly the case that keeps the repetition curve honest rather than punishing every grind.
+		double repeats = Math.sqrt(20);
+		assertEquals(1.45 * repeats, ranked.get(0).effort(), 1e-6);
+		assertEquals(3.0 / (1.45 * repeats), ranked.get(0).score(), 1e-6);
 		assertEquals(12.4, ranked.get(1).effort(), 1e-6);
 		assertEquals(5.0 / 12.4, ranked.get(1).score(), 1e-6);
 		assertTrue(ranked.get(0).score() > ranked.get(1).score());

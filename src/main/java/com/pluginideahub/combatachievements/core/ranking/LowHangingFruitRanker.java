@@ -1,6 +1,7 @@
 package com.pluginideahub.combatachievements.core.ranking;
 
 import com.pluginideahub.combatachievements.core.achievement.CombatAchievement;
+import com.pluginideahub.combatachievements.core.effort.TaskTimeModel;
 import com.pluginideahub.combatachievements.core.achievement.EffortDataLibrary;
 import com.pluginideahub.combatachievements.core.achievement.QuestRequirement;
 import com.pluginideahub.combatachievements.core.achievement.TaskDifficulty;
@@ -104,6 +105,7 @@ public final class LowHangingFruitRanker
 			TaskDifficulty difficulty = difficultyLib.difficultyFor(task.id());
 			double effortValue = model.effortFor(task, effort, sig)
 				* difficultyFactor(difficulty, difficultyWeight)
+				* repetitionFactor(task)
 				* RankedTask.recStatsSinkFactor(sig.recStatsShortfall());
 			double score = effortValue <= 0 ? 0 : Math.pow(task.points(), pointsWeight) / effortValue;
 			ranked.add(new RankedTask(task, effortValue, score, rationale(task, effort, sig),
@@ -131,6 +133,28 @@ public final class LowHangingFruitRanker
 	 * single kill purely on points. Paired with the entry-kill tie-break, this makes "kill it once" lead
 	 * its boss.
 	 */
+	/**
+	 * How much a task's required repetitions multiply its cost. The effort model scores gear, RNG, supplies
+	 * and learning — all real things, but none of them notice that a task says "150 times". Without this,
+	 * "Complete the Chambers of Xeric 150 times" carried exactly the same effort as "25 times" AND scored
+	 * as cheaper than doing a single raid under a restriction, so points-per-effort put the longest grind
+	 * in the game at the top of its own boss.
+	 *
+	 * <p>Square-root rather than linear, and deliberately gentle. This is a count, not a cost: 20 Abyssal
+	 * Sire kills and 20 Chambers raids repeat the same number of times but are an hour and a day apart, so
+	 * a steep curve punishes quick-boss grinds it has no business punishing (it flipped "kill the Sire 20
+	 * times" below a one-attempt Master perfection task, which is plainly wrong). sqrt is enough to sink a
+	 * long raid grind beneath every single-attempt task at its own boss without over-taxing short ones.
+	 *
+	 * <p>The honest fix is to cost tasks by their estimated MINUTES, which already multiply kills by
+	 * time-to-kill; the ranker has no timing library, so this approximates it.</p>
+	 */
+	private static double repetitionFactor(CombatAchievement task)
+	{
+		int kills = TaskTimeModel.requiredKills(task.description());
+		return kills <= 1 ? 1.0 : Math.sqrt(kills);
+	}
+
 	private void reprice(List<RankedTask> ranked)
 	{
 		Map<String, Double> bestByBoss = new HashMap<>();
