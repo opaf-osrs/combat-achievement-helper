@@ -1675,16 +1675,19 @@ public class CombatAchievementsPanel extends PluginPanel
 		// only wired up when the boss actually has a page, so it can never be a dead click.
 		if (bossExists(boss))
 		{
-			label.setCursor(new Cursor(Cursor.HAND_CURSOR));
-			row.setCursor(new Cursor(Cursor.HAND_CURSOR));
-			addForegroundHover(label, CombatAchievementsTheme.HEADER_GOLD, CombatAchievementsTheme.NAME);
-			onClick(row, () -> {
+			Runnable openBoss = () -> {
 				currentMode = PanelMode.BOSSES;
 				selectedCa = null;
 				selectedBoss = boss;
 				buildModeBar();
 				rebuild();
-			});
+			};
+			addForegroundHover(label, CombatAchievementsTheme.HEADER_GOLD, CombatAchievementsTheme.NAME);
+			// The listener has to go on the LABEL as well as the row. AWT does not bubble mouse events the
+			// way the DOM does: a component with any listener of its own consumes them, and the hover tint
+			// above gives the label one — so a click on the name never reached a row-only handler.
+			onClick(label, openBoss);
+			onClick(row, openBoss);
 		}
 		return fullWidth(row);
 	}
