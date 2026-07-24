@@ -162,6 +162,8 @@ public class CombatAchievementsPanel extends PluginPanel
 	private transient boolean devBulkUpdate;
 
 	private final JLabel title = new JLabel("Combat Achievement Helper");
+	/** Header Discord button, kept so a theme change can re-tint its icon. */
+	private transient JButton discordButton;
 	private final JPanel devSection = new JPanel(new BorderLayout());
 	private final JPanel devBody = new JPanel();
 	private final JLabel devHeader = new JLabel();
@@ -195,6 +197,11 @@ public class CombatAchievementsPanel extends PluginPanel
 		title.setFont(FontManager.getRunescapeBoldFont());
 		title.setForeground(CombatAchievementsTheme.HEADER_GOLD);
 		titleRow.add(title, BorderLayout.WEST);
+		if (!DISCORD_URL.isEmpty())
+		{
+			discordButton = discordLink();
+			titleRow.add(discordButton, BorderLayout.EAST);
+		}
 		header.add(titleRow, BorderLayout.NORTH);
 
 		modeBar.setBackground(ColorScheme.DARKER_GRAY_COLOR);
@@ -630,10 +637,6 @@ public class CombatAchievementsPanel extends PluginPanel
 		// so the whole footer reads as chrome rather than as calls to action.
 		JPanel links = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
 		links.setOpaque(false);
-		if (!DISCORD_URL.isEmpty())
-		{
-			links.add(discordLink());
-		}
 		if (FeedbackLink.hasGeneralForm())
 		{
 			links.add(footerLink("Feedback", FeedbackLink.generalUrl(),
@@ -661,12 +664,24 @@ public class CombatAchievementsPanel extends PluginPanel
 		link.setBorderPainted(false);
 		link.setContentAreaFilled(false);
 		link.setOpaque(false);
-		link.setBorder(BorderFactory.createEmptyBorder(2, 0, 0, 0));
+		link.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 		link.setMargin(new Insets(0, 0, 0, 0));
 		link.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		link.setToolTipText("Opens the Discord invite in your browser");
 		link.addActionListener(e -> LinkBrowser.browse(DISCORD_URL));
 		return link;
+	}
+
+	/** Re-applies the current theme's colours to the header Discord icon (it outlives a rebuild). */
+	private void retintDiscord()
+	{
+		if (discordButton == null)
+		{
+			return;
+		}
+		BufferedImage mark = ImageUtil.loadImageResource(CombatAchievementsPlugin.class, "discord.png");
+		discordButton.setIcon(new ImageIcon(tint(mark, CombatAchievementsTheme.NEUTRAL_META)));
+		discordButton.setRolloverIcon(new ImageIcon(tint(mark, CombatAchievementsTheme.HEADER_GOLD)));
 	}
 
 	/** Recolours a white-with-alpha silhouette, keeping its alpha so the edges stay smooth. */
@@ -935,6 +950,7 @@ public class CombatAchievementsPanel extends PluginPanel
 		{
 			CombatAchievementsTheme.apply(palette);
 			title.setForeground(CombatAchievementsTheme.HEADER_GOLD);
+			retintDiscord();
 			refreshDevHeader(); // the dev section persists across rebuilds, so re-tint it explicitly
 			sortBox.setForeground(CombatAchievementsTheme.NAME);
 			searchField.setCaretColor(CombatAchievementsTheme.NAME);
