@@ -161,6 +161,8 @@ public class CombatAchievementsPanel extends PluginPanel
 	private String selectedBoss;
 	/** When non-null (Route mode), the quest-unlock drill-in is shown; a selected CA overlays it. */
 	private transient SidePanelViewModel.UnlockView selectedUnlock;
+	/** Boss groups the user has opened on the quest page; all start closed, reset per quest. */
+	private final Set<String> expandedUnlockBosses = new HashSet<>();
 
 	/**
 	 * Developer-mode account simulation. Volatile because it is written on the EDT (by the controls) and
@@ -929,7 +931,18 @@ public class CombatAchievementsPanel extends PluginPanel
 			selectedCa = null;
 			selectedBoss = null;
 			selectedUnlock = model.unlocks().get(0);
+			expandedUnlockBosses.clear();
 			buildModeBar();
+			rebuild();
+		}
+	}
+
+	/** Preview/test hook: opens the first boss group on the quest-unlock page (they start closed). */
+	public void expandFirstUnlockBoss()
+	{
+		if (selectedUnlock != null && !selectedUnlock.unlockedCas.isEmpty())
+		{
+			expandedUnlockBosses.add(selectedUnlock.unlockedCas.get(0).monster);
 			rebuild();
 		}
 	}
@@ -2038,6 +2051,7 @@ public class CombatAchievementsPanel extends PluginPanel
 		{
 			onClick(card, () -> {
 				selectedUnlock = u;
+				expandedUnlockBosses.clear();
 				rebuild();
 			});
 		}
@@ -2088,12 +2102,16 @@ public class CombatAchievementsPanel extends PluginPanel
 			{
 				pts += c.points;
 			}
-			content.add(unlockBossHeader(e.getKey(), e.getValue().size(), pts));
+			boolean expanded = expandedUnlockBosses.contains(e.getKey());
+			content.add(unlockBossHeader(e.getKey(), e.getValue().size(), pts, expanded));
 			content.add(spacer());
-			for (SidePanelViewModel.CaDetail c : e.getValue())
+			if (expanded)
 			{
-				content.add(unlockCaCard(c));
-				content.add(spacer());
+				for (SidePanelViewModel.CaDetail c : e.getValue())
+				{
+					content.add(unlockCaCard(c));
+					content.add(spacer());
+				}
 			}
 		}
 	}
@@ -2105,11 +2123,16 @@ public class CombatAchievementsPanel extends PluginPanel
 	}
 
 	/**
-	 * A boss group header on the quest page: the boss name with its share of the prize, clickable
-	 * through to the boss page when it has one (same behaviour as the Route's group headers).
+	 * A boss group header on the quest page: an arrow that shows/hides the group's CAs (all groups
+	 * start closed), the boss name — clickable through to the boss page when it has one — and the
+	 * group's share of the prize.
 	 */
-	private JPanel unlockBossHeader(String boss, int count, int points)
+	private JPanel unlockBossHeader(String boss, int count, int points, boolean expanded)
 	{
+		JLabel arrow = new JLabel(expanded ? "▾ " : "▸ ");
+		arrow.setFont(FontManager.getRunescapeBoldFont());
+		arrow.setForeground(CombatAchievementsTheme.HEADER_GOLD);
+
 		JLabel label = new JLabel(escape(boss));
 		label.setFont(FontManager.getRunescapeBoldFont());
 		label.setForeground(CombatAchievementsTheme.HEADER_GOLD);
@@ -2118,16 +2141,37 @@ public class CombatAchievementsPanel extends PluginPanel
 		meta.setFont(FontManager.getRunescapeSmallFont());
 		meta.setForeground(ColorScheme.LIGHT_GRAY_COLOR);
 
+		// The prize goes UNDER the name, not beside it: three "Tombs of Am…" rows squeezed against
+		// an inline count were indistinguishable, and the boss name is the part that must survive.
+		JPanel textCol = new JPanel();
+		textCol.setOpaque(false);
+		textCol.setLayout(new BoxLayout(textCol, BoxLayout.Y_AXIS));
+		label.setAlignmentX(Component.LEFT_ALIGNMENT);
+		meta.setAlignmentX(Component.LEFT_ALIGNMENT);
+		textCol.add(label);
+		textCol.add(meta);
+
 		JPanel row = new JPanel(new BorderLayout(4, 0));
 		row.setOpaque(false);
 		row.setBorder(BorderFactory.createEmptyBorder(6, 0, 2, 0));
-		// Name in CENTER so a long boss name ellipsizes; the prize in EAST stays visible either way.
-		row.add(label, BorderLayout.CENTER);
-		row.add(meta, BorderLayout.EAST);
+		row.add(arrow, BorderLayout.WEST);
+		row.add(textCol, BorderLayout.CENTER);
 		// Cap the row's preferred width or a long name widens the whole content column past the panel
-		// and the EAST meta lands off-screen (the widest-child trap; same cap as the route cards).
+		// (the widest-child trap; same cap as the route cards). The name still ellipsizes past this.
 		row.setPreferredSize(new Dimension(ROUTE_TEXT_WIDTH, row.getPreferredSize().height));
 
+		Runnable toggle = () -> {
+			if (!expandedUnlockBosses.remove(boss))
+			{
+				expandedUnlockBosses.add(boss);
+			}
+			rebuild();
+		};
+		// The row (and the arrow) toggle the group; the boss NAME jumps to the boss page instead,
+		// when there is one. AWT does not bubble mouse events, so each part needs its own handler —
+		// the name's hover listener alone would swallow clicks meant for the row.
+		onClick(arrow, toggle);
+		onClick(row, toggle);
 		if (bossExists(boss))
 		{
 			Runnable openBoss = () -> {
@@ -2139,10 +2183,11 @@ public class CombatAchievementsPanel extends PluginPanel
 				rebuild();
 			};
 			addForegroundHover(label, CombatAchievementsTheme.HEADER_GOLD, CombatAchievementsTheme.NAME);
-			// AWT does not bubble mouse events: the hover listener on the label consumes clicks, so the
-			// handler must sit on the label AND the row (the Route's group header learned this the hard way).
 			onClick(label, openBoss);
-			onClick(row, openBoss);
+		}
+		else
+		{
+			onClick(label, toggle);
 		}
 		return fullWidth(row);
 	}

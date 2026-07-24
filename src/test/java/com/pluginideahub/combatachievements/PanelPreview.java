@@ -150,7 +150,9 @@ public final class PanelPreview
 			panel.openFirstLockedCaDetail();
 			snapshot(panel, new File(outDir, "15-locked-ca-detail.png"));
 			panel.openFirstUnlockDetail();
-			snapshot(panel, new File(outDir, "20-unlock-detail.png"));
+			snapshot(panel, new File(outDir, "20-unlock-detail.png")); // boss groups closed (default)
+			panel.expandFirstUnlockBoss();
+			snapshot(panel, new File(outDir, "20b-unlock-detail-open.png"));
 
 			// Theme previews: the same CA-detail screen under each selectable palette, side by side, so
 			// the colour themes (names, points, headers, difficulty, requirements) can be compared.
