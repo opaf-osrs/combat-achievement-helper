@@ -163,6 +163,8 @@ public class CombatAchievementsPanel extends PluginPanel
 	private transient SidePanelViewModel.UnlockView selectedUnlock;
 	/** Boss groups the user has opened on the quest page; all start closed, reset per quest. */
 	private final Set<String> expandedUnlockBosses = new HashSet<>();
+	/** When non-null, quest pages offer an "open in Quest Helper" button routed through this. */
+	private transient Consumer<String> onOpenQuestHelper;
 
 	/**
 	 * Developer-mode account simulation. Volatile because it is written on the EDT (by the controls) and
@@ -920,6 +922,15 @@ public class CombatAchievementsPanel extends PluginPanel
 			buildModeBar();
 			rebuild();
 		}
+	}
+
+	/**
+	 * Wires (or, with null, removes) the quest pages' "open in Quest Helper" button. The plugin only
+	 * wires it when the config option is on, so the button never ships dead by default.
+	 */
+	public void setQuestHelperHandler(Consumer<String> handler)
+	{
+		this.onOpenQuestHelper = handler;
 	}
 
 	/** Preview/test hook: opens the quest-unlock drill-in for the Route's first "Unlock next" card. */
@@ -2083,6 +2094,10 @@ public class CombatAchievementsPanel extends PluginPanel
 		JPanel links = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 1));
 		links.setOpaque(false);
 		links.add(linkButton("Wiki", questWikiUrl(u.questName)));
+		if (onOpenQuestHelper != null)
+		{
+			links.add(actionButton("Quest Helper", () -> onOpenQuestHelper.accept(u.questName)));
+		}
 		content.add(fullWidth(links));
 		content.add(spacer());
 
@@ -2721,6 +2736,11 @@ public class CombatAchievementsPanel extends PluginPanel
 
 	private JButton linkButton(String text, String url)
 	{
+		return actionButton(text, () -> LinkBrowser.browse(url));
+	}
+
+	private JButton actionButton(String text, Runnable action)
+	{
 		JButton button = new JButton(text);
 		button.setFont(FontManager.getRunescapeSmallFont());
 		button.setFocusPainted(false);
@@ -2729,7 +2749,7 @@ public class CombatAchievementsPanel extends PluginPanel
 		button.setBackground(ColorScheme.DARKER_GRAY_COLOR);
 		button.setForeground(CombatAchievementsTheme.HEADER_GOLD);
 		button.setBorder(BorderFactory.createEmptyBorder(2, 7, 2, 7));
-		button.addActionListener(e -> LinkBrowser.browse(url));
+		button.addActionListener(e -> action.run());
 		addHover(button, ColorScheme.DARKER_GRAY_COLOR, ColorScheme.DARK_GRAY_HOVER_COLOR);
 		return button;
 	}

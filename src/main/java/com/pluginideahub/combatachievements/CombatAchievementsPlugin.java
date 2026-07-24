@@ -83,6 +83,9 @@ public class CombatAchievementsPlugin extends Plugin
 	@Inject
 	private HiscoreClient hiscoreClient;
 
+	@Inject
+	private net.runelite.client.eventbus.EventBus eventBus;
+
 	private static final String KC_CONFIG_GROUP = "pluginideahub-combatachievements";
 	private static final Gson GSON = new Gson();
 
@@ -154,6 +157,7 @@ public class CombatAchievementsPlugin extends Plugin
 		panel.setBarHandlers(this::barTask, this::unbarTask, this::clearBarredTasks);
 		panel.setRouteHandlers(this::addToRoute, this::removeFromRoute);
 		panel.setResetCustomHandler(this::resetRouteCustomisation);
+		panel.setQuestHelperHandler(config.questHelperButton() ? this::openInQuestHelper : null);
 		navigationButton = NavigationButton.builder()
 			.tooltip("Combat Achievement Helper")
 			.icon(ImageUtil.loadImageResource(CombatAchievementsPlugin.class, "icon.png"))
@@ -299,6 +303,19 @@ public class CombatAchievementsPlugin extends Plugin
 		{
 			log.debug("Combat Achievement Helper: hiscore KC backfill failed", ex);
 		}
+	}
+
+	/**
+	 * Asks Quest Helper to open the given quest, via the plugin-message protocol its newer versions
+	 * accept (namespace "questhelper", action "start"). Harmless when Quest Helper is absent or too
+	 * old — nothing subscribes, nothing happens — which is why the button is off by default in config.
+	 */
+	private void openInQuestHelper(String questName)
+	{
+		java.util.Map<String, Object> data = new HashMap<>();
+		data.put("quest", questName);
+		data.put("source", "Combat Achievement Helper");
+		eventBus.post(new net.runelite.client.events.PluginMessage("questhelper", "start", data));
 	}
 
 	/** Persists the accumulated KC map per account so competence/progress survive restarts. */
@@ -539,6 +556,7 @@ public class CombatAchievementsPlugin extends Plugin
 				panel.applyTheme(config.panelTheme().palette());
 				panel.setHowToDefault(config.showHowTo());
 				panel.setDeveloperMode(config.developerMode());
+				panel.setQuestHelperHandler(config.questHelperButton() ? this::openInQuestHelper : null);
 			}
 			requestRefresh();
 		}
