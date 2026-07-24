@@ -27,6 +27,13 @@ public final class FeedbackLink
 	/** entry.NNNNN for the "Task id" field — the only thing the player should not have to type. */
 	private static final String ENTRY_TASK_ID = "entry.602421074";
 
+	/**
+	 * A second, general form for feedback about the plugin itself (rather than one task's rating), linked
+	 * from the panel footer. Nothing is pre-filled: it is opened from the footer, not from a task, so there
+	 * is no context to carry. Empty = the footer link is hidden.
+	 */
+	private static final String GENERAL_FORM_ID = "1FAIpQLSf_9QToV1ASjX6kETsMGdamM1zUvSPuC7K8B3bJDK-nkjWO7w";
+
 	// ---------------------------------------------------------------------------------------------
 
 	private static final String FORM_URL = "https://docs.google.com/forms/d/e/%s/viewform";
@@ -39,6 +46,18 @@ public final class FeedbackLink
 	public static boolean isConfigured()
 	{
 		return !FORM_ID.isEmpty();
+	}
+
+	/** True once the general feedback form is configured; the footer hides its link when false. */
+	public static boolean hasGeneralForm()
+	{
+		return !GENERAL_FORM_ID.isEmpty();
+	}
+
+	/** The general plugin-feedback form, or "" when none is configured. Carries no pre-filled data. */
+	public static String generalUrl()
+	{
+		return buildUrl(GENERAL_FORM_ID, new LinkedHashMap<>());
 	}
 
 	/**

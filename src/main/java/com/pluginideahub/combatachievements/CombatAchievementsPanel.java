@@ -618,21 +618,43 @@ public class CombatAchievementsPanel extends PluginPanel
 		footer.setBackground(ColorScheme.DARKER_GRAY_COLOR);
 		footer.setBorder(BorderFactory.createEmptyBorder(6, 0, 0, 0));
 
-		JButton support = new JButton("Support on Patreon");
-		support.setFont(FontManager.getRunescapeSmallFont());
-		support.setFocusPainted(false);
-		support.setBorderPainted(false);
-		support.setContentAreaFilled(false);
-		support.setOpaque(false);
-		support.setForeground(CombatAchievementsTheme.NEUTRAL_META);
-		support.setBorder(BorderFactory.createEmptyBorder(2, 0, 0, 0));
-		support.setCursor(new Cursor(Cursor.HAND_CURSOR));
-		support.setToolTipText("Opens patreon.com in your browser");
-		support.addActionListener(e -> LinkBrowser.browse(PATREON_URL));
-		addForegroundHover(support, CombatAchievementsTheme.NEUTRAL_META,
-			CombatAchievementsTheme.HEADER_GOLD);
-		footer.add(support, BorderLayout.WEST);
+		footer.add(footerLink("Support on Patreon", PATREON_URL, "Opens patreon.com in your browser"),
+			BorderLayout.WEST);
+
+		// Right-hand side: the quiet "tell us something" links. Same muted styling as the Patreon link,
+		// so the whole footer reads as chrome rather than as calls to action.
+		JPanel links = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
+		links.setOpaque(false);
+		if (FeedbackLink.hasGeneralForm())
+		{
+			links.add(footerLink("Feedback", FeedbackLink.generalUrl(),
+				"Opens the feedback form in your browser"));
+		}
+		if (links.getComponentCount() > 0)
+		{
+			footer.add(links, BorderLayout.EAST);
+		}
 		return footer;
+	}
+
+	/** One muted footer link: plain text, meta-grey, warming to gold on hover. */
+	private JButton footerLink(String text, String url, String tooltip)
+	{
+		JButton link = new JButton(text);
+		link.setFont(FontManager.getRunescapeSmallFont());
+		link.setFocusPainted(false);
+		link.setBorderPainted(false);
+		link.setContentAreaFilled(false);
+		link.setOpaque(false);
+		link.setForeground(CombatAchievementsTheme.NEUTRAL_META);
+		link.setBorder(BorderFactory.createEmptyBorder(2, 0, 0, 0));
+		link.setMargin(new Insets(0, 0, 0, 0));
+		link.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		link.setToolTipText(tooltip);
+		link.addActionListener(e -> LinkBrowser.browse(url));
+		addForegroundHover(link, CombatAchievementsTheme.NEUTRAL_META,
+			CombatAchievementsTheme.HEADER_GOLD);
+		return link;
 	}
 
 	private void emit(PanelAction action)
