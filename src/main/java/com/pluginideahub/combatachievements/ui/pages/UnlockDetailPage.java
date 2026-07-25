@@ -61,10 +61,6 @@ public class UnlockDetailPage
 		JPanel links = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 1));
 		links.setOpaque(false);
 		links.add(CardKit.linkButton("Wiki", questWikiUrl(u.questName)));
-		if (panel.onOpenQuestHelper() != null)
-		{
-			links.add(CardKit.actionButton("Quest Helper", () -> panel.onOpenQuestHelper().accept(u.questName)));
-		}
 		content.add(CardKit.fullWidth(links));
 		content.add(CardKit.spacer());
 

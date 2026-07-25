@@ -30,18 +30,6 @@ public interface CombatAchievementsConfig extends Config
 	}
 
 	@ConfigItem(
-		keyName = "questHelperButton",
-		name = "Quest Helper button",
-		description = "Adds an 'Open in Quest Helper' button to quest pages. Needs the Quest Helper "
-			+ "plugin, on a version that accepts the request — older versions ignore the click.",
-		position = 2
-	)
-	default boolean questHelperButton()
-	{
-		return false;
-	}
-
-	@ConfigItem(
 		keyName = "developerMode",
 		name = "Developer mode",
 		description = "Extra debug info for development. Leave this off.",

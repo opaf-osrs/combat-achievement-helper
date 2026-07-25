@@ -159,8 +159,6 @@ public class CombatAchievementsPanel extends PluginPanel
 	private boolean unlockPrereqsExpanded;
 	/** Whether the quest page's "Stats first" list is unfolded; starts closed, reset per quest. */
 	private boolean unlockStatsExpanded;
-	/** When non-null, quest pages offer an "open in Quest Helper" button routed through this. */
-	private transient Consumer<String> onOpenQuestHelper;
 
 	/**
 	 * Developer-mode account simulation. Volatile because it is written on the EDT (by the controls) and
@@ -889,15 +887,6 @@ public class CombatAchievementsPanel extends PluginPanel
 		}
 	}
 
-	/**
-	 * Wires (or, with null, removes) the quest pages' "open in Quest Helper" button. The plugin only
-	 * wires it when the config option is on, so the button never ships dead by default.
-	 */
-	public void setQuestHelperHandler(Consumer<String> handler)
-	{
-		this.onOpenQuestHelper = handler;
-	}
-
 	/** Preview/test hook: opens the quest-unlock drill-in for the Route's first "Unlock next" card. */
 	public void openFirstUnlockDetail()
 	{
@@ -1370,11 +1359,6 @@ public class CombatAchievementsPanel extends PluginPanel
 	public Runnable onResetCustom()
 	{
 		return onResetCustom;
-	}
-
-	public Consumer<String> onOpenQuestHelper()
-	{
-		return onOpenQuestHelper;
 	}
 
 	/** A bold gold section header that toggles a collapsed section when clicked (▸ collapsed / ▾ open). */
