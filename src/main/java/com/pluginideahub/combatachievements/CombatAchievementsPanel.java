@@ -95,6 +95,15 @@ public class CombatAchievementsPanel extends PluginPanel
 	private static final String PATREON_URL = "https://www.patreon.com/c/CAHelper";
 	/** Discord invite for the footer icon. Empty = the icon is hidden, so a blank never ships a dead link. */
 	private static final String DISCORD_URL = "https://discord.gg/N7HUvV92a";
+	/**
+	 * Feedback forms, opened in the browser. Both are whole literal constants and stay that way: the hub
+	 * reads a URL assembled in code as network i/o, which costs the plugin its automated review. The task
+	 * form therefore asks the player which achievement they mean rather than carrying it in the link.
+	 */
+	private static final String FEEDBACK_URL =
+		"https://docs.google.com/forms/d/e/1FAIpQLSf_9QToV1ASjX6kETsMGdamM1zUvSPuC7K8B3bJDK-nkjWO7w/viewform";
+	public static final String SUGGEST_FIX_URL =
+		"https://docs.google.com/forms/d/e/1FAIpQLSfcuYJVGfV7QKeoI72h_TTyTuTTESueSro5T5PTJJndB9Bw5g/viewform";
 	/** Default per-visit overhead (minutes) amortised into the Bosses "Recommended" sort; matches the
 	 *  {@code tripOverheadMinutes} config default so the two agree until the plugin seeds the live value. */
 	private static final int DEFAULT_TRIP_OVERHEAD = 6;
@@ -662,6 +671,13 @@ public class CombatAchievementsPanel extends PluginPanel
 
 		footer.add(footerLink("Support on Patreon", PATREON_URL, "Opens patreon.com in your browser"),
 			BorderLayout.WEST);
+
+		// Right-hand side: the quiet "tell us something" link. Same muted styling as the Patreon link,
+		// so the whole footer reads as chrome rather than as a call to action.
+		JPanel links = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
+		links.setOpaque(false);
+		links.add(footerLink("Feedback", FEEDBACK_URL, "Opens the feedback form in your browser"));
+		footer.add(links, BorderLayout.EAST);
 
 		return footer;
 	}

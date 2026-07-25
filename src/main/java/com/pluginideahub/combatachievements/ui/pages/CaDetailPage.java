@@ -132,7 +132,11 @@ public class CaDetailPage
 			content.add(CardKit.spacer());
 		}
 
-		content.add(CardKit.fullWidth(panel.linkRow(d.wikiUrl, d.guideUrl, d.curatedVideo)));
+		// "Suggest fix" only belongs on a task's own page, so it is appended here rather than baked into
+		// the shared link row the Bosses and Recommended cards use.
+		JPanel links = panel.linkRow(d.wikiUrl, d.guideUrl, d.curatedVideo);
+		links.add(CardKit.linkButton("Suggest fix", CombatAchievementsPanel.SUGGEST_FIX_URL));
+		content.add(CardKit.fullWidth(links));
 	}
 
 	void addDetailText(String header, String text)
