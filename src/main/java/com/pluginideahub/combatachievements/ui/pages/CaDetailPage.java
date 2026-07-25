@@ -1,7 +1,6 @@
 package com.pluginideahub.combatachievements.ui.pages;
 
 import com.pluginideahub.combatachievements.CombatAchievementsPanel;
-import com.pluginideahub.combatachievements.core.feedback.FeedbackLink;
 import com.pluginideahub.combatachievements.core.ui.SidePanelViewModel;
 import com.pluginideahub.combatachievements.ui.CardKit;
 import com.pluginideahub.combatachievements.ui.CombatAchievementsTheme;
@@ -133,7 +132,7 @@ public class CaDetailPage
 			content.add(CardKit.spacer());
 		}
 
-		content.add(CardKit.fullWidth(panel.linkRow(d.wikiUrl, d.guideUrl, d.curatedVideo, feedbackUrl(d))));
+		content.add(CardKit.fullWidth(panel.linkRow(d.wikiUrl, d.guideUrl, d.curatedVideo)));
 	}
 
 	void addDetailText(String header, String text)
@@ -186,15 +185,5 @@ public class CaDetailPage
 	private static double displayedDifficulty(SidePanelViewModel.CaDetail d)
 	{
 		return d.bossDifficulty > 0 ? d.bossDifficulty + d.bump : d.difficulty;
-	}
-
-	/**
-	 * The "Suggest fix" link for a task, or "" when no feedback form is configured (button hidden). Only
-	 * the task id is sent — the player is already looking at the achievement, so the form asks them for
-	 * the difficulty they'd give it and nothing they shouldn't have to type.
-	 */
-	private static String feedbackUrl(SidePanelViewModel.CaDetail d)
-	{
-		return FeedbackLink.isConfigured() ? FeedbackLink.taskUrl(d.id) : "";
 	}
 }

@@ -1,7 +1,6 @@
 package com.pluginideahub.combatachievements;
 
 import com.pluginideahub.combatachievements.core.debug.DebugSimulation;
-import com.pluginideahub.combatachievements.core.feedback.FeedbackLink;
 import com.pluginideahub.combatachievements.core.ui.PanelAction;
 import com.pluginideahub.combatachievements.core.ui.PanelMode;
 import com.pluginideahub.combatachievements.core.ui.SidePanelViewModel;
@@ -664,19 +663,6 @@ public class CombatAchievementsPanel extends PluginPanel
 		footer.add(footerLink("Support on Patreon", PATREON_URL, "Opens patreon.com in your browser"),
 			BorderLayout.WEST);
 
-		// Right-hand side: the quiet "tell us something" links. Same muted styling as the Patreon link,
-		// so the whole footer reads as chrome rather than as calls to action.
-		JPanel links = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
-		links.setOpaque(false);
-		if (FeedbackLink.hasGeneralForm())
-		{
-			links.add(footerLink("Feedback", FeedbackLink.generalUrl(),
-				"Opens the feedback form in your browser"));
-		}
-		if (links.getComponentCount() > 0)
-		{
-			footer.add(links, BorderLayout.EAST);
-		}
 		return footer;
 	}
 
@@ -1419,11 +1405,6 @@ public class CombatAchievementsPanel extends PluginPanel
 
 	public JPanel linkRow(String wikiUrl, String guideUrl, boolean curatedVideo)
 	{
-		return linkRow(wikiUrl, guideUrl, curatedVideo, "");
-	}
-
-	public JPanel linkRow(String wikiUrl, String guideUrl, boolean curatedVideo, String feedbackUrl)
-	{
 		JPanel row = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 1));
 		row.setOpaque(false);
 		if (wikiUrl != null && !wikiUrl.isEmpty())
@@ -1433,10 +1414,6 @@ public class CombatAchievementsPanel extends PluginPanel
 		if (guideUrl != null && !guideUrl.isEmpty())
 		{
 			row.add(CardKit.linkButton(curatedVideo ? "Watch guide" : "Search guide", guideUrl));
-		}
-		if (feedbackUrl != null && !feedbackUrl.isEmpty())
-		{
-			row.add(CardKit.linkButton("Suggest fix", feedbackUrl));
 		}
 		return row;
 	}
