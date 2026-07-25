@@ -58,11 +58,14 @@ public class UnlockDetailPage
 		content.add(CardKit.fullWidth(header));
 		content.add(CardKit.spacer());
 
-		JPanel links = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 1));
-		links.setOpaque(false);
-		links.add(CardKit.linkButton("Wiki", questWikiUrl(u.questName)));
-		content.add(CardKit.fullWidth(links));
-		content.add(CardKit.spacer());
+		if (!u.questWikiUrl.isEmpty())
+		{
+			JPanel links = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 1));
+			links.setOpaque(false);
+			links.add(CardKit.linkButton("Wiki", u.questWikiUrl));
+			content.add(CardKit.fullWidth(links));
+			content.add(CardKit.spacer());
+		}
 
 		// The prerequisite chain as its own foldable section, one quest per line in chain order —
 		// prose on the card turned into a wall for the long questlines.
@@ -136,12 +139,6 @@ public class UnlockDetailPage
 				}
 			}
 		}
-	}
-
-	/** The wiki page for a quest, derived from its name the same way task wiki urls are built. */
-	private static String questWikiUrl(String questName)
-	{
-		return "https://oldschool.runescape.wiki/w/" + questName.replace(' ', '_');
 	}
 
 	/**

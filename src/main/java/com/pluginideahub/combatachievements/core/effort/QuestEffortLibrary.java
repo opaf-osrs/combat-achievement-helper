@@ -98,7 +98,7 @@ public final class QuestEffortLibrary
 			BundledJson.optString(o, "difficulty", ""), BundledJson.optString(o, "length", ""),
 			BundledJson.optInt(o, "estMinutes", 0), BundledJson.optInt(o, "effortScore", 0),
 			BundledJson.optInt(o, "questPoints", 0), BundledJson.optBoolean(o, "members", false),
-			skills, prereqs);
+			skills, prereqs, BundledJson.optString(o, "wikiUrl", ""));
 	}
 
 	public String version()

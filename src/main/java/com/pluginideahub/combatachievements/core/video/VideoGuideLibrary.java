@@ -12,8 +12,8 @@ import java.util.Map;
 
 /**
  * Loads curated per-task guide videos ({@code video_guides.json}, keyed by task id). Sparse and
- * decoupled: any task without a curated entry falls through to the {@link YouTubeSearch} fallback, so
- * the panel always offers a one-click guide. Pure Java (Gson only). See docs/DESIGN.md §6d.
+ * decoupled: any task without a curated entry falls back to the search link bundled with the task
+ * itself, so the panel always offers a one-click guide. Pure Java (Gson only). See docs/DESIGN.md §6d.
  */
 public final class VideoGuideLibrary
 {
@@ -131,16 +131,16 @@ public final class VideoGuideLibrary
 	}
 
 	/**
-	 * The best guide URL for a task: the first curated link if present, otherwise the YouTube-search
-	 * fallback built from the task name.
+	 * The best guide URL for a task: the first curated link if present, otherwise the search link the
+	 * dataset ships for that task.
 	 */
-	public String bestGuideUrl(int taskId, String taskName)
+	public String bestGuideUrl(int taskId, String searchUrl)
 	{
 		List<String> urls = byId.get(taskId);
 		if (urls != null && !urls.isEmpty())
 		{
 			return urls.get(0);
 		}
-		return YouTubeSearch.urlFor(taskName);
+		return searchUrl == null ? "" : searchUrl;
 	}
 }

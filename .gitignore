@@ -29,3 +29,6 @@ run-client.bat
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# stray local clones
+/wa/

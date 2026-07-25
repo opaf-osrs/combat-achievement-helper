@@ -505,20 +505,23 @@ public final class SidePanelViewModel
 		public final List<String> prerequisiteList;
 		/** Skills still short for the chain, one "Skill have→target" per entry — "Stats first". */
 		public final List<String> unmetSkillList;
+		/** The quest's wiki page, carried from the dataset. */
+		public final String questWikiUrl;
 
 		public UnlockView(String questName, String difficulty, int unlockedTaskCount,
 			int unlockedPoints, int totalMinutes, String prerequisites, String unmetSkills)
 		{
 			this(questName, difficulty, unlockedTaskCount, unlockedPoints, totalMinutes,
 				prerequisites, unmetSkills, Collections.emptyList(), 0, Collections.emptyList(),
-				Collections.emptyList());
+				Collections.emptyList(), "");
 		}
 
 		public UnlockView(String questName, String difficulty, int unlockedTaskCount,
 			int unlockedPoints, int totalMinutes, String prerequisites, String unmetSkills,
 			List<CaDetail> unlockedCas, int worstShortfall, List<String> prerequisiteList,
-			List<String> unmetSkillList)
+			List<String> unmetSkillList, String questWikiUrl)
 		{
+			this.questWikiUrl = questWikiUrl == null ? "" : questWikiUrl;
 			this.unmetSkillList = Collections.unmodifiableList(
 				unmetSkillList == null ? Collections.emptyList() : unmetSkillList);
 			this.questName = questName;

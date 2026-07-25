@@ -18,9 +18,16 @@ public final class CombatAchievement
 	private final String description;
 	private final String leagueRegion;
 	private final String wikiUrl;
+	private final String guideSearchUrl;
 
 	public CombatAchievement(int id, String name, AchievementTier tier, String monster, TaskType type,
 		int points, String description, String leagueRegion, String wikiUrl)
+	{
+		this(id, name, tier, monster, type, points, description, leagueRegion, wikiUrl, "");
+	}
+
+	public CombatAchievement(int id, String name, AchievementTier tier, String monster, TaskType type,
+		int points, String description, String leagueRegion, String wikiUrl, String guideSearchUrl)
 	{
 		this.id = id;
 		this.name = name == null ? "" : name;
@@ -31,6 +38,7 @@ public final class CombatAchievement
 		this.description = description == null ? "" : description;
 		this.leagueRegion = leagueRegion == null ? "" : leagueRegion;
 		this.wikiUrl = wikiUrl == null ? "" : wikiUrl;
+		this.guideSearchUrl = guideSearchUrl == null ? "" : guideSearchUrl;
 	}
 
 	public int id()
@@ -76,6 +84,12 @@ public final class CombatAchievement
 	public String wikiUrl()
 	{
 		return wikiUrl;
+	}
+
+	/** The bundled YouTube-search link used when this task has no curated video guide. */
+	public String guideSearchUrl()
+	{
+		return guideSearchUrl;
 	}
 
 	/** True when this task is bound to a specific monster (vs a non-boss activity task). */

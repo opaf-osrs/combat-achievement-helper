@@ -12,7 +12,7 @@ import java.util.Map;
 public final class QuestInfo
 {
 	public static final QuestInfo UNKNOWN = new QuestInfo(
-		"", "", "", 0, 0, 0, false, Collections.emptyMap(), Collections.emptyList());
+		"", "", "", 0, 0, 0, false, Collections.emptyMap(), Collections.emptyList(), "");
 
 	private final String name;
 	private final String difficulty;
@@ -23,11 +23,13 @@ public final class QuestInfo
 	private final boolean members;
 	private final Map<String, Integer> skillRequirements;
 	private final List<String> directPrerequisiteQuests;
+	private final String wikiUrl;
 
 	public QuestInfo(String name, String difficulty, String length, int estMinutes, int effortScore,
 		int questPoints, boolean members, Map<String, Integer> skillRequirements,
-		List<String> directPrerequisiteQuests)
+		List<String> directPrerequisiteQuests, String wikiUrl)
 	{
+		this.wikiUrl = wikiUrl == null ? "" : wikiUrl;
 		this.name = name == null ? "" : name;
 		this.difficulty = difficulty == null ? "" : difficulty;
 		this.length = length == null ? "" : length;
@@ -40,6 +42,12 @@ public final class QuestInfo
 		this.directPrerequisiteQuests = Collections.unmodifiableList(
 			directPrerequisiteQuests == null ? Collections.emptyList()
 				: new java.util.ArrayList<>(directPrerequisiteQuests));
+	}
+
+	/** The quest's wiki page, as bundled with the dataset. */
+	public String wikiUrl()
+	{
+		return wikiUrl;
 	}
 
 	public String name()

@@ -35,7 +35,8 @@ public class VideoGuideLibraryTest
 		VideoGuideLibrary lib = fixture();
 		assertFalse(lib.hasCuratedGuide(99));
 		assertTrue(lib.guidesFor(99).isEmpty());
-		assertEquals(YouTubeSearch.urlFor("Noxious Foe"), lib.bestGuideUrl(99, "Noxious Foe"));
+		assertEquals("https://www.youtube.com/results?search_query=OSRS+Noxious+Foe",
+			lib.bestGuideUrl(99, "https://www.youtube.com/results?search_query=OSRS+Noxious+Foe"));
 	}
 
 	@Test

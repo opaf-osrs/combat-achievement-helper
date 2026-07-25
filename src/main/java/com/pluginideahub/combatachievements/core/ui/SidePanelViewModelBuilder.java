@@ -566,7 +566,7 @@ public final class SidePanelViewModelBuilder
 			running += a.points();
 			steps.add(new SidePanelViewModel.PathRow(a.id(), a.name(), a.tier().displayName(),
 				a.points(), running, a.wikiUrl(),
-				videoLib.bestGuideUrl(a.id(), a.name()), buildCaDetail(a, true, "")));
+				videoLib.bestGuideUrl(a.id(), a.guideSearchUrl()), buildCaDetail(a, true, "")));
 		}
 		// The barred pile, so the panel can list what was set aside and offer it back. Drawn from the
 		// incomplete tasks, so anything since completed drops off the list by itself.
@@ -857,7 +857,7 @@ public final class SidePanelViewModelBuilder
 					: "";
 				tasks.add(new SidePanelViewModel.SessionTaskView(a.id(), a.name(), a.tier().displayName(),
 					a.points(), item.sessionMinutes(), progress, a.wikiUrl(),
-					videoLib.bestGuideUrl(a.id(), a.name()), buildCaDetail(a, true, "")));
+					videoLib.bestGuideUrl(a.id(), a.guideSearchUrl()), buildCaDetail(a, true, "")));
 			}
 			views.add(new SidePanelViewModel.SessionView(session.monster(), session.taskCount(),
 				session.totalPoints(), session.totalMinutes(),
@@ -985,7 +985,8 @@ public final class SidePanelViewModelBuilder
 			views.add(new SidePanelViewModel.UnlockView(s.questName(), s.difficulty(),
 				s.unlockedTaskCount(), s.unlockedPoints(), s.totalMinutes(),
 				String.join(", ", s.remainingPrerequisites()), String.join(", ", s.unmetSkills()),
-				unlockedCas, s.worstSkillShortfall(), s.remainingPrerequisites(), s.unmetSkills()));
+				unlockedCas, s.worstSkillShortfall(), s.remainingPrerequisites(), s.unmetSkills(),
+				questEffortLib.questFor(s.questName()).wikiUrl()));
 		}
 		return views;
 	}
@@ -996,7 +997,7 @@ public final class SidePanelViewModelBuilder
 		return new SidePanelViewModel.TaskRow(a.id(), a.name(), a.description(), a.tier().displayName(),
 			a.monster(), a.points(), rt.difficulty().difficulty(), rt.difficulty().reason(), rt.rationale(),
 			rt.lockReason(), rt.doableNow(), rt.curated(),
-			videoLib.hasCuratedGuide(a.id()), a.wikiUrl(), videoLib.bestGuideUrl(a.id(), a.name()),
+			videoLib.hasCuratedGuide(a.id()), a.wikiUrl(), videoLib.bestGuideUrl(a.id(), a.guideSearchUrl()),
 			buildCaDetail(a, rt.doableNow(), rt.lockReason()));
 	}
 
@@ -1047,7 +1048,7 @@ public final class SidePanelViewModelBuilder
 			task.tier().displayName(), task.type() == null ? "" : task.type().displayName(), task.points(),
 			task.description(), doableNow, lockReason, diff.difficulty(), diff.bossDifficulty(), diff.bump(),
 			diff.reason(), mins, pph, reqs, det.stats(), det.setup(), det.strategy(), det.items(),
-			task.wikiUrl(), videoLib.bestGuideUrl(task.id(), task.name()), videoLib.hasCuratedGuide(task.id()),
+			task.wikiUrl(), videoLib.bestGuideUrl(task.id(), task.guideSearchUrl()), videoLib.hasCuratedGuide(task.id()),
 			extraMinutes, withinReach);
 	}
 }

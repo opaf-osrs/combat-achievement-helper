@@ -138,10 +138,11 @@ public final class CombatAchievementLibrary
 		String description = optString(obj, "description");
 		String leagueRegion = optString(obj, "leagueRegion");
 		String wikiUrl = optString(obj, "wikiUrl");
+		String guideSearchUrl = optString(obj, "guideSearchUrl");
 
 		// Points are always derived from the tier, never trusted from the file.
 		return new CombatAchievement(id, name, tier, monster, type, tier.pointsPerTask(),
-			description, leagueRegion, wikiUrl);
+			description, leagueRegion, wikiUrl, guideSearchUrl);
 	}
 
 	private static int requireInt(JsonObject obj, String key)
