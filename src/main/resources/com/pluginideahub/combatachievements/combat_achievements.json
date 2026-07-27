@@ -234,7 +234,7 @@
       "monster": "General Graardor",
       "type": "Mechanical",
       "points": 3,
-      "description": "Kill General Graardor whilst he is immobilized<sup class=\"noprint\">&#91;<span class=\"fact-text\" title=\"&quot;Immobilized&quot; is American English, whereas British English would use &quot;immobilised&quot;.\">sic</span>&#93;</sup>.",
+      "description": "Kill General Graardor whilst he is immobilized.",
       "leagueRegion": "Asgarnia",
       "wikiUrl": "https://oldschool.runescape.wiki/w/General_Graardor",
       "guideSearchUrl": "https://www.youtube.com/results?search_query=OSRS+Ourg+Freezer+combat+achievement+guide"
@@ -3798,7 +3798,7 @@
       "monster": "Chambers of Xeric",
       "type": "Perfection",
       "points": 5,
-      "description": "Clear the [[Jewelled_Crab|Crystal Crabs]] room without wasting an orb after the first crystal has been activated.",
+      "description": "Clear the Crystal Crabs room without wasting an orb after the first crystal has been activated.",
       "leagueRegion": "Kourend",
       "wikiUrl": "https://oldschool.runescape.wiki/w/Chambers_of_Xeric",
       "guideSearchUrl": "https://www.youtube.com/results?search_query=OSRS+Playing+with+Lasers+combat+achievement+guide"
@@ -6031,7 +6031,7 @@
       "type": "Restriction",
       "points": 4,
       "description": "Kill the Whisperer whilst only being on the Arceuus spellbook.",
-      "leagueRegion": "Asgarnia&Kourend,Asgarnia,(with [[Grimoire]] Relic)",
+      "leagueRegion": "Asgarnia&Kourend,Asgarnia,(with Grimoire Relic)",
       "wikiUrl": "https://oldschool.runescape.wiki/w/Whisperer",
       "guideSearchUrl": "https://www.youtube.com/results?search_query=OSRS+Tentacular+combat+achievement+guide"
     },
@@ -6546,7 +6546,7 @@
       "monster": "Fortis Colosseum",
       "type": "Mechanical",
       "points": 5,
-      "description": "Defeat Sol Heredit after using [[Fortis Salute]] to the north, east, south and west of the arena while he is below 10% hitpoints.",
+      "description": "Defeat Sol Heredit after using Fortis Salute to the north, east, south and west of the arena while he is below 10% hitpoints.",
       "leagueRegion": "Varlamore",
       "wikiUrl": "https://oldschool.runescape.wiki/w/Fortis_Colosseum",
       "guideSearchUrl": "https://www.youtube.com/results?search_query=OSRS+Showboating+combat+achievement+guide"
