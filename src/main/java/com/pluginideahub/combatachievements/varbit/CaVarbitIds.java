@@ -2,15 +2,18 @@ package com.pluginideahub.combatachievements.varbit;
 
 import net.runelite.api.Client;
 import net.runelite.api.gameval.VarPlayerID;
+import net.runelite.api.gameval.VarbitID;
 
 /**
  * Reads Combat Achievement task completion from the live client.
  *
- * <p>Completion is stored as a <b>packed bitfield across 20 VarPlayers</b>
- * ({@code CA_TASK_COMPLETED_0 .. _19}, 640 bits — enough for the 637 tasks): task {@code id}'s
- * completion is bit {@code id % 32} of varp {@code id / 32}. The task {@code id} here is the in-game
- * CA struct's id param (1306), which we validated equals our dataset id 0..636 (see
- * {@code data/struct-id-bridge.json}).</p>
+ * <p>Completion is stored as a <b>packed bitfield across VarPlayers</b>
+ * ({@code CA_TASK_COMPLETED_0 ..}, 32 tasks per varp): task {@code id}'s completion is bit
+ * {@code id % 32} of varp {@code id / 32}. The task {@code id} here is the in-game CA struct's id
+ * param (1306), which we validated equals our dataset id (see {@code data/struct-id-bridge.json}).
+ * When Jagex adds tasks past the current capacity the game gains a new varp; the cache calls them
+ * {@code ca_task_completed_N}. {@link CaVarbitIdsTest} fails the build when the bundled dataset
+ * outgrows this list, which is exactly what happened at 646 tasks (Maggot King, bits 640-645).</p>
  *
  * <p>The varps are RuneLite {@code gameval} constants, so they track game updates rather than
  * hard-coded raw ids. Mechanism confirmed against the open-source {@code combat-achievements-tracker}
@@ -36,6 +39,9 @@ public final class CaVarbitIds
 		VarPlayerID.CA_TASK_COMPLETED_14, VarPlayerID.CA_TASK_COMPLETED_15,
 		VarPlayerID.CA_TASK_COMPLETED_16, VarPlayerID.CA_TASK_COMPLETED_17,
 		VarPlayerID.CA_TASK_COMPLETED_18, VarPlayerID.CA_TASK_COMPLETED_19,
+		// ca_task_completed_20: not yet in RuneLite's gameval (their VarPlayerID stops at _19), so the
+		// raw id from the cache dump until they add it. Holds tasks 640-671; Maggot King lives here.
+		5673,
 	};
 
 	/** True when task {@code taskId} is complete on the logged-in account. Call on the client thread. */
@@ -73,11 +79,13 @@ public final class CaVarbitIds
 	}
 
 	/**
-	 * Total CA points: there is no separate points varp in this scheme — points are summed from the
-	 * (now real) completed task set by the reader. Returns 0 so the reader falls back to that sum.
+	 * Total CA points as the game itself counts them ({@code VarbitID.CA_POINTS}). Ground truth for
+	 * tier maths: it stays right even when the bundled dataset or the bitfield above lags a game
+	 * update, which is the failure the derived sum cannot see. 0 before login / before the varbit
+	 * syncs; the reader falls back to the derived sum then.
 	 */
 	public static int readTotalPoints(Client client)
 	{
-		return 0;
+		return client == null ? 0 : client.getVarbitValue(VarbitID.CA_POINTS);
 	}
 }

@@ -8,6 +8,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import net.runelite.api.Client;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Reads the live account's Combat Achievement completion into a pure {@link ProgressSnapshot}. The
@@ -19,6 +21,8 @@ import net.runelite.api.Client;
  */
 public final class CombatAchievementVarbitReader
 {
+	private static final Logger log = LoggerFactory.getLogger(CombatAchievementVarbitReader.class);
+
 	/** True once {@link CaVarbitIds} holds confirmed IDs; gates whether the reader can be trusted. */
 	public boolean isVerified()
 	{
@@ -52,8 +56,14 @@ public final class CombatAchievementVarbitReader
 		int gamePoints = CaVarbitIds.readTotalPoints(client);
 		if (gamePoints <= 0)
 		{
-			// No dedicated points varp in this scheme — the (now real) completed set is authoritative.
+			// Varbit not synced yet (pre-login read) — fall back to the derived sum.
 			gamePoints = computedPoints;
+		}
+		else if (gamePoints != computedPoints)
+		{
+			// The game says a different total than our task sum: the dataset or the bitfield is lagging
+			// a game update. Tier maths stays right (it uses gamePoints); the task list is what's stale.
+			log.debug("CA points mismatch: game says {}, dataset sum is {}", gamePoints, computedPoints);
 		}
 		long accountHash = client.getAccountHash();
 

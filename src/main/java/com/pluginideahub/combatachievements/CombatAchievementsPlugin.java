@@ -139,7 +139,7 @@ public class CombatAchievementsPlugin extends Plugin
 			questEffortLibrary = QuestEffortLibrary.loadBundled();
 			skillXpLibrary = SkillXpLibrary.loadBundled();
 			scalingLibrary = ScalingLibrary.loadBundled();
-			log.info("Combat Achievement Helper: loaded {} tasks (dataset {}), {} curated effort, {} curated videos, {} guides, {} difficulties, {} tier rewards",
+			log.debug("Combat Achievement Helper: loaded {} tasks (dataset {}), {} curated effort, {} curated videos, {} guides, {} difficulties, {} tier rewards",
 				library.taskCount(), library.version(), effortLibrary.curatedCount(), videoLibrary.curatedCount(),
 				guideLibrary.count(), taskDifficultyLibrary.count(), tierRewardLibrary.count());
 		}
