@@ -3250,10 +3250,8 @@
       "reason": "kill count"
     },
     "648": {
-      "difficulty": 4,
-      "boss": 3,
-      "bump": 1.0,
-      "reason": "perfection floor"
+      "difficulty": 3,
+      "reason": "research"
     },
     "649": {
       "difficulty": 4,

@@ -3622,7 +3622,7 @@
     "648": {
       "stats": "75+ Attack, 75+ Strength, 70+ Defence, 70+ Prayer, 76+ Magic for thralls helpful",
       "setup": "Crush melee, she is weak to crush and golembane weapons: Inquisitor's mace or Scythe with Torva at the top end, Granite hammer or Zombie axe with Blood moon armour or a Fighter torso on a budget. Protect from Melee, Piety, thralls, and a Dragon warhammer or Dragon mace for specs.",
-      "strategy": "The wiki does not spell out what counts as avoidable here. Treat every special as the test: dodge each sweep, bounce each blast and pray Protect from Magic through each smite, including the faster chained specials after she enrages at around 45%."
+      "strategy": "Avoidable damage is the specials: keep Protect from Melee on for her normal hits and do every sweep, blast and smite right, including the faster chained specials once she enrages. Not that hard once you know the specials."
     },
     "649": {
       "stats": "75+ Attack, 75+ Strength, 70+ Defence, 70+ Prayer, 76+ Magic for thralls helpful",
@@ -3651,8 +3651,8 @@
     },
     "654": {
       "stats": "76+ Magic for thralls, 43+ Prayer",
-      "setup": "Empty weapon slot, an off-hand of your choice, thrall runes, and earth spell runes for manual casting. Ring of recoil or similar for passive damage.",
-      "strategy": "Let thralls and recoil carry the damage and manually cast earth spells to use her 15% earth weakness, or punch. Unarmed is 4-tick, so it combines well with Dancing Queen."
+      "setup": "Empty weapon slot with a defender in the off-hand, Book of the dead in the inventory for thralls, and runes to manually cast spells (earth spells for her 15% weakness).",
+      "strategy": "Not hard, just tedious. Thralls plus manually cast spells do the damage while the defender stays in the off-hand. Unarmed is 4-tick, so it combines well with Dancing Queen."
     }
   }
 }
