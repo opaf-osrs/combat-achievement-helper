@@ -1,7 +1,7 @@
 {
   "version": "2026-06-28",
   "source": "OSRS Wiki Bucket API (bucket: combat_achievement); points derived from tier; CC BY-NC-SA.",
-  "taskCount": 646,
+  "taskCount": 655,
   "tierPoints": {
     "Easy": 1,
     "Medium": 2,
@@ -1302,7 +1302,7 @@
       "monster": "Corrupted Hunllef",
       "type": "Speed",
       "points": 5,
-      "description": "Complete a Corrupted Gauntlet in less than 7 minutes and 30 seconds.",
+      "description": "Complete a Corrupted Gauntlet in less than 7 minutes and 5 seconds.",
       "leagueRegion": "Tirannwn",
       "wikiUrl": "https://oldschool.runescape.wiki/w/Corrupted_Hunllef",
       "guideSearchUrl": "https://www.youtube.com/results?search_query=OSRS+Corrupted+Gauntlet+Speed-Chaser+combat+achievement+guide"
@@ -1314,7 +1314,7 @@
       "monster": "Corrupted Hunllef",
       "type": "Speed",
       "points": 6,
-      "description": "Complete a Corrupted Gauntlet in less than 6 minutes and 30 seconds.",
+      "description": "Complete a Corrupted Gauntlet in less than 6 minutes and 5 seconds.",
       "leagueRegion": "Tirannwn",
       "wikiUrl": "https://oldschool.runescape.wiki/w/Corrupted_Hunllef",
       "guideSearchUrl": "https://www.youtube.com/results?search_query=OSRS+Corrupted+Gauntlet+Speed-Runner+combat+achievement+guide"
@@ -1422,7 +1422,7 @@
       "monster": "Crystalline Hunllef",
       "type": "Speed",
       "points": 5,
-      "description": "Complete the Gauntlet in less than 5 minutes.",
+      "description": "Complete the Gauntlet in less than 4 minutes and 45 seconds.",
       "leagueRegion": "Tirannwn",
       "wikiUrl": "https://oldschool.runescape.wiki/w/Crystalline_Hunllef",
       "guideSearchUrl": "https://www.youtube.com/results?search_query=OSRS+Gauntlet+Speed-Chaser+combat+achievement+guide"
@@ -1434,7 +1434,7 @@
       "monster": "Crystalline Hunllef",
       "type": "Speed",
       "points": 6,
-      "description": "Complete the Gauntlet in less than 4 minutes.",
+      "description": "Complete the Gauntlet in less than 3 minutes and 45 seconds.",
       "leagueRegion": "Tirannwn",
       "wikiUrl": "https://oldschool.runescape.wiki/w/Crystalline_Hunllef",
       "guideSearchUrl": "https://www.youtube.com/results?search_query=OSRS+Gauntlet+Speed-Runner+combat+achievement+guide"
@@ -7694,11 +7694,11 @@
     {
       "id": 640,
       "name": "Maggot King Speed Chaser",
-      "tier": "Master",
+      "tier": "Grandmaster",
       "monster": "Maggot King",
       "type": "Speed",
-      "points": 5,
-      "description": "Kill the Maggot King 5 times in 9 minutes.",
+      "points": 6,
+      "description": "Complete the first 5 kills of the Maggot King within 9 minutes after entering the arena.",
       "leagueRegion": "Morytania",
       "wikiUrl": "https://oldschool.runescape.wiki/w/Maggot_King_Speed_Chaser",
       "guideSearchUrl": "https://www.youtube.com/results?search_query=OSRS+Maggot+King+Speed+Chaser+combat+achievement+guide"
@@ -7762,6 +7762,114 @@
       "leagueRegion": "Morytania",
       "wikiUrl": "https://oldschool.runescape.wiki/w/Perfect_Maggot_King",
       "guideSearchUrl": "https://www.youtube.com/results?search_query=OSRS+Perfect+Maggot+King+combat+achievement+guide"
+    },
+    {
+      "id": 646,
+      "name": "Mad Angel Adept",
+      "tier": "Medium",
+      "monster": "Mad Angel",
+      "type": "Kill Count",
+      "points": 2,
+      "description": "Kill the Mad Angel 25 times.",
+      "leagueRegion": "No",
+      "wikiUrl": "https://oldschool.runescape.wiki/w/Mad_Angel_Adept",
+      "guideSearchUrl": "https://www.youtube.com/results?search_query=OSRS+Mad+Angel+Adept+combat+achievement+guide"
+    },
+    {
+      "id": 647,
+      "name": "Mad Angel Veteran",
+      "tier": "Hard",
+      "monster": "Mad Angel",
+      "type": "Kill Count",
+      "points": 3,
+      "description": "Kill the Mad Angel 50 times.",
+      "leagueRegion": "No",
+      "wikiUrl": "https://oldschool.runescape.wiki/w/Mad_Angel_Veteran",
+      "guideSearchUrl": "https://www.youtube.com/results?search_query=OSRS+Mad+Angel+Veteran+combat+achievement+guide"
+    },
+    {
+      "id": 648,
+      "name": "Perfect Mad Angel",
+      "tier": "Hard",
+      "monster": "Mad Angel",
+      "type": "Perfection",
+      "points": 3,
+      "description": "Kill the Mad Angel without taking any avoidable damage.",
+      "leagueRegion": "No",
+      "wikiUrl": "https://oldschool.runescape.wiki/w/Perfect_Mad_Angel",
+      "guideSearchUrl": "https://www.youtube.com/results?search_query=OSRS+Perfect+Mad+Angel+combat+achievement+guide"
+    },
+    {
+      "id": 649,
+      "name": "This Is Madness",
+      "tier": "Elite",
+      "monster": "Mad Angel",
+      "type": "Stamina",
+      "points": 4,
+      "description": "Kill the Mad Angel 15 times without leaving her arena.",
+      "leagueRegion": "No",
+      "wikiUrl": "https://oldschool.runescape.wiki/w/This_Is_Madness",
+      "guideSearchUrl": "https://www.youtube.com/results?search_query=OSRS+This+Is+Madness+combat+achievement+guide"
+    },
+    {
+      "id": 650,
+      "name": "Mad Angel Speed-Runner",
+      "tier": "Hard",
+      "monster": "Mad Angel",
+      "type": "Speed",
+      "points": 3,
+      "description": "Kill the Mad Angel 5 times within 10 minutes of entering her arena.",
+      "leagueRegion": "No",
+      "wikiUrl": "https://oldschool.runescape.wiki/w/Mad_Angel_Speed-Runner",
+      "guideSearchUrl": "https://www.youtube.com/results?search_query=OSRS+Mad+Angel+Speed-Runner+combat+achievement+guide"
+    },
+    {
+      "id": 651,
+      "name": "Dancing Queen",
+      "tier": "Medium",
+      "monster": "Mad Angel",
+      "type": "Mechanical",
+      "points": 2,
+      "description": "Kill the Mad Angel after getting 6 consecutive enhanced attacks by dodging the sweep attack successfully during her enrage phase.",
+      "leagueRegion": "No",
+      "wikiUrl": "https://oldschool.runescape.wiki/w/Dancing_Queen",
+      "guideSearchUrl": "https://www.youtube.com/results?search_query=OSRS+Dancing+Queen+combat+achievement+guide"
+    },
+    {
+      "id": 652,
+      "name": "Smite Fight",
+      "tier": "Medium",
+      "monster": "Mad Angel",
+      "type": "Mechanical",
+      "points": 2,
+      "description": "Kill the Mad Angel after getting 3 consecutive enhanced attacks by successfully praying against the smite attacks during her enrage phase.",
+      "leagueRegion": "No",
+      "wikiUrl": "https://oldschool.runescape.wiki/w/Smite_Fight",
+      "guideSearchUrl": "https://www.youtube.com/results?search_query=OSRS+Smite+Fight+combat+achievement+guide"
+    },
+    {
+      "id": 653,
+      "name": "Juggling Act",
+      "tier": "Medium",
+      "monster": "Mad Angel",
+      "type": "Mechanical",
+      "points": 2,
+      "description": "Kill the Mad Angel after attacking her between each bounce of the blast attack during her enrage phase.",
+      "leagueRegion": "No",
+      "wikiUrl": "https://oldschool.runescape.wiki/w/Juggling_Act",
+      "guideSearchUrl": "https://www.youtube.com/results?search_query=OSRS+Juggling+Act+combat+achievement+guide"
+    },
+    {
+      "id": 654,
+      "name": "The Pen Is Mightier",
+      "tier": "Elite",
+      "monster": "Mad Angel",
+      "type": "Restriction",
+      "points": 4,
+      "description": "Kill the Mad Angel without equipping any weapon.",
+      "leagueRegion": "No",
+      "wikiUrl": "https://oldschool.runescape.wiki/w/The_Pen_Is_Mightier",
+      "guideSearchUrl": "https://www.youtube.com/results?search_query=OSRS+The+Pen+Is+Mightier+combat+achievement+guide"
     }
   ]
 }

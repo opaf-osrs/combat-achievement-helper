@@ -3238,6 +3238,58 @@
       "boss": 8,
       "bump": 1.0,
       "reason": "perfection floor"
+    },
+    "646": {
+      "difficulty": 3,
+      "boss": 3,
+      "reason": "kill count"
+    },
+    "647": {
+      "difficulty": 3,
+      "boss": 3,
+      "reason": "kill count"
+    },
+    "648": {
+      "difficulty": 4,
+      "boss": 3,
+      "bump": 1.0,
+      "reason": "perfection floor"
+    },
+    "649": {
+      "difficulty": 4,
+      "boss": 3,
+      "bump": 0.5,
+      "reason": "stamina floor"
+    },
+    "650": {
+      "difficulty": 4,
+      "boss": 3,
+      "bump": 1.0,
+      "reason": "speed"
+    },
+    "651": {
+      "difficulty": 4,
+      "boss": 3,
+      "bump": 0.8,
+      "reason": "mechanic"
+    },
+    "652": {
+      "difficulty": 4,
+      "boss": 3,
+      "bump": 0.8,
+      "reason": "mechanic"
+    },
+    "653": {
+      "difficulty": 4,
+      "boss": 3,
+      "bump": 0.8,
+      "reason": "mechanic"
+    },
+    "654": {
+      "difficulty": 4,
+      "boss": 3,
+      "bump": 0.7,
+      "reason": "gear/style"
     }
   }
 }

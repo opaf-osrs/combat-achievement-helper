@@ -19,18 +19,18 @@ public class TierMathTest
 	@Test
 	public void totalPointsMatchVerifiedNumber()
 	{
-		assertEquals(2671, TierMath.totalPointsAvailable(ALL));
+		assertEquals(2697, TierMath.totalPointsAvailable(ALL));
 	}
 
 	@Test
 	public void cumulativeThresholdsMatchVerifiedNumbers()
 	{
 		assertEquals(41, TierMath.thresholdFor(AchievementTier.EASY, ALL));
-		assertEquals(161, TierMath.thresholdFor(AchievementTier.MEDIUM, ALL));
-		assertEquals(419, TierMath.thresholdFor(AchievementTier.HARD, ALL));
-		assertEquals(1075, TierMath.thresholdFor(AchievementTier.ELITE, ALL));
-		assertEquals(1945, TierMath.thresholdFor(AchievementTier.MASTER, ALL));
-		assertEquals(2671, TierMath.thresholdFor(AchievementTier.GRANDMASTER, ALL));
+		assertEquals(169, TierMath.thresholdFor(AchievementTier.MEDIUM, ALL));
+		assertEquals(436, TierMath.thresholdFor(AchievementTier.HARD, ALL));
+		assertEquals(1100, TierMath.thresholdFor(AchievementTier.ELITE, ALL));
+		assertEquals(1965, TierMath.thresholdFor(AchievementTier.MASTER, ALL));
+		assertEquals(2697, TierMath.thresholdFor(AchievementTier.GRANDMASTER, ALL));
 	}
 
 	@Test
@@ -39,10 +39,10 @@ public class TierMathTest
 		assertNull(TierMath.currentTierFor(0, ALL));
 		assertNull(TierMath.currentTierFor(40, ALL));
 		assertEquals(AchievementTier.EASY, TierMath.currentTierFor(41, ALL));
-		assertEquals(AchievementTier.EASY, TierMath.currentTierFor(160, ALL));
-		assertEquals(AchievementTier.MEDIUM, TierMath.currentTierFor(161, ALL));
-		assertEquals(AchievementTier.MASTER, TierMath.currentTierFor(1945, ALL));
-		assertEquals(AchievementTier.GRANDMASTER, TierMath.currentTierFor(2671, ALL));
+		assertEquals(AchievementTier.EASY, TierMath.currentTierFor(168, ALL));
+		assertEquals(AchievementTier.MEDIUM, TierMath.currentTierFor(169, ALL));
+		assertEquals(AchievementTier.MASTER, TierMath.currentTierFor(1965, ALL));
+		assertEquals(AchievementTier.GRANDMASTER, TierMath.currentTierFor(2697, ALL));
 		assertEquals(AchievementTier.GRANDMASTER, TierMath.currentTierFor(9999, ALL));
 	}
 
@@ -53,11 +53,11 @@ public class TierMathTest
 		assertEquals(AchievementTier.EASY, gap.nextTier());
 		assertEquals(41, gap.pointsNeeded());
 
-		TierMath.TierGap gap2 = TierMath.gapToNextTier(160, ALL);
+		TierMath.TierGap gap2 = TierMath.gapToNextTier(168, ALL);
 		assertEquals(AchievementTier.MEDIUM, gap2.nextTier());
 		assertEquals(1, gap2.pointsNeeded());
 
-		assertNull("fully unlocked has no next tier", TierMath.gapToNextTier(2671, ALL));
+		assertNull("fully unlocked has no next tier", TierMath.gapToNextTier(2697, ALL));
 	}
 
 	@Test
@@ -86,7 +86,7 @@ public class TierMathTest
 		TierProgress medium = rows.get(1);
 		assertEquals(0, medium.completedCount());
 		assertEquals(false, medium.unlocked());
-		assertEquals(161 - easyPoints, medium.pointsRemainingToUnlock());
+		assertEquals(169 - easyPoints, medium.pointsRemainingToUnlock());
 	}
 
 	@Test

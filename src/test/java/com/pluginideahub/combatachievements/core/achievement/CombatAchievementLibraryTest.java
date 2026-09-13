@@ -15,8 +15,8 @@ public class CombatAchievementLibraryTest
 	public void bundledDatasetLoadsWithExpectedShape()
 	{
 		CombatAchievementLibrary lib = CombatAchievementLibrary.loadBundled();
-		assertEquals("expected 646 tasks (July 2026 snapshot + Maggot King)", 646, lib.taskCount());
-		assertEquals(646, lib.all().size());
+		assertEquals("expected 655 tasks (Sept 2026 snapshot + Mad Angel)", 655, lib.taskCount());
+		assertEquals(655, lib.all().size());
 
 		// Every task has a recognized tier and type, and derived points equal the tier rank.
 		for (CombatAchievement task : lib.all())
@@ -34,11 +34,11 @@ public class CombatAchievementLibraryTest
 	{
 		CombatAchievementLibrary lib = CombatAchievementLibrary.loadBundled();
 		assertEquals(41, lib.byTier(AchievementTier.EASY).size());
-		assertEquals(60, lib.byTier(AchievementTier.MEDIUM).size());
-		assertEquals(86, lib.byTier(AchievementTier.HARD).size());
-		assertEquals(164, lib.byTier(AchievementTier.ELITE).size());
-		assertEquals(174, lib.byTier(AchievementTier.MASTER).size());
-		assertEquals(121, lib.byTier(AchievementTier.GRANDMASTER).size());
+		assertEquals(64, lib.byTier(AchievementTier.MEDIUM).size());
+		assertEquals(89, lib.byTier(AchievementTier.HARD).size());
+		assertEquals(166, lib.byTier(AchievementTier.ELITE).size());
+		assertEquals(173, lib.byTier(AchievementTier.MASTER).size());
+		assertEquals(122, lib.byTier(AchievementTier.GRANDMASTER).size());
 	}
 
 	@Test

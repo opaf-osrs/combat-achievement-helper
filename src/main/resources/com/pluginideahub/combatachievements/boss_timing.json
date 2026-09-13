@@ -2,7 +2,7 @@
   "version": "2026-07-05",
   "source": "data/curation/boss_timing.csv (OSRS Wiki + estimation). ROUGH timings.",
   "note": "Per-boss rough time-to-kill (seconds), respawn/downtime, effective kills-per-hour, and attempts-per-kill (novice fail rate). For raids/minigames ttkSeconds is one full run. Used with each CA's kill count to estimate real grind time. Estimates, not guarantees.",
-  "monsterCount": 89,
+  "monsterCount": 90,
   "missing": [],
   "monsters": {
     "Aberrant Spectre": {
@@ -546,6 +546,12 @@
       "respawnSeconds": 15,
       "killsPerHour": 20,
       "note": "First-pass estimate pending real kill data; speed task implies ~105s top-end kills."
+    },
+    "Mad Angel": {
+      "ttkSeconds": 70,
+      "respawnSeconds": 16,
+      "killsPerHour": 40,
+      "note": "Wiki money-making guide rate is 40 kills/hr at 60+ melee. Respawn 26 ticks (15.6s). TTK derived from that rate, not measured."
     }
   }
 }

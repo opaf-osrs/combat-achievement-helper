@@ -19416,6 +19416,294 @@
           "mode": "all"
         }
       ]
+    },
+    "646": {
+      "soft": [
+        {
+          "skills": [
+            "Attack"
+          ],
+          "level": 60,
+          "mode": "all"
+        },
+        {
+          "skills": [
+            "Strength"
+          ],
+          "level": 60,
+          "mode": "all"
+        },
+        {
+          "skills": [
+            "Defence"
+          ],
+          "level": 70,
+          "mode": "all"
+        },
+        {
+          "skills": [
+            "Prayer"
+          ],
+          "level": 70,
+          "mode": "all"
+        },
+        {
+          "skills": [
+            "Magic"
+          ],
+          "level": 76,
+          "mode": "all"
+        }
+      ]
+    },
+    "647": {
+      "soft": [
+        {
+          "skills": [
+            "Attack"
+          ],
+          "level": 60,
+          "mode": "all"
+        },
+        {
+          "skills": [
+            "Strength"
+          ],
+          "level": 60,
+          "mode": "all"
+        },
+        {
+          "skills": [
+            "Defence"
+          ],
+          "level": 70,
+          "mode": "all"
+        },
+        {
+          "skills": [
+            "Prayer"
+          ],
+          "level": 70,
+          "mode": "all"
+        },
+        {
+          "skills": [
+            "Magic"
+          ],
+          "level": 76,
+          "mode": "all"
+        }
+      ]
+    },
+    "648": {
+      "soft": [
+        {
+          "skills": [
+            "Attack"
+          ],
+          "level": 75,
+          "mode": "all"
+        },
+        {
+          "skills": [
+            "Strength"
+          ],
+          "level": 75,
+          "mode": "all"
+        },
+        {
+          "skills": [
+            "Defence"
+          ],
+          "level": 70,
+          "mode": "all"
+        },
+        {
+          "skills": [
+            "Prayer"
+          ],
+          "level": 70,
+          "mode": "all"
+        },
+        {
+          "skills": [
+            "Magic"
+          ],
+          "level": 76,
+          "mode": "all"
+        }
+      ]
+    },
+    "649": {
+      "soft": [
+        {
+          "skills": [
+            "Attack"
+          ],
+          "level": 75,
+          "mode": "all"
+        },
+        {
+          "skills": [
+            "Strength"
+          ],
+          "level": 75,
+          "mode": "all"
+        },
+        {
+          "skills": [
+            "Defence"
+          ],
+          "level": 70,
+          "mode": "all"
+        },
+        {
+          "skills": [
+            "Prayer"
+          ],
+          "level": 70,
+          "mode": "all"
+        },
+        {
+          "skills": [
+            "Magic"
+          ],
+          "level": 76,
+          "mode": "all"
+        }
+      ]
+    },
+    "650": {
+      "soft": [
+        {
+          "skills": [
+            "Attack"
+          ],
+          "level": 75,
+          "mode": "all"
+        },
+        {
+          "skills": [
+            "Strength"
+          ],
+          "level": 75,
+          "mode": "all"
+        },
+        {
+          "skills": [
+            "Defence"
+          ],
+          "level": 70,
+          "mode": "all"
+        },
+        {
+          "skills": [
+            "Prayer"
+          ],
+          "level": 70,
+          "mode": "all"
+        },
+        {
+          "skills": [
+            "Magic"
+          ],
+          "level": 76,
+          "mode": "all"
+        }
+      ]
+    },
+    "651": {
+      "soft": [
+        {
+          "skills": [
+            "Attack"
+          ],
+          "level": 60,
+          "mode": "all"
+        },
+        {
+          "skills": [
+            "Strength"
+          ],
+          "level": 60,
+          "mode": "all"
+        },
+        {
+          "skills": [
+            "Prayer"
+          ],
+          "level": 43,
+          "mode": "all"
+        }
+      ]
+    },
+    "652": {
+      "soft": [
+        {
+          "skills": [
+            "Attack"
+          ],
+          "level": 60,
+          "mode": "all"
+        },
+        {
+          "skills": [
+            "Strength"
+          ],
+          "level": 60,
+          "mode": "all"
+        },
+        {
+          "skills": [
+            "Prayer"
+          ],
+          "level": 43,
+          "mode": "all"
+        }
+      ]
+    },
+    "653": {
+      "soft": [
+        {
+          "skills": [
+            "Attack"
+          ],
+          "level": 60,
+          "mode": "all"
+        },
+        {
+          "skills": [
+            "Strength"
+          ],
+          "level": 60,
+          "mode": "all"
+        },
+        {
+          "skills": [
+            "Prayer"
+          ],
+          "level": 43,
+          "mode": "all"
+        }
+      ]
+    },
+    "654": {
+      "soft": [
+        {
+          "skills": [
+            "Magic"
+          ],
+          "level": 76,
+          "mode": "all"
+        },
+        {
+          "skills": [
+            "Prayer"
+          ],
+          "level": 43,
+          "mode": "all"
+        }
+      ]
     }
   }
 }

@@ -616,7 +616,7 @@
     "107": {
       "stats": "80+ Ranged/Magic, 74+ Prayer, 70+ Defence, gathering skills (high levels speed prep) to enter",
       "setup": "Streamlined prep for attuned bow + staff and perfected armour, egniol potions, paddlefish; efficient pathing between resources",
-      "strategy": "Beat the timer by optimising prep (fast resource gathering, minimal wasted ticks) and a quick 2-weapon Hunllef kill; the boss must die before the gauntlet timer passes 7:30, so a smooth prep is as important as DPS."
+      "strategy": "Beat the timer by optimising prep (fast resource gathering, minimal wasted ticks) and a quick 2-weapon Hunllef kill; the boss must die before the gauntlet timer passes 7:05, so a smooth prep is as important as DPS."
     },
     "108": {
       "stats": "85+ Ranged/Magic, 77+ Prayer, 70+ Defence, high gathering levels to speed prep, to enter",
@@ -674,7 +674,7 @@
     "117": {
       "stats": "90+ Attack, 95+ Strength, 95+ Ranged, 90+ Magic, 80+ Prayer",
       "setup": "Efficient T2/T3 crystal weapons and armour; optimised prep with high gathering stats so resource collection is fast.",
-      "strategy": "Run a tight, memorised prep route (minimal mining/fishing) and a fast Hunllef rotation; high combat stats kill the boss quickly. Every wasted tick in prep counts toward the 5-minute timer, so cut non-essential gathering.",
+      "strategy": "Run a tight, memorised prep route (minimal mining/fishing) and a fast Hunllef rotation; high combat stats kill the boss quickly. Every wasted tick in prep counts toward the 4:45 timer, so cut non-essential gathering.",
       "items": "Crystal halberd; Crystal bow; Crystal staff; Crystal armour (helm/body/legs)"
     },
     "118": {
@@ -3608,6 +3608,51 @@
       "setup": "Consistent ranged/fire magic setup with melee punish switch; serpentine helm plus poison immunity can permit stepping on poison pools, but airborne projectiles must still be dodged; standard bow/venator bow for larvae.",
       "strategy": "Play conservatively: use correct prayers, turn protection prayer off before venator screech, dodge airborne projectiles, carrion and slams, and kill larvae before they can heal the boss. Poison immunity can make poison pools safe, but it does not make their falling projectiles safe.",
       "items": "Serpentine helm and poison immunity helpful; standard bow/venator bow for larvae"
+    },
+    "646": {
+      "stats": "60+ Attack, 60+ Strength, 70+ Defence, 70+ Prayer for Piety, 76+ Magic for thralls helpful",
+      "setup": "Crush melee, she is weak to crush and golembane weapons: Inquisitor's mace or Scythe with Torva at the top end, Granite hammer or Zombie axe with Blood moon armour or a Fighter torso on a budget. Protect from Melee, Piety, thralls, and a Dragon warhammer or Dragon mace for specs.",
+      "strategy": "Plain kill count x25. Protect from Melee drops her normal max hit from 31 to 5. Every third attack is a special: step to the side opposite her sword for the sweep, stand on the marked tile so the blast bounces back into her, and pray Protect from Magic for the smite. Each one handled gives a guaranteed-accuracy empowered hit. Around 45% HP she enrages and chains all three faster. The money-making guide rates the fight at about 40 kills an hour."
+    },
+    "647": {
+      "stats": "60+ Attack, 60+ Strength, 70+ Defence, 70+ Prayer for Piety, 76+ Magic for thralls helpful",
+      "setup": "Crush melee, she is weak to crush and golembane weapons: Inquisitor's mace or Scythe with Torva at the top end, Granite hammer or Zombie axe with Blood moon armour or a Fighter torso on a budget. Protect from Melee, Piety, thralls, and a Dragon warhammer or Dragon mace for specs.",
+      "strategy": "Same fight as Adept, 50 times. At about 40 kills an hour this is roughly 75 minutes of kills plus banking. Handle every special for the free empowered hits."
+    },
+    "648": {
+      "stats": "75+ Attack, 75+ Strength, 70+ Defence, 70+ Prayer, 76+ Magic for thralls helpful",
+      "setup": "Crush melee, she is weak to crush and golembane weapons: Inquisitor's mace or Scythe with Torva at the top end, Granite hammer or Zombie axe with Blood moon armour or a Fighter torso on a budget. Protect from Melee, Piety, thralls, and a Dragon warhammer or Dragon mace for specs.",
+      "strategy": "The wiki does not spell out what counts as avoidable here. Treat every special as the test: dodge each sweep, bounce each blast and pray Protect from Magic through each smite, including the faster chained specials after she enrages at around 45%."
+    },
+    "649": {
+      "stats": "75+ Attack, 75+ Strength, 70+ Defence, 70+ Prayer, 76+ Magic for thralls helpful",
+      "setup": "Normal crush melee setup with Saradomin brews to stretch healing and 8-12 super restores. Blood spells or an amulet of blood fury help recover chip damage.",
+      "strategy": "Clean specials are what keep supplies lasting 15 kills, since her normal hits are tiny under Protect from Melee. Kills have roughly a 10% chance of a supply drop. She respawns in 26 ticks (15.6s)."
+    },
+    "650": {
+      "stats": "75+ Attack, 75+ Strength, 70+ Defence, 70+ Prayer, 76+ Magic for thralls helpful",
+      "setup": "Your highest crush DPS, Piety, thralls, divine super combat potions and a Dragon warhammer spec.",
+      "strategy": "Two minutes per kill including her 15.6s respawn. The empowered hits from handled specials are free damage, so take every one."
+    },
+    "651": {
+      "stats": "60+ Attack, 60+ Strength, 43+ Prayer",
+      "setup": "A 4-tick or faster weapon, because enraged sweeps come every 4 ticks. Unarmed also works since punches are 4-tick.",
+      "strategy": "Stand on the side opposite the sword each sweep. Running through or behind her does not give the enhanced attack. Pairs with The Pen Is Mightier, since unarmed is 4-tick and the enrage phase lasts longer."
+    },
+    "652": {
+      "stats": "60+ Attack, 60+ Strength, 43+ Prayer",
+      "setup": "A 3-tick weapon such as a Ham joint or Goblin paint cannon makes the timing easy. Turn Piety off so she does not die before the enraged specials.",
+      "strategy": "Pray Protect from Magic through the triple smite. With a 4 or 5 tick weapon, attack right after the first bolt so the follow-up lands between the 2nd and 3rd strike, which still gets all 3 bonus hits."
+    },
+    "653": {
+      "stats": "60+ Attack, 60+ Strength, 43+ Prayer",
+      "setup": "Crush melee, she is weak to crush and golembane weapons: Inquisitor's mace or Scythe with Torva at the top end, Granite hammer or Zombie axe with Blood moon armour or a Fighter torso on a budget. Protect from Melee, Piety, thralls, and a Dragon warhammer or Dragon mace for specs.",
+      "strategy": "Stand on the marked tile so the blast bounces back into her, and get an attack in before each following bounce. Only needs doing once in the fight after she enrages."
+    },
+    "654": {
+      "stats": "76+ Magic for thralls, 43+ Prayer",
+      "setup": "Empty weapon slot, an off-hand of your choice, thrall runes, and earth spell runes for manual casting. Ring of recoil or similar for passive damage.",
+      "strategy": "Let thralls and recoil carry the damage and manually cast earth spells to use her 15% earth weakness, or punch. Unarmed is 4-tick, so it combines well with Dancing Queen."
     }
   }
 }

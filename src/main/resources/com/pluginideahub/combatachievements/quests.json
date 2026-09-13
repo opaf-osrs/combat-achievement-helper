@@ -2,7 +2,7 @@
   "version": "2026-06-29",
   "source": "OSRS Wiki quest pages (per-quest research agents), CA-relevant quest universe",
   "note": "Quest-effort graph for the quests that gate Combat Achievements (gating quests + full prerequisite chains). estMinutes/effortScore are heuristics derived from the wiki Length/Difficulty so the plugin can compare doing a quest chain vs grinding a CA. directPrerequisiteQuests forms the dependency graph.",
-  "questCount": 113,
+  "questCount": 114,
   "quests": {
     "A Kingdom Divided": {
       "name": "A Kingdom Divided",
@@ -2142,6 +2142,27 @@
       ],
       "series": null,
       "wikiUrl": "https://oldschool.runescape.wiki/w/The_Blood_Moon_Rises"
+    },
+    "Fallen From Grace": {
+      "name": "Fallen From Grace",
+      "difficulty": "Experienced",
+      "length": "Short",
+      "estMinutes": 8,
+      "effortScore": 4,
+      "questPoints": 2,
+      "members": true,
+      "combatRequirement": "Combat 75 recommended",
+      "skillRequirements": {
+        "Sailing": 62,
+        "Crafting": 60,
+        "Mining": 53,
+        "Runecraft": 47
+      },
+      "directPrerequisiteQuests": [
+        "Pandemonium"
+      ],
+      "series": null,
+      "wikiUrl": "https://oldschool.runescape.wiki/w/Fallen_From_Grace"
     }
   }
 }
