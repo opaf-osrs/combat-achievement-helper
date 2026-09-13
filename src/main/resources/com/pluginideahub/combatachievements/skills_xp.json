@@ -2,7 +2,7 @@
   "version": "2026-06-29",
   "source": "OSRS Wiki training guides (per-skill agents). Normal methods only — excludes 3t/2t manipulation and whale/very-expensive setups.",
   "note": "Representative XP/hour by level bracket, so the plugin can estimate hours to train a skill X->Y as part of a quest's true unlock cost. Buyable skills (Prayer/Construction/Herblore) are gp-limited not click-limited; rates assume the standard method.",
-  "skillCount": 23,
+  "skillCount": 24,
   "missing": [],
   "skills": {
     "Attack": {
@@ -821,6 +821,40 @@
         }
       ],
       "notes": "All methods are members-only; Hunter is effectively a P2P skill (F2P has no real Hunter content). Rates are realistic solo rates EXCLUDING 1-tick/2-tick chinchompa manipulation and alt-account multilogging, which can push black chins to ~250-300k/hr. 1-50: birdhouse runs are the commonly-recommended low-effort backbone (~40-50k/hr effective, passive between runs); active trap hunting in this range climbs from ~13k (weasels) to ~50k/hr (jerboas/falconry). 50-70: red chinchompas without tick manipulation run ~90-115k/hr; drift net fishing is a buyable AFK-ish alternative. 70-99: black chinchompas are the standard fastest method (Wilderness risk) - solo no-tick rates scale ~145k at 73, ~197k at 90, ~225k at 99; Hunters' Rumours (~160-195k/hr at 72-91) is the recommended safe non-Wilderness alternative with similar XP. 90-99: black chins (~197-225k/hr) remain fastest; herbiboar (~157-171k/hr) is the popular low-attention option. These methods are click-intensive/active, not gp-limited. ADJUSTED for the plugin (2026-07-23): every bracket recalibrated down to what an ordinary player actually averages including banking, travel and restocking, on a modest budget. The published figures are best-case - fully funded buyables, optimal gear and unbroken attention - and applied from level 1 they made whole skills look free."
+    },
+    "Sailing": {
+      "skill": "Sailing",
+      "brackets": [
+        {
+          "fromLevel": 1,
+          "toLevel": 45,
+          "method": "Sea charting and early courier tasks, with the Tempor Tantrum trial from 30",
+          "xpPerHour": 12000,
+          "members": true
+        },
+        {
+          "fromLevel": 45,
+          "toLevel": 62,
+          "method": "Summer Shore courier route",
+          "xpPerHour": 17000,
+          "members": true
+        },
+        {
+          "fromLevel": 62,
+          "toLevel": 75,
+          "method": "Rellekka courier route (Etceteria unlocked at 65)",
+          "xpPerHour": 55000,
+          "members": true
+        },
+        {
+          "fromLevel": 75,
+          "toLevel": 99,
+          "method": "Lunar Isle courier tasks or the Gwenith Glide trial",
+          "xpPerHour": 110000,
+          "members": true
+        }
+      ],
+      "notes": "Members only. Sources: https://oldschool.runescape.wiki/w/Sailing_training (2026-09-13). Wiki figures: around 10k xp/hr charting at 22, 19k Tempor Tantrum at Swordfish rank, about 20k on the Summer Shore route, 66k rising to 99k on the Rellekka route at 62-65, and 130k-184k from Lunar Isle couriers or Gwenith Glide at 72+. Quests (Pandemonium, Prying Times, Current Affairs, Troubled Tortugans) cover some early xp. ADJUSTED for the plugin the same way as the other skills: every bracket set below the published best case to reflect an ordinary player including travel and restocking."
     }
   }
 }
